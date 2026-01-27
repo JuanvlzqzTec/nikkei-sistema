@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nikkei_postgres_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nikkei_dev
+      POSTGRES_USER: nikkei_user
+      POSTGRES_PASSWORD: nikkei_dev_password
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init:/docker-entrypoint-initdb.d
+    networks:
+      - nikkei_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nikkei_user -d nikkei_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: nikkei_redis_dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass "redis_dev_password"
+    volumes:
+      - redis_data:/data
+    networks:
+      - nikkei_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: nikkei_pgadmin_dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@nikkei.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - nikkei_network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: nikkei_redis_commander_dev
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:redis_dev_password
+    ports:
+      - "8081:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - nikkei_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  nikkei_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,0 +1,297 @@
+# GITIGNORE - SISTEMA NIKKEI
+
+# ARCHIVOS DE ENTORNO Y CONFIGURACIÓN
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+
+# Archivos de configuración específicos
+config.local.json
+*.config.local.*
+
+# FRONTEND (Next.js / Node.js)
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de build
+.next/
+out/
+build/
+dist/
+
+# Caché de Next.js
+.next/cache/
+
+# Archivos de desarrollo
+.vercel
+.turbo
+
+# Archivos de TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# BACKEND
+
+# Binarios
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Archivos de test
+*.test
+*.out
+
+# Binarios del proyecto
+/backend/bin/
+/backend/tmp/
+/backend/nikkei-api
+/backend/main
+
+# Caché de Go
+go.work
+go.work.sum
+
+# Air tmp files
+tmp/
+
+# BASE DE DATOS
+
+# Archivos de backup
+*.sql
+*.dump
+/backups/
+/database/backups/
+
+# Archivos de migración temporales
+*.migration.tmp
+
+# Archivos de datos locales
+*.db
+*.sqlite
+*.sqlite3
+
+# DOCKER Y CONTENEDORES
+
+# Volúmenes locales
+/volumes/
+/data/
+
+# Archivos de composición específicos
+docker-compose.override.yml
+docker-compose.local.yml
+
+# UPLOADS Y ARCHIVOS DE USUARIO
+
+# Directorio de uploads
+/uploads/
+/public/uploads/
+/backend/uploads/
+/frontend/public/uploads/
+
+# Archivos temporales de procesamiento
+/temp/
+/tmp/
+*.tmp
+*.temp
+
+# LOGS
+
+# Logs de aplicación
+*.log
+logs/
+/backend/logs/
+/frontend/logs/
+
+# Logs de npm/pnpm
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# EDITORES E IDEs
+
+# VSCode
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.vscode/tasks.json
+!.vscode/settings.template.json
+
+# JetBrains IDEs
+.idea/
+*.swp
+*.swo
+
+# Vim
+*~
+*.swp
+*.swo
+.vimrc.local
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+
+# SISTEMA OPERATIVO
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.nfs*
+
+# HERRAMIENTAS DE DESARROLLO
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# DOCUMENTACIÓN Y ARCHIVOS TEMPORALES
+
+# Archivos temporales de documentación
+/docs/temp/
+*.draft.md
+
+# Archivos de configuración personal
+.personal/
+personal.notes
+
+# TESTING
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+
+# Test databases
+test.db
+test.sqlite
+
+# Archivos de test temporales
+test-results/
+test-reports/
+
+# CERTIFICADOS Y LLAVES
+
+# Certificados SSL
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+
+# Llaves SSH
+id_rsa*
+id_ed25519*
+
+# ARCHIVOS 
+
+# Archivos de desarrollo específicos
+/scripts/local/
+.local/
+
+# Archivos de configuración de usuarios
+user.config.json
+local.settings.json
+
+# Archivos de backup automático
+*.backup
+*.bak
+
+# Archivos de análisis y profiling
+*.prof
+*.pprof
+
+# SERVICIOS EXTERNOS
+
+# Archivos de configuración de servicios
+.firebase/
+.vercel/
+.netlify/
+
+# Credenciales de servicios
+service-account.json
+credentials.json
+secrets.json
+
+# EXCLUSIONES ESPECÍFICAS
+
+# Mantener directorios importantes vacíos
+!.gitkeep
+!.keep
+
+# Mantener archivos de ejemplo
+!.env.example
+!config.example.json
+
+# MONITOREO Y MÉTRICAS
+
+# Archivos de métricas
+metrics/
+prometheus/
+grafana/data/
