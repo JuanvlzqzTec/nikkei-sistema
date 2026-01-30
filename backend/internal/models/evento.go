@@ -28,8 +28,9 @@ type Evento struct {
 	CreatedAt           time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt           time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Organizador   User      `gorm:"foreignKey:IDOrganizador;constraint:OnDelete:RESTRICT" json:"organizador,omitempty"`
-	Participantes []Persona `gorm:"many2many:participacion_eventos;foreignKey:IDEvento;joinForeignKey:id_evento;References:IDPersona;joinReferences:id_persona" json:"participantes,omitempty"`
+	//Descomentar cuando se quieran cargar las relaciones
+	//Organizador   User      `gorm:"foreignKey:IDOrganizador;constraint:OnDelete:RESTRICT" json:"organizador,omitempty"`
+	//Participantes []Persona `gorm:"many2many:participacion_eventos;foreignKey:IDEvento;joinForeignKey:id_evento;References:IDPersona;joinReferences:id_persona" json:"participantes,omitempty"`
 }
 
 func (Evento) TableName() string {

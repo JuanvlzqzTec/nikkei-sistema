@@ -18,8 +18,9 @@ type ParticipacionEvento struct {
 	NecesidadesEspeciales *string    `gorm:"type:text" json:"necesidades_especiales"`
 	CreatedAt             time.Time  `gorm:"autoCreateTime" json:"created_at"`
 
-	Persona Persona `gorm:"foreignKey:IDPersona;constraint:OnDelete:CASCADE" json:"persona,omitempty"`
-	Evento  Evento  `gorm:"foreignKey:IDEvento;constraint:OnDelete:CASCADE" json:"evento,omitempty"`
+	//Descomentar cuando se quieran cargar las relaciones
+	//Persona Persona `gorm:"foreignKey:IDPersona;constraint:OnDelete:CASCADE" json:"persona,omitempty"`
+	//Evento  Evento  `gorm:"foreignKey:IDEvento;constraint:OnDelete:CASCADE" json:"evento,omitempty"`
 }
 
 func (ParticipacionEvento) TableName() string {

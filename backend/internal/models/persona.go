@@ -37,15 +37,18 @@ type Persona struct {
 	CreatedAt               time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt               time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Familia           Familia            `gorm:"foreignKey:IDFamilia;constraint:OnDelete:RESTRICT" json:"familia,omitempty"`
-	EmpresaEmpleadora *EmpresaEmpleadora `gorm:"foreignKey:IDEmpresaEmpleadora;constraint:OnDelete:SET NULL" json:"empresa_empleadora,omitempty"`
-	User              *User              `gorm:"foreignKey:IDPersona" json:"user,omitempty"`
-	EmpresaPropia     *Empresa           `gorm:"foreignKey:IDPropietario" json:"empresa_propia,omitempty"`
+	//Descomentar todas estas lineas cuando se quieran cargar las relaciones
 
-	Eventos []Evento `gorm:"many2many:participacion_eventos;foreignKey:IDPersona;joinForeignKey:id_persona;References:IDEvento;joinReferences:id_evento" json:"eventos,omitempty"`
+	//Familia           Familia            `gorm:"foreignKey:IDFamilia;constraint:OnDelete:RESTRICT" json:"familia,omitempty"`
+	//EmpresaEmpleadora *EmpresaEmpleadora `gorm:"foreignKey:IDEmpresaEmpleadora;constraint:OnDelete:SET NULL" json:"empresa_empleadora,omitempty"`
 
-	Parientes  []Persona `gorm:"many2many:genealogia;foreignKey:IDPersona;joinForeignKey:id_persona;References:IDPersona;joinReferences:id_pariente" json:"parientes,omitempty"`
-	Familiares []Persona `gorm:"many2many:genealogia;foreignKey:IDPersona;joinForeignKey:id_pariente;References:IDPersona;joinReferences:id_persona" json:"familiares,omitempty"`
+	//User              *User              `gorm:"foreignKey:IDPersona" json:"user,omitempty"`
+	//EmpresaPropia     *Empresa           `gorm:"foreignKey:IDPropietario" json:"empresa_propia,omitempty"`
+
+	//Eventos []Evento `gorm:"many2many:participacion_eventos;foreignKey:IDPersona;joinForeignKey:id_persona;References:IDEvento;joinReferences:id_evento" json:"eventos,omitempty"`
+
+	//Parientes  []Persona `gorm:"many2many:genealogia;foreignKey:IDPersona;joinForeignKey:id_persona;References:IDPersona;joinReferences:id_pariente" json:"parientes,omitempty"`
+	//Familiares []Persona `gorm:"many2many:genealogia;foreignKey:IDPersona;joinForeignKey:id_pariente;References:IDPersona;joinReferences:id_persona" json:"familiares,omitempty"`
 }
 
 func (Persona) TableName() string {

@@ -16,7 +16,8 @@ type User struct {
 	CreatedAt     time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt     time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Persona *Persona `gorm:"foreignKey:IDPersona;constraint:OnDelete:SET NULL" json:"persona,omitempty"`
+	// Descomentar cuando se quiera cargar la relación con Persona
+	//Persona *Persona `gorm:"foreignKey:IDPersona;constraint:OnDelete:SET NULL" json:"persona,omitempty"`
 }
 
 func (User) TableName() string {

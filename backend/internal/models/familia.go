@@ -20,7 +20,9 @@ type Familia struct {
 	CreatedAt            time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt            time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Personas []Persona `gorm:"foreignKey:IDFamilia" json:"personas,omitempty"`
+	//Descomentar cuando se quieran cargar las relaciones
+
+	//Personas []Persona `gorm:"foreignKey:IDFamilia" json:"personas,omitempty"`
 }
 
 func (Familia) TableName() string {

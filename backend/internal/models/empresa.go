@@ -31,7 +31,8 @@ type Empresa struct {
 	CreatedAt                 time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt                 time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Propietario Persona `gorm:"foreignKey:IDPropietario;constraint:OnDelete:RESTRICT" json:"propietario,omitempty"`
+	//Descomentar cuando se quiera cargar la relacion
+	//Propietario Persona `gorm:"foreignKey:IDPropietario;constraint:OnDelete:RESTRICT" json:"propietario,omitempty"`
 }
 
 func (Empresa) TableName() string {

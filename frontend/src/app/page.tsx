@@ -21,7 +21,7 @@ export default function TestPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-red-50 p-8">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-red-50 p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-8">
           🏮 Sistema Nikkei Sinaloa
@@ -77,10 +77,7 @@ export default function TestPage() {
 
         <div className="mt-8 text-center">
           <p className="text-gray-600">
-            🎉 ¡Todo el stack está funcionando correctamente!
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Próximo paso: Implementar autenticación y modelos de datos
+            ¡Todo el stack está funcionando correctamente!
           </p>
         </div>
       </div>

@@ -14,7 +14,8 @@ type EmpresaEmpleadora struct {
 	CreatedAt           time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt           time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Empleados []Persona `gorm:"foreignKey:IDEmpresaEmpleadora" json:"empleados,omitempty"`
+	// Descomentar cuando se implemente la relación con Persona
+	// Empleados []Persona `gorm:"foreignKey:IDEmpresaEmpleadora" json:"empleados,omitempty"`
 }
 
 func (EmpresaEmpleadora) TableName() string {

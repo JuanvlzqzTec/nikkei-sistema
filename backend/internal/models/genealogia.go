@@ -15,8 +15,9 @@ type Genealogia struct {
 	CreatedAt             time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt             time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Persona  Persona `gorm:"foreignKey:IDPersona;constraint:OnDelete:CASCADE" json:"persona,omitempty"`
-	Pariente Persona `gorm:"foreignKey:IDPariente;constraint:OnDelete:CASCADE" json:"pariente,omitempty"`
+	//Descomentar cuando se quieran cargar las relaciones
+	//Persona  Persona `gorm:"foreignKey:IDPersona;constraint:OnDelete:CASCADE" json:"persona,omitempty"`
+	//Pariente Persona `gorm:"foreignKey:IDPariente;constraint:OnDelete:CASCADE" json:"pariente,omitempty"`
 }
 
 func (Genealogia) TableName() string {

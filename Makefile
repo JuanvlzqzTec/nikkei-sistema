@@ -138,6 +138,32 @@ logs-redis: ## Ver logs de Redis
 	$(COMPOSE_DEV) logs -f redis
 
 # Limpieza
+
+db-connect: ## Conectar directamente a PostgreSQL
+	docker exec -it nikkei_postgres_dev psql -U nikkei_user -d nikkei_dev
+
+db-reset: ## Reiniciar base de datos (CUIDADO: borra todos los datos)
+	@echo "$(RED)ADVERTENCIA: Esto eliminará TODOS los datos$(NC)"
+	@read -p "¿Estás seguro? Escribe 'SI' para continuar: " confirm; \
+	if [ "$$confirm" = "SI" ]; then \
+		echo "$(YELLOW)Eliminando base de datos...$(NC)"; \
+		make clean; \
+		make dev-services; \
+		sleep 5; \
+		echo "$(GREEN)Base de datos reiniciada$(NC)"; \
+	else \
+		echo "$(YELLOW)Operación cancelada$(NC)"; \
+	fi
+
+db-tables: ## Mostrar todas las tablas de la base de datos
+	docker exec -it nikkei_postgres_dev psql -U nikkei_user -d nikkei_dev -c "\dt"
+
+db-count: ## Contar registros en todas las tablas
+	docker exec -it nikkei_postgres_dev psql -U nikkei_user -d nikkei_dev -c "\
+		SELECT schemaname,tablename,n_tup_ins-n_tup_del as rowcount \
+		FROM pg_stat_user_tables \
+		ORDER BY rowcount DESC;"
+
 clean: ## Limpiar containers y volúmenes de desarrollo
 	@echo "$(YELLOW)Limpiando contenedores y volúmenes...$(NC)"
 	$(COMPOSE_DEV) down -v --remove-orphans
@@ -150,13 +176,13 @@ clean-build: ## Limpiar archivos de construcción
 	@echo "$(GREEN)Archivos de construcción eliminados$(NC)"
 
 # Backup y restauración
-backup: ## Crear backup de la base de datos
+db-backup: ## Crear backup de la base de datos
 	@echo "$(BLUE)Creando backup de la base de datos...$(NC)"
 	@mkdir -p backups
 	$(COMPOSE_DEV) exec postgres pg_dump -U nikkei_user -d nikkei_dev > backups/backup_$(shell date +%Y%m%d_%H%M%S).sql
 	@echo "$(GREEN)Backup creado en directorio backups/$(NC)"
 
-restore: ## Restaurar backup de base de datos (requiere archivo BACKUP_FILE)
+db-restore: ## Restaurar backup de base de datos (requiere archivo BACKUP_FILE)
 	@if [ -z "$(BACKUP_FILE)" ]; then \
 		echo "$(RED)Especifica el archivo: make restore BACKUP_FILE=backups/backup_xxx.sql$(NC)"; \
 		exit 1; \
