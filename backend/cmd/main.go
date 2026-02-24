@@ -11,6 +11,8 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database"
+	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/handlers"
+	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/middleware"
 )
 
 func main() {
@@ -44,6 +46,8 @@ func main() {
 	config.AllowCredentials = true
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	r.Use(cors.New(config))
+
+	authHandler := handlers.NewAuthHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -81,7 +85,6 @@ func main() {
 		api.GET("/stats", func(c *gin.Context) {
 			stats := make(map[string]int64)
 
-			// Variables temporales para contar registros
 			var usersCount, familiasCount, personasCount, empresasCount int64
 			var empresasEmpleadorasCount, eventosCount, participacionCount, genealogiaCount int64
 
@@ -94,7 +97,6 @@ func main() {
 			database.DB.Table("participacion_eventos").Count(&participacionCount)
 			database.DB.Table("genealogia").Count(&genealogiaCount)
 
-			// Asignar a map
 			stats["users"] = usersCount
 			stats["familias"] = familiasCount
 			stats["personas"] = personasCount
@@ -109,6 +111,29 @@ func main() {
 				"counts":  stats,
 			})
 		})
+
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", authHandler.Register)
+			auth.POST("/login", authHandler.Login)
+			auth.POST("/validate", middleware.OptionalAuth(), authHandler.ValidateToken)
+		}
+
+		protected := api.Group("/")
+		protected.Use(middleware.AuthMiddleware())
+		{
+			protected.GET("profile", authHandler.GetProfile)
+			protected.POST("logout", authHandler.Logout)
+			protected.POST("change-password", authHandler.ChangePassword)
+			protected.POST("refresh", authHandler.RefreshToken)
+
+			admin := protected.Group("/admin")
+			admin.Use(middleware.RequireAdmin())
+			{
+				admin.PUT("users/:id/role", authHandler.UpdateUserRole)
+				admin.DELETE("users/:id", authHandler.DeactivateUser)
+			}
+		}
 	}
 
 	port := os.Getenv("PORT")
@@ -121,6 +146,7 @@ func main() {
 	log.Printf("Health check: http://localhost:%s/api/v1/health", port)
 	log.Printf("Database info: http://localhost:%s/api/v1/database/info", port)
 	log.Printf("Statistics: http://localhost:%s/api/v1/stats", port)
+	log.Printf("Auth endpoints: http://localhost:%s/api/v1/auth/", port)
 
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Error al iniciar servidor:", err)
