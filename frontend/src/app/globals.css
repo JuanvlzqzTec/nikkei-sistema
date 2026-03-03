@@ -191,6 +191,91 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.bg-asanoha-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='52' height='60' viewBox='0 0 104 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M52 120L0 90V30L52 0l52 30v60l-52 30zm0-11.55l42-24.25V35.8L52 11.55 10 35.8v48.4l42 24.25zM52 90l26-15V45L52 30 26 45v30l26 15z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-size: 52px 60px;
+  background-repeat: repeat;
+}
+
+.event-badge {
+  padding: 0.25rem 0.75rem; 
+  border-radius: 9999px; 
+  font-size: 0.75rem; 
+  font-weight: 700; 
+  text-transform: uppercase; 
+  letter-spacing: 0.05em; 
+  display: inline-block;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.logo-bubble {
+  position: relative;
+  border-radius: 9999px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+  cursor: pointer;
+  border: 4px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-bubble img {
+  object-fit: cover !important; 
+  filter: none !important;   
+}
+
+.logo-bubble:hover {
+  transform: scale(1.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 20;
+  border-color: var(--color-nikkei-gold);
+}
+
+.section-compact {
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+.footer-link {
+  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-sans);
+}
+
+.footer-link:hover {
+  color: var(--color-nikkei-gold);
+  padding-left: 4px;
+}
+
+.social-icon {
+  padding: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.social-icon:hover {
+  border-color: var(--color-nikkei-gold);
+  color: var(--color-nikkei-gold);
+  transform: translateY(-4px);
+}
+
 @media (max-width: 768px) {
   .header-buttons-top {
     flex-direction: column;
