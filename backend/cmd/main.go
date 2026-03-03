@@ -57,7 +57,7 @@ func main() {
 				"message":  "Sistema Nikkei API funcionando",
 				"version":  "1.0.0",
 				"database": "PostgreSQL conectado",
-				"tables":   "8 tablas creadas",
+				"tables":   "9 tablas creadas",
 			})
 		})
 
@@ -78,6 +78,7 @@ func main() {
 					"users", "familias", "personas", "empresas",
 					"empresas_empleadoras", "eventos",
 					"participacion_eventos", "genealogia",
+					"galeria_historica",
 				},
 			})
 		})
@@ -87,6 +88,7 @@ func main() {
 
 			var usersCount, familiasCount, personasCount, empresasCount int64
 			var empresasEmpleadorasCount, eventosCount, participacionCount, genealogiaCount int64
+			var galeriaCount int64
 
 			database.DB.Table("users").Count(&usersCount)
 			database.DB.Table("familias").Count(&familiasCount)
@@ -96,6 +98,7 @@ func main() {
 			database.DB.Table("eventos").Count(&eventosCount)
 			database.DB.Table("participacion_eventos").Count(&participacionCount)
 			database.DB.Table("genealogia").Count(&genealogiaCount)
+			database.DB.Table("galeria_historica").Count(&galeriaCount)
 
 			stats["users"] = usersCount
 			stats["familias"] = familiasCount
@@ -105,6 +108,7 @@ func main() {
 			stats["eventos"] = eventosCount
 			stats["participacion_eventos"] = participacionCount
 			stats["genealogia"] = genealogiaCount
+			stats["galeria_historica"] = galeriaCount
 
 			c.JSON(200, gin.H{
 				"message": "Estadísticas de la base de datos",

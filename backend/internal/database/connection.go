@@ -71,6 +71,7 @@ func AutoMigrate() {
 		&models.Evento{},
 		&models.ParticipacionEvento{},
 		&models.Genealogia{},
+		&models.Galeria{},
 	}
 
 	err := DB.AutoMigrate(models...)
@@ -293,6 +294,32 @@ func CreateInitialData() {
 		log.Printf("Error creando personas: %v", result.Error)
 	} else {
 		log.Printf("Creadas %d personas de ejemplo", len(personas))
+	}
+
+	hitos := []models.Galeria{
+		{
+			Titulo:      "Primeros Inmigrantes a Mazatlán",
+			Descripcion: stringPtr("Fotografía de las primeras familias Nikkei que se establecieron en el puerto."),
+			URLImagen:   "/assets/historia/inmigrantes.jpg",
+			Categoria:   "inmigracion",
+			EsDestacado: true,
+			Orden:       1,
+		},
+		{
+			Titulo:      "Fundación de la Asociación",
+			Descripcion: stringPtr("Reunión histórica donde se formalizaron los estatutos de la asociación."),
+			URLImagen:   "/assets/historia/fundacion.jpg",
+			Categoria:   "fundacion",
+			EsDestacado: true,
+			Orden:       2,
+		},
+	}
+
+	result = DB.Create(&hitos)
+	if result.Error != nil {
+		log.Printf("Error creando hitos: %v", result.Error)
+	} else {
+		log.Printf("Creados %d hitos", len(hitos))
 	}
 
 	adminUser := models.User{

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogIn, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { LogIn, UserPlus, ChevronLeft, ChevronRight, History } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function HomePage() {
@@ -15,7 +15,32 @@ export default function HomePage() {
     '/assets/slider/slide-3.jpg',
   ]
 
-  // Auto-advance slider every 3 seconds
+  // Datos temporales para la galería (se conectarán al modelo Galeria del backend)
+  const hitosDestacados = [
+    {
+      id: 1,
+      titulo: "Primeros Inmigrantes",
+      categoria: "Inmigración",
+      imagen: "/assets/slider/slide-1.jpg",
+      anio: "19XX"
+    },
+    {
+      id: 2,
+      titulo: "Fundación Asociación",
+      categoria: "Hito Histórico",
+      imagen: "/assets/slider/slide-2.jpg",
+      anio: "19XX"
+    },
+    {
+      id: 3,
+      titulo: "Primer Matsuri",
+      categoria: "Cultura",
+      imagen: "/assets/slider/slide-3.jpg",
+      anio: "20XX"
+    }
+  ]
+
+  // Auto-advance slider cada 3 segundos
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -34,12 +59,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header existente */}
+      {/* Header */}
       <header className="header-container shadow-sm">
         <div className="w-full px-4">
           <div className="flex items-start justify-between">
             
-            {/* Lado Izquierdo - Logo y Textos pegados a la izquierda */}
+            {/* Logo y Textos */}
             <div className="flex items-center gap-3">
               <Image
                 src="/assets/Logo-OJN.png"
@@ -59,10 +84,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Lado Derecho - Botones */}
+            {/* Botones y Navegación */}
             <div className="header-buttons-container">
-              
-              {/* Botones de Auth */}
               <div className="header-buttons-top" style={{ padding: '0.1px 0.5px' }}>
                 <Link href="/register">
                   <Button variant="ghost" className="header-auth-button group">
@@ -79,76 +102,52 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Navegación */}
               <div className="flex items-center justify-end mt-1 gap-2">
                 <button className="header-nav-button">Sobre Nosotros</button>
                 <button className="header-nav-button">Historia</button>
                 <button className="header-nav-button">Eventos</button>
                 <button className="header-nav-button">Contacto</button>
               </div>
-              
             </div>
           </div>
         </div>
       </header>
 
-      {/* Nueva Sección Hero con fondo burgundy y patrón */}
+      {/* Sección Hero */}
       <section className="hero-section relative overflow-hidden">
-        {/* Fondo burgundy con patrón geométrico del login */}
         <div className="absolute inset-0" style={{
           backgroundColor: 'var(--color-nikkei-burgundy)',
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='84' height='48' viewBox='0 0 84 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m0 12c0 6.627 5.373 12 12 12s12-5.373 12-12-5.373-12-12-12-12 5.373-12 12zm84 0c0 6.627-5.373 12-12 12s-12-5.373-12-12 5.373-12 12-12 12 5.373 12 12zm-84 24c0 6.627 5.373 12 12 12s12-5.373 12-12-5.373-12-12-12-12 5.373-12 12zm84 0c0 6.627-5.373 12-12 12s-12-5.373-12-12 5.373-12 12-12 12 5.373 12 12z' fill='%23ffffff' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M30 0h1v30h-1z'/%3E%3Cpath d='M0 29h30v1H0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }} />
         
-        {/* Overlay con gradiente sutil */}
         <div className="absolute inset-0 bg-linear-to-r from-red-900/10 via-transparent to-red-800/10" />
         
-        {/* Contenido de la sección hero */}
         <div className="relative z-10 container-nikkei py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-150">
-            
-            {/* Lado Izquierdo - Textos y CTA */}
             <div className="space-y-8">
-              
-              {/* Texto principal en japonés */}
               <div className="space-y-4">
-                <h2 className="text-4xl lg:text-6xl font-serif text-white leading-tight">
-                  時を超えて続く絆を築く
-                </h2>
-                
-                {/* Texto en español */}
-                <p className="text-xl lg:text-2xl text-white/90 font-serif">
-                  Creando vínculos que perduran con el tiempo
-                </p>
+                <h2 className="text-4xl lg:text-6xl font-serif text-white leading-tight">時を超えて続く絆を築く</h2>
+                <p className="text-xl lg:text-2xl text-white/90 font-serif">Creando vínculos que perduran con el tiempo</p>
               </div>
 
-              {/* Línea decorativa */}
               <div className="w-24 h-1 bg-linear-to-r from-amber-400 to-yellow-300 rounded-full" />
 
-              {/* Descripción adicional */}
               <p className="text-lg text-white/80 font-sans leading-relaxed max-w-lg">
                 Únete a nuestra comunidad y forma parte de la historia que conecta 
                 las tradiciones japonesas con el corazón de Sinaloa.
               </p>
 
-              {/* CTA Button */}
               <div className="pt-4">
                 <Link href="/register">
-                  <Button className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <Button className="btn-nikkei">
                     Únete a Nuestra Comunidad
                   </Button>
                 </Link>
               </div>
-              
             </div>
 
-            {/* Lado Derecho - Slider de Imágenes */}
             <div className="relative">
-              
-              {/* Container del slider */}
               <div className="relative overflow-hidden shadow-2xl bg-white/10 backdrop-blur-sm border border-white/20">
-                
-                {/* Imágenes del slider */}
                 <div className="relative h-96 lg:h-125">
                   {slides.map((slide, index) => (
                     <div
@@ -157,54 +156,20 @@ export default function HomePage() {
                         index === currentSlide ? 'opacity-100' : 'opacity-0'
                       }`}
                     >
-                      <Image
-                        src={slide}
-                        alt={`Slide ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                      />
+                      <Image src={slide} alt={`Slide ${index + 1}`} fill className="object-cover" priority={index === 0} />
                     </div>
                   ))}
                 </div>
 
-                {/* Flechas de navegación */}
-                <button
-                  onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110"
-                  aria-label="Imagen anterior"
-                >
+                <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110">
                   <ChevronLeft size={24} />
                 </button>
 
-                <button
-                  onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110"
-                  aria-label="Siguiente imagen"
-                >
+                <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110">
                   <ChevronRight size={24} />
                 </button>
-
-                {/* Indicadores de puntos */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {slides.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                        index === currentSlide 
-                          ? 'bg-white' 
-                          : 'bg-white/40 hover:bg-white/60'
-                      }`}
-                      aria-label={`Ir a slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
               </div>
-              
             </div>
-            
           </div>
         </div>
       </section>
@@ -213,87 +178,49 @@ export default function HomePage() {
       <section className="bg-wave-pattern bg-linear-to-br from-orange-50 via-amber-50 to-red-50 py-20">
         <div className="container-nikkei">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            
-            {/* Lado Izquierdo - Imagen */}
             <div className="relative">
-              
-              {/* Container de la imagen */}
               <div className="relative overflow-hidden shadow-2xl bg-white/10 backdrop-blur-sm border border-red-200/30">
-                
-                {/* Imagen principal */}
                 <div className="relative h-96 lg:h-125">
-                  <Image
-                    src="/assets/sobre-nosotros.jpg"
-                    alt="Comunidad Nikkei de Sinaloa"
-                    fill
-                    className="object-cover"
-                  />
-                  
-                  {/* Overlay sutil */}
+                  <Image src="/assets/sobre-nosotros.jpg" alt="Comunidad Nikkei de Sinaloa" fill className="object-cover" />
                   <div className="absolute inset-0 bg-red-900/10" />
                 </div>
-
-                {/* Texto overlay en la imagen */}
                 <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-6">
-                  <p className="text-white font-serif text-lg">
-                    Nuestra comunidad Nikkei
-                  </p>
-                  <p className="text-white/80 font-sans text-sm">
-                    Preservando tradiciones, creando futuro
-                  </p>
+                  <p className="text-white font-serif text-lg">Nuestra comunidad Nikkei</p>
+                  <p className="text-white/80 font-sans text-sm">Preservando tradiciones, creando futuro</p>
                 </div>
-
               </div>
-
-              {/* Elementos decorativos */}
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-linear-to-br from-red-600 to-red-700 rounded-full opacity-20 blur-xl" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-linear-to-br from-orange-400 to-red-500 rounded-full opacity-15 blur-xl" />
-              
             </div>
 
-            {/* Lado Derecho - Contenido de texto */}
             <div className="space-y-8">
-              
-              {/* Títulos */}
               <div className="space-y-4">
-                <h2 className="text-3xl lg:text-4xl font-serif text-red-800 leading-tight">
-                  私たちについて
-                </h2>
-                <h3 className="text-2xl lg:text-3xl font-serif text-red-700">
-                  Sobre Nosotros
-                </h3>
+                <h2 className="text-3xl lg:text-4xl font-serif text-red-800 leading-tight">私たちについて</h2>
+                <h3 className="text-2xl lg:text-3xl font-serif text-red-700">Sobre Nosotros</h3>
               </div>
 
-              {/* Línea decorativa */}
               <div className="w-20 h-1 bg-linear-to-r from-red-600 to-orange-400 rounded-full" />
 
-              {/* Texto principal oficial */}
               <div className="space-y-6">
                 <p className="text-lg text-gray-700 font-sans leading-relaxed">
                   Nos enfocamos en <strong className="text-red-800">preservar, difundir y vivir la cultura japonesa</strong> en nuestra comunidad. 
                 </p>
-                
                 <p className="text-lg text-gray-700 font-sans leading-relaxed">
                   Promovemos actividades culturales, educativas y de integración que fortalecen la 
                   <strong className="text-red-800"> identidad nikkei</strong> y crean puentes de amistad entre 
-                  <strong className="text-red-800">Japón, México y nuestra sociedad</strong>.
+                  <strong className="text-red-800"> Japón, México y nuestra sociedad</strong>.
                 </p>
               </div>
 
-              {/* Cards de valores/pilares */}
               <div className="grid grid-cols-3 gap-4 mt-8">
                 <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm">
                   <div className="text-2xl mb-2">🌸</div>
                   <h4 className="font-serif text-red-800 text-sm font-semibold">Preservar</h4>
                   <p className="text-xs text-gray-600 font-sans">Cultura japonesa</p>
                 </div>
-                
                 <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm">
                   <div className="text-2xl mb-2">🤝</div>
                   <h4 className="font-serif text-red-800 text-sm font-semibold">Integrar</h4>
                   <p className="text-xs text-gray-600 font-sans">Comunidades</p>
                 </div>
-                
                 <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm">
                   <div className="text-2xl mb-2">🏮</div>
                   <h4 className="font-serif text-red-800 text-sm font-semibold">Fortalecer</h4>
@@ -301,27 +228,63 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Call to action secundario */}
               <div className="pt-4">
-                <Button className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 font-sans font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
-                  Conoce Nuestra Historia
-                </Button>
+                <Link href="/historia">
+                  <Button className="btn-nikkei">
+                    Conoce Nuestra Historia
+                  </Button>
+                </Link>
               </div>
-              
             </div>
-            
           </div>
         </div>
       </section>
 
-      {/* Placeholder para siguientes secciones */}
-      <section className="bg-wave-pattern bg-linear-to-br from-orange-50 via-amber-50 to-red-50 py-20">
-        <div className="container-nikkei">
-          <p className="text-center text-gray-600 font-sans">
-            ...
-          </p>
+      {/* SECCIÓN: Nuestras Raíces (Galería Histórica) */}
+      <section className="bg-wave-pattern bg-linear-to-tr from-red-50 via-amber-50 to-orange-50 py-24 relative overflow-hidden">
+        <div className="container-nikkei relative z-10">
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+            <h2 className="text-3xl lg:text-4xl font-serif text-nikkei-burgundy">私たちのルーツ</h2>
+            <h3 className="text-2xl font-serif text-nikkei-burgundy-light">Nuestras Raíces</h3>
+            <div className="w-16 h-1 bg-nikkei-gold mx-auto rounded-full" />
+            <p className="text-gray-600 font-sans italic">
+              Un viaje a través de la memoria y la identidad de nuestra comunidad en Sinaloa.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {hitosDestacados.map((hito) => (
+              <div key={hito.id} className="group relative h-85 overflow-hidden rounded-xl shadow-xl border-2 border-white/50">
+                <Image 
+                  src={hito.imagen} 
+                  alt={hito.titulo} 
+                  fill 
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-nikkei-burgundy/90 via-nikkei-burgundy/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
+                
+                <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <span className="text-nikkei-gold font-serif text-sm mb-2">{hito.anio}</span>
+                  <h4 className="text-white text-xl font-serif mb-2">{hito.titulo}</h4>
+                  <p className="text-white/80 text-sm font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                    {hito.categoria}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <Link href="/historia">
+              <Button className="btn-nikkei">
+                <History size={20} />
+                Explorar Archivo Histórico
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
+
     </div>
   )
 }

@@ -162,6 +162,35 @@ h1, h2, h3, h4, h5, h6 {
   color: white; 
 }
 
+.btn-nikkei {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(to right, #dc2626, #b91c1c);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1rem 2rem;
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-nikkei:hover {
+  background: linear-gradient(to right, #b91c1c, #991b1b);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.3);
+  transform: scale(1.05);
+}
+
+.hero-section .btn-nikkei {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 @media (max-width: 768px) {
   .header-buttons-top {
     flex-direction: column;
