@@ -300,7 +300,7 @@ func CreateInitialData() {
 		{
 			Titulo:      "Primeros Inmigrantes a Mazatlán",
 			Descripcion: stringPtr("Fotografía de las primeras familias Nikkei que se establecieron en el puerto."),
-			URLImagen:   "/assets/historia/inmigrantes.jpg",
+			URLImagen:   "/assets/slider/slide-1.jpg",
 			Categoria:   "inmigracion",
 			EsDestacado: true,
 			Orden:       1,
@@ -308,10 +308,18 @@ func CreateInitialData() {
 		{
 			Titulo:      "Fundación de la Asociación",
 			Descripcion: stringPtr("Reunión histórica donde se formalizaron los estatutos de la asociación."),
-			URLImagen:   "/assets/historia/fundacion.jpg",
+			URLImagen:   "/assets/slider/slide-2.jpg",
 			Categoria:   "fundacion",
 			EsDestacado: true,
 			Orden:       2,
+		},
+		{
+			Titulo:      "Primer Festival Matsuri",
+			Descripcion: stringPtr("Celebración del primer festival cultural de la comunidad."),
+			URLImagen:   "/assets/slider/slide-3.jpg",
+			Categoria:   "cultura",
+			EsDestacado: true,
+			Orden:       3,
 		},
 	}
 

@@ -25,9 +25,7 @@ func main() {
 	}
 
 	database.ConnectDatabase()
-
 	database.AutoMigrate()
-
 	database.CreateInitialData()
 
 	c := make(chan os.Signal, 1)
@@ -47,7 +45,9 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	r.Use(cors.New(config))
 
+	// Inicializar handlers
 	authHandler := handlers.NewAuthHandler()
+	galeriaHandler := handlers.NewGaleriaHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -116,6 +116,7 @@ func main() {
 			})
 		})
 
+		// Rutas de autenticación
 		auth := api.Group("/auth")
 		{
 			auth.POST("/register", authHandler.Register)
@@ -123,6 +124,16 @@ func main() {
 			auth.POST("/validate", middleware.OptionalAuth(), authHandler.ValidateToken)
 		}
 
+		// Rutas públicas de galería (sin autenticación)
+		galeria := api.Group("/galeria")
+		{
+			galeria.GET("/", galeriaHandler.GetAll)                  // GET /api/v1/galeria?categoria=cultura&destacados=true&limite=6
+			galeria.GET("/destacados", galeriaHandler.GetDestacados) // GET /api/v1/galeria/destacados
+			galeria.GET("/categorias", galeriaHandler.GetCategorias) // GET /api/v1/galeria/categorias
+			galeria.GET("/:id", galeriaHandler.GetByID)              // GET /api/v1/galeria/1
+		}
+
+		// Rutas protegidas (requieren autenticación)
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())
 		{
@@ -131,11 +142,21 @@ func main() {
 			protected.POST("change-password", authHandler.ChangePassword)
 			protected.POST("refresh", authHandler.RefreshToken)
 
+			// Rutas de administrador
 			admin := protected.Group("/admin")
 			admin.Use(middleware.RequireAdmin())
 			{
+				// Gestión de usuarios
 				admin.PUT("users/:id/role", authHandler.UpdateUserRole)
 				admin.DELETE("users/:id", authHandler.DeactivateUser)
+
+				// Gestión de galería (solo admins pueden crear/editar/eliminar)
+				galeriaAdmin := admin.Group("/galeria")
+				{
+					galeriaAdmin.POST("/", galeriaHandler.Create)      // POST /api/v1/admin/galeria
+					galeriaAdmin.PUT("/:id", galeriaHandler.Update)    // PUT /api/v1/admin/galeria/1
+					galeriaAdmin.DELETE("/:id", galeriaHandler.Delete) // DELETE /api/v1/admin/galeria/1
+				}
 			}
 		}
 	}
@@ -151,6 +172,8 @@ func main() {
 	log.Printf("Database info: http://localhost:%s/api/v1/database/info", port)
 	log.Printf("Statistics: http://localhost:%s/api/v1/stats", port)
 	log.Printf("Auth endpoints: http://localhost:%s/api/v1/auth/", port)
+	log.Printf("Galería endpoints: http://localhost:%s/api/v1/galeria/", port)
+	log.Printf("Admin galería: http://localhost:%s/api/v1/admin/galeria/", port)
 
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Error al iniciar servidor:", err)

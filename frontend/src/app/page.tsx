@@ -9,9 +9,14 @@ import {
   Mail, Phone, Instagram, Facebook, Youtube
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { galeriaService, type GaleriaItem } from '@/lib/galeriaService'
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [hitosDestacados, setHitosDestacados] = useState<GaleriaItem[]>([])
+  const [galeriaLoading, setGaleriaLoading] = useState(true)
+  const [galeriaError, setGaleriaError] = useState(false)
+  
   const slides = ['/assets/slider/slide-1.jpg', '/assets/slider/slide-2.jpg', '/assets/slider/slide-3.jpg']
 
   const empresasDestacadas = [
@@ -22,16 +27,29 @@ export default function HomePage() {
     { id: 5, nombre: "Sushi Sinaloa", giro: "Gastronomía", logo: "/assets/slider/slide-2.jpg", web: "#", size: "w-32 h-32", delay: "0.2s" },
   ]
 
-  const hitosDestacados = [
-    { id: 1, titulo: "Primeros Inmigrantes", categoria: "Inmigración", imagen: "/assets/slider/slide-1.jpg", anio: "19XX" },
-    { id: 2, titulo: "Fundación Asociación", categoria: "Hito Histórico", imagen: "/assets/slider/slide-2.jpg", anio: "19XX" },
-    { id: 3, titulo: "Primer Matsuri", categoria: "Cultura", imagen: "/assets/slider/slide-3.jpg", anio: "20XX" }
-  ]
-
   const eventosProximos = [
     { id_evento: 1, titulo: "Gran Matsuri 2026", tipo_evento: "matsuri", fecha_inicio: "2026-05-15T18:00:00Z", ciudad: "Culiacán", ubicacion: "Jardín Botánico", imagen_evento: "/assets/slider/slide-1.jpg", capacidad_maxima: 500, participantes_actuales: 342 },
     { id_evento: 2, titulo: "Torneo Deportivo", tipo_evento: "deportivo", fecha_inicio: "2026-06-10T09:00:00Z", ciudad: "Mazatlán", ubicacion: "Club Muralla", imagen_evento: "/assets/slider/slide-2.jpg", capacidad_maxima: 100, participantes_actuales: 45 }
   ]
+
+  // Load galería data
+  useEffect(() => {
+    const loadGaleria = async () => {
+      try {
+        setGaleriaLoading(true)
+        const data = await galeriaService.getDestacados()
+        setHitosDestacados(data.slice(0, 3)) // Only first 3 for this section
+        setGaleriaError(false)
+      } catch (error) {
+        console.error('Failed to load galería:', error)
+        setGaleriaError(true)
+      } finally {
+        setGaleriaLoading(false)
+      }
+    }
+
+    loadGaleria()
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentSlide((prev) => (prev + 1) % slides.length), 3000)
@@ -203,7 +221,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Nuestras Raíces */}
+      {/* Nuestras Raíces - Connected to API */}
       <section className="bg-wave-pattern bg-linear-to-tr from-red-50 via-amber-50 to-orange-50 py-20 relative overflow-hidden">
         <div className="container-nikkei relative z-10 text-center">
           <div className="mb-12 space-y-4">
@@ -211,19 +229,57 @@ export default function HomePage() {
             <h3 className="text-2xl font-serif text-nikkei-burgundy-light">Nuestras Raíces</h3>
             <div className="w-16 h-1 bg-nikkei-gold mx-auto rounded-full" />
           </div>
+          
           <div className="grid md:grid-cols-3 gap-8 text-left">
-            {hitosDestacados.map((hito) => (
-              <div key={hito.id} className="group relative h-85 overflow-hidden rounded-xl shadow-xl border-2 border-white/50">
-                <Image src={hito.imagen} alt={hito.titulo} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-linear-to-t from-nikkei-burgundy/90 via-nikkei-burgundy/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
-                <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                  <span className="text-nikkei-gold font-serif text-sm mb-2">{hito.anio}</span>
-                  <h4 className="text-white text-xl font-serif mb-2">{hito.titulo}</h4>
-                  <p className="text-white/80 text-sm font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">{hito.categoria}</p>
+            {galeriaLoading ? (
+              // Loading skeletons
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="group relative h-85 overflow-hidden rounded-xl shadow-xl border-2 border-white/50">
+                  <div className="animate-pulse bg-gray-200 h-full w-full"></div>
                 </div>
+              ))
+            ) : galeriaError ? (
+              // Error state
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500">
+                <p className="text-lg mb-4">No se pudieron cargar los datos históricos</p>
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  variant="outline" 
+                  className="text-nikkei-burgundy border-nikkei-burgundy"
+                >
+                  Intentar de nuevo
+                </Button>
               </div>
-            ))}
+            ) : hitosDestacados.length === 0 ? (
+              // Empty state
+              <div className="col-span-full text-center py-12 text-gray-500">
+                <p>No hay elementos destacados disponibles</p>
+              </div>
+            ) : (
+              // Render galería data
+              hitosDestacados.map((hito) => (
+                <div key={hito.id_galeria} className="group relative h-85 overflow-hidden rounded-xl shadow-xl border-2 border-white/50">
+                  <Image 
+                    src={hito.url_imagen} 
+                    alt={hito.titulo} 
+                    fill 
+                    className="object-cover transition-transform duration-700 group-hover:scale-110" 
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-nikkei-burgundy/90 via-nikkei-burgundy/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <span className="text-nikkei-gold font-serif text-sm mb-2">
+                      {galeriaService.getAnio(hito)}
+                    </span>
+                    <h4 className="text-white text-xl font-serif mb-2">{hito.titulo}</h4>
+                    <p className="text-white/80 text-sm font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                      {galeriaService.getCategoriaDisplay(hito.categoria)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
+          
           <div className="mt-12"><Link href="/historia"><Button className="btn-nikkei"><History size={20} />Explorar Archivo Histórico</Button></Link></div>
         </div>
       </section>
