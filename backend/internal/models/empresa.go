@@ -6,7 +6,7 @@ import (
 
 type Empresa struct {
 	IDEmpresa                 uint       `gorm:"primaryKey;column:id_empresa;autoIncrement" json:"id_empresa"`
-	IDPropietario             uint       `gorm:"uniqueIndex;not null" json:"id_propietario"`
+	IDPropietario             uint       `gorm:"not null" json:"id_propietario"`
 	NombreEmpresa             string     `gorm:"not null;size:200" json:"nombre_empresa"`
 	RazonSocial               *string    `gorm:"size:250" json:"razon_social"`
 	RFC                       *string    `gorm:"size:13" json:"rfc"`
@@ -28,19 +28,23 @@ type Empresa struct {
 	RedesSociales             *string    `gorm:"type:jsonb" json:"redes_sociales"`
 	HorariosAtencion          *string    `gorm:"type:jsonb" json:"horarios_atencion"`
 	ServiciosProductos        *string    `gorm:"type:text" json:"servicios_productos"`
+	StatusAprobacion          *string    `gorm:"size:50;default:pendiente;check:status_aprobacion IN ('pendiente','aprobada','rechazada')" json:"status_aprobacion"`
+	EnHomepage                bool       `gorm:"default:false" json:"en_homepage"`
+	OrdenHomepage             int        `gorm:"default:0" json:"orden_homepage"`
 	CreatedAt                 time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt                 time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
-
-	//Descomentar cuando se quiera cargar la relacion
-	//Propietario Persona `gorm:"foreignKey:IDPropietario;constraint:OnDelete:RESTRICT" json:"propietario,omitempty"`
 }
 
 func (Empresa) TableName() string {
 	return "empresas"
 }
 
-func (e *Empresa) EsRestaurante() bool {
-	return e.Sector != nil && *e.Sector == "Restaurantes"
+func (e *Empresa) EsAprobada() bool {
+	return e.StatusAprobacion != nil && *e.StatusAprobacion == "aprobada"
+}
+
+func (e *Empresa) EsPendiente() bool {
+	return e.StatusAprobacion == nil || *e.StatusAprobacion == "pendiente"
 }
 
 func (e *Empresa) TieneSitioWeb() bool {

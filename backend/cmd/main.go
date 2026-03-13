@@ -45,78 +45,56 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	r.Use(cors.New(config))
 
-	// Inicializar handlers
 	authHandler := handlers.NewAuthHandler()
 	galeriaHandler := handlers.NewGaleriaHandler()
+	sliderHandler := handlers.NewSliderHandler()
+	eventosHandler := handlers.NewEventosHandler()
+	empresasHandler := handlers.NewEmpresasHandler()
 
 	api := r.Group("/api/v1")
 	{
 		api.GET("/health", func(c *gin.Context) {
 			c.JSON(200, gin.H{
-				"status":   "ok",
-				"message":  "Sistema Nikkei API funcionando",
-				"version":  "1.0.0",
-				"database": "PostgreSQL conectado",
-				"tables":   "9 tablas creadas",
+				"status":  "ok",
+				"message": "Sistema Nikkei API funcionando",
+				"version": "1.0.0",
 			})
 		})
 
 		api.GET("/ping", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "pong",
-			})
+			c.JSON(200, gin.H{"message": "pong"})
 		})
 
 		api.GET("/database/info", func(c *gin.Context) {
 			var tables []string
 			database.DB.Raw("SELECT tablename FROM pg_tables WHERE schemaname = 'public'").Scan(&tables)
-
-			c.JSON(200, gin.H{
-				"database": "nikkei_dev",
-				"tables":   tables,
-				"models": []string{
-					"users", "familias", "personas", "empresas",
-					"empresas_empleadoras", "eventos",
-					"participacion_eventos", "genealogia",
-					"galeria_historica",
-				},
-			})
+			c.JSON(200, gin.H{"database": "nikkei_dev", "tables": tables})
 		})
 
 		api.GET("/stats", func(c *gin.Context) {
 			stats := make(map[string]int64)
-
 			var usersCount, familiasCount, personasCount, empresasCount int64
-			var empresasEmpleadorasCount, eventosCount, participacionCount, genealogiaCount int64
-			var galeriaCount int64
+			var eventosCount, galeriaCount, sliderCount int64
 
 			database.DB.Table("users").Count(&usersCount)
 			database.DB.Table("familias").Count(&familiasCount)
 			database.DB.Table("personas").Count(&personasCount)
 			database.DB.Table("empresas").Count(&empresasCount)
-			database.DB.Table("empresas_empleadoras").Count(&empresasEmpleadorasCount)
 			database.DB.Table("eventos").Count(&eventosCount)
-			database.DB.Table("participacion_eventos").Count(&participacionCount)
-			database.DB.Table("genealogia").Count(&genealogiaCount)
 			database.DB.Table("galeria_historica").Count(&galeriaCount)
+			database.DB.Table("slider_items").Count(&sliderCount)
 
 			stats["users"] = usersCount
 			stats["familias"] = familiasCount
 			stats["personas"] = personasCount
 			stats["empresas"] = empresasCount
-			stats["empresas_empleadoras"] = empresasEmpleadorasCount
 			stats["eventos"] = eventosCount
-			stats["participacion_eventos"] = participacionCount
-			stats["genealogia"] = genealogiaCount
 			stats["galeria_historica"] = galeriaCount
+			stats["slider_items"] = sliderCount
 
-			c.JSON(200, gin.H{
-				"message": "Estadísticas de la base de datos",
-				"counts":  stats,
-			})
+			c.JSON(200, gin.H{"message": "Estadísticas", "counts": stats})
 		})
 
-		// Rutas de autenticación
 		auth := api.Group("/auth")
 		{
 			auth.POST("/register", authHandler.Register)
@@ -124,16 +102,35 @@ func main() {
 			auth.POST("/validate", middleware.OptionalAuth(), authHandler.ValidateToken)
 		}
 
-		// Rutas públicas de galería (sin autenticación)
+		//Slider (público)
+		api.GET("/slider", sliderHandler.GetAll)
+
+		//Galería (público)
 		galeria := api.Group("/galeria")
 		{
-			galeria.GET("/", galeriaHandler.GetAll)                  // GET /api/v1/galeria?categoria=cultura&destacados=true&limite=6
-			galeria.GET("/destacados", galeriaHandler.GetDestacados) // GET /api/v1/galeria/destacados
-			galeria.GET("/categorias", galeriaHandler.GetCategorias) // GET /api/v1/galeria/categorias
-			galeria.GET("/:id", galeriaHandler.GetByID)              // GET /api/v1/galeria/1
+			galeria.GET("/", galeriaHandler.GetAll)
+			galeria.GET("/destacados", galeriaHandler.GetDestacados)
+			galeria.GET("/categorias", galeriaHandler.GetCategorias)
+			galeria.GET("/:id", galeriaHandler.GetByID)
 		}
 
-		// Rutas protegidas (requieren autenticación)
+		//Eventos (público)
+		eventos := api.Group("/eventos")
+		{
+			eventos.GET("/proximos", eventosHandler.GetProximos)
+			eventos.GET("/", eventosHandler.GetAll)
+			eventos.GET("/:id", eventosHandler.GetByID)
+		}
+
+		//Empresas (público)
+		empresas := api.Group("/empresas")
+		{
+			empresas.GET("/homepage", empresasHandler.GetHomepage)
+			empresas.GET("/", empresasHandler.GetAll)
+			empresas.GET("/:id", empresasHandler.GetByID)
+		}
+
+		//Rutas usuario autenticado
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())
 		{
@@ -142,20 +139,47 @@ func main() {
 			protected.POST("change-password", authHandler.ChangePassword)
 			protected.POST("refresh", authHandler.RefreshToken)
 
-			// Rutas de administrador
+			// Usuario registrado puede solicitar registro de empresa
+			protected.POST("empresas/solicitar", empresasHandler.SolicitarRegistro)
+
+			//Rutas admin
 			admin := protected.Group("/admin")
 			admin.Use(middleware.RequireAdmin())
 			{
-				// Gestión de usuarios
 				admin.PUT("users/:id/role", authHandler.UpdateUserRole)
 				admin.DELETE("users/:id", authHandler.DeactivateUser)
 
-				// Gestión de galería (solo admins pueden crear/editar/eliminar)
+				sliderAdmin := admin.Group("/slider")
+				{
+					sliderAdmin.GET("/", sliderHandler.GetAllAdmin)
+					sliderAdmin.POST("/", sliderHandler.Create)
+					sliderAdmin.PUT("/:id", sliderHandler.Update)
+					sliderAdmin.DELETE("/:id", sliderHandler.Delete)
+					sliderAdmin.PUT("/reorder", sliderHandler.Reorder)
+				}
+
 				galeriaAdmin := admin.Group("/galeria")
 				{
-					galeriaAdmin.POST("/", galeriaHandler.Create)      // POST /api/v1/admin/galeria
-					galeriaAdmin.PUT("/:id", galeriaHandler.Update)    // PUT /api/v1/admin/galeria/1
-					galeriaAdmin.DELETE("/:id", galeriaHandler.Delete) // DELETE /api/v1/admin/galeria/1
+					galeriaAdmin.POST("/", galeriaHandler.Create)
+					galeriaAdmin.PUT("/:id", galeriaHandler.Update)
+					galeriaAdmin.DELETE("/:id", galeriaHandler.Delete)
+				}
+
+				eventosAdmin := admin.Group("/eventos")
+				{
+					eventosAdmin.POST("/", eventosHandler.Create)
+					eventosAdmin.PUT("/:id", eventosHandler.Update)
+					eventosAdmin.DELETE("/:id", eventosHandler.Delete)
+					eventosAdmin.PATCH("/:id/status", eventosHandler.UpdateStatus)
+				}
+
+				empresasAdmin := admin.Group("/empresas")
+				{
+					empresasAdmin.POST("/", empresasHandler.Create)
+					empresasAdmin.PUT("/:id", empresasHandler.Update)
+					empresasAdmin.DELETE("/:id", empresasHandler.Delete)
+					empresasAdmin.PATCH("/:id/aprobacion", empresasHandler.UpdateAprobacion)
+					empresasAdmin.PATCH("/:id/homepage", empresasHandler.SetHomepage)
 				}
 			}
 		}
@@ -167,14 +191,7 @@ func main() {
 	}
 
 	log.Printf("Servidor iniciando en puerto %s", port)
-	log.Printf("API disponible en: http://localhost:%s/api/v1", port)
-	log.Printf("Health check: http://localhost:%s/api/v1/health", port)
-	log.Printf("Database info: http://localhost:%s/api/v1/database/info", port)
-	log.Printf("Statistics: http://localhost:%s/api/v1/stats", port)
-	log.Printf("Auth endpoints: http://localhost:%s/api/v1/auth/", port)
-	log.Printf("Galería endpoints: http://localhost:%s/api/v1/galeria/", port)
-	log.Printf("Admin galería: http://localhost:%s/api/v1/admin/galeria/", port)
-
+	log.Printf("API: http://localhost:%s/api/v1", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Error al iniciar servidor:", err)
 	}
