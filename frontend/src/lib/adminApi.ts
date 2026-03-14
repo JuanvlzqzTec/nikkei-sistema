@@ -49,7 +49,6 @@ export interface Evento {
   ciudad?: string
   capacidad_maxima?: number
   requiere_registro: boolean
-  es_publico: boolean
   imagen_evento?: string
   link_transmision?: string
   requisitos?: string

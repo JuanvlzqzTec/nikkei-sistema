@@ -102,7 +102,6 @@ func (h *EventosHandler) Create(c *gin.Context) {
 		Ciudad              *string `json:"ciudad"`
 		CapacidadMaxima     *int    `json:"capacidad_maxima"`
 		RequiereRegistro    *bool   `json:"requiere_registro"`
-		EsPublico           *bool   `json:"es_publico"`
 		ImagenEvento        *string `json:"imagen_evento"`
 		LinkTransmision     *string `json:"link_transmision"`
 		Requisitos          *string `json:"requisitos"`
@@ -115,12 +114,15 @@ func (h *EventosHandler) Create(c *gin.Context) {
 		return
 	}
 
-	fechaInicio, err := time.Parse("2006-01-02T15:04", req.FechaInicio)
+	fechaInicio, err := time.Parse("2006-01-02T15:04:05-07:00", req.FechaInicio)
 	if err != nil {
-		fechaInicio, err = time.Parse("2006-01-02", req.FechaInicio)
+		fechaInicio, err = time.Parse("2006-01-02T15:04", req.FechaInicio)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Formato de fecha inválido. Usa YYYY-MM-DD o YYYY-MM-DDTHH:MM"})
-			return
+			fechaInicio, err = time.Parse("2006-01-02", req.FechaInicio)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Formato de fecha inválido. Usa YYYY-MM-DD o YYYY-MM-DDTHH:MM"})
+				return
+			}
 		}
 	}
 
@@ -140,14 +142,10 @@ func (h *EventosHandler) Create(c *gin.Context) {
 		ContactoOrganizador: req.ContactoOrganizador,
 		Status:              "borrador",
 		RequiereRegistro:    true,
-		EsPublico:           true,
 	}
 
 	if req.RequiereRegistro != nil {
 		evento.RequiereRegistro = *req.RequiereRegistro
-	}
-	if req.EsPublico != nil {
-		evento.EsPublico = *req.EsPublico
 	}
 	if req.Status != "" {
 		evento.Status = req.Status
@@ -155,7 +153,9 @@ func (h *EventosHandler) Create(c *gin.Context) {
 
 	// Fecha fin opcional
 	if req.FechaFin != nil {
-		if ff, err := time.Parse("2006-01-02T15:04", *req.FechaFin); err == nil {
+		if ff, err := time.Parse("2006-01-02T15:04:05-07:00", *req.FechaFin); err == nil {
+			evento.FechaFin = &ff
+		} else if ff, err := time.Parse("2006-01-02T15:04", *req.FechaFin); err == nil {
 			evento.FechaFin = &ff
 		} else if ff, err := time.Parse("2006-01-02", *req.FechaFin); err == nil {
 			evento.FechaFin = &ff
@@ -193,7 +193,6 @@ func (h *EventosHandler) Update(c *gin.Context) {
 		Ciudad              *string `json:"ciudad"`
 		CapacidadMaxima     *int    `json:"capacidad_maxima"`
 		RequiereRegistro    *bool   `json:"requiere_registro"`
-		EsPublico           *bool   `json:"es_publico"`
 		ImagenEvento        *string `json:"imagen_evento"`
 		LinkTransmision     *string `json:"link_transmision"`
 		Requisitos          *string `json:"requisitos"`
@@ -216,14 +215,18 @@ func (h *EventosHandler) Update(c *gin.Context) {
 		evento.TipoEvento = req.TipoEvento
 	}
 	if req.FechaInicio != "" {
-		if fi, err := time.Parse("2006-01-02T15:04", req.FechaInicio); err == nil {
+		if fi, err := time.Parse("2006-01-02T15:04:05-07:00", req.FechaInicio); err == nil {
+			evento.FechaInicio = fi
+		} else if fi, err := time.Parse("2006-01-02T15:04", req.FechaInicio); err == nil {
 			evento.FechaInicio = fi
 		} else if fi, err := time.Parse("2006-01-02", req.FechaInicio); err == nil {
 			evento.FechaInicio = fi
 		}
 	}
 	if req.FechaFin != nil {
-		if ff, err := time.Parse("2006-01-02T15:04", *req.FechaFin); err == nil {
+		if ff, err := time.Parse("2006-01-02T15:04:05-07:00", *req.FechaFin); err == nil {
+			evento.FechaFin = &ff
+		} else if ff, err := time.Parse("2006-01-02T15:04", *req.FechaFin); err == nil {
 			evento.FechaFin = &ff
 		} else if ff, err := time.Parse("2006-01-02", *req.FechaFin); err == nil {
 			evento.FechaFin = &ff
@@ -243,9 +246,6 @@ func (h *EventosHandler) Update(c *gin.Context) {
 	}
 	if req.RequiereRegistro != nil {
 		evento.RequiereRegistro = *req.RequiereRegistro
-	}
-	if req.EsPublico != nil {
-		evento.EsPublico = *req.EsPublico
 	}
 	if req.ImagenEvento != nil {
 		evento.ImagenEvento = req.ImagenEvento

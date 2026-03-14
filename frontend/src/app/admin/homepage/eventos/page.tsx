@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
-import { Plus, Pencil, Trash2, X, Check, Loader2, Calendar, MapPin } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Check, Loader2, Calendar, MapPin, Upload, ImageIcon } from 'lucide-react'
 import { eventosApi, type Evento } from '@/lib/adminApi'
 import { Button } from '@/components/ui/button'
+
+const CLOUDINARY_CLOUD_NAME = 'dyfkeoc7a'
+const CLOUDINARY_UPLOAD_PRESET = 'nikkei_default'
 
 const TIPOS = ['matsuri', 'reunion', 'cultural', 'deportivo', 'educativo', 'empresarial', 'ceremonia']
 const STATUS_OPTS = ['borrador', 'publicado', 'en_curso', 'finalizado', 'cancelado']
@@ -21,7 +24,20 @@ const emptyForm = {
   titulo: '', descripcion: '', tipo_evento: 'matsuri', fecha_inicio: '',
   fecha_fin: '', ubicacion: '', ciudad: '', capacidad_maxima: '',
   imagen_evento: '', link_transmision: '', requisitos: '',
-  contacto_organizador: '', status: 'publicado', es_publico: true, requiere_registro: true,
+  contacto_organizador: '', status: 'publicado', requiere_registro: true,
+}
+
+function utcToLocalInput(utcString: string): string {
+  if (!utcString) return ''
+  const date = new Date(utcString)
+  const localMs = date.getTime() - 7 * 60 * 60 * 1000
+  const local = new Date(localMs)
+  return local.toISOString().slice(0, 16)
+}
+
+function localInputToOffset(localStr: string): string {
+  if (!localStr) return ''
+  return `${localStr}:00-07:00`
 }
 
 export default function EventosAdminPage() {
@@ -34,6 +50,11 @@ export default function EventosAdminPage() {
   const [editingEvento, setEditingEvento] = useState<Evento | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [filterStatus, setFilterStatus] = useState('')
+
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const [dragOver, setDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
     try {
@@ -55,6 +76,7 @@ export default function EventosAdminPage() {
   const openCreate = () => {
     setEditingEvento(null)
     setForm(emptyForm)
+    setUploadError('')
     setShowModal(true)
   }
 
@@ -64,8 +86,8 @@ export default function EventosAdminPage() {
       titulo: ev.titulo,
       descripcion: ev.descripcion || '',
       tipo_evento: ev.tipo_evento,
-      fecha_inicio: ev.fecha_inicio?.slice(0, 16) || '',
-      fecha_fin: ev.fecha_fin?.slice(0, 16) || '',
+      fecha_inicio: utcToLocalInput(ev.fecha_inicio),
+      fecha_fin: ev.fecha_fin ? utcToLocalInput(ev.fecha_fin) : '',
       ubicacion: ev.ubicacion || '',
       ciudad: ev.ciudad || '',
       capacidad_maxima: ev.capacidad_maxima?.toString() || '',
@@ -74,10 +96,55 @@ export default function EventosAdminPage() {
       requisitos: ev.requisitos || '',
       contacto_organizador: ev.contacto_organizador || '',
       status: ev.status,
-      es_publico: ev.es_publico,
       requiere_registro: ev.requiere_registro,
     })
+    setUploadError('')
     setShowModal(true)
+  }
+
+  const uploadToCloudinary = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Solo se permiten imágenes')
+      return
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('La imagen no puede superar 10MB')
+      return
+    }
+    setUploading(true)
+    setUploadError('')
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+    formData.append('folder', 'nikkei-sinaloa/eventos')
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: 'POST', body: formData }
+      )
+      const data = await res.json()
+      if (data.secure_url) {
+        f('imagen_evento', data.secure_url)
+      } else {
+        setUploadError('Error al subir imagen')
+      }
+    } catch {
+      setUploadError('Error de conexión al subir imagen')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleFileDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(false)
+    const file = e.dataTransfer.files[0]
+    if (file) uploadToCloudinary(file)
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) uploadToCloudinary(file)
   }
 
   const handleSave = async () => {
@@ -91,7 +158,8 @@ export default function EventosAdminPage() {
       const payload = {
         ...form,
         capacidad_maxima: form.capacidad_maxima ? Number(form.capacidad_maxima) : undefined,
-        fecha_fin: form.fecha_fin || undefined,
+        fecha_inicio: localInputToOffset(form.fecha_inicio),
+        fecha_fin: form.fecha_fin ? localInputToOffset(form.fecha_fin) : undefined,
       }
       if (editingEvento) {
         await eventosApi.update(editingEvento.id_evento, payload)
@@ -130,7 +198,6 @@ export default function EventosAdminPage() {
     }
   }
 
-  // Próximos publicados (los que aparecerán en homepage)
   const proximos = eventos
     .filter((e) => e.status === 'publicado' && new Date(e.fecha_inicio) > new Date())
     .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())
@@ -150,7 +217,6 @@ export default function EventosAdminPage() {
         </Button>
       </div>
 
-      {/* Homepage preview */}
       {proximos.length > 0 && (
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <p className="text-xs font-semibold text-green-700 font-sans uppercase tracking-wide mb-2">
@@ -170,7 +236,6 @@ export default function EventosAdminPage() {
         </div>
       )}
 
-      {/* Alerts */}
       {error && (
         <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 font-sans">
           <X size={15} />{error}
@@ -184,7 +249,6 @@ export default function EventosAdminPage() {
         </div>
       )}
 
-      {/* Filtro */}
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setFilterStatus('')}
@@ -207,7 +271,6 @@ export default function EventosAdminPage() {
         ))}
       </div>
 
-      {/* Tabla */}
       {loading ? (
         <div className="flex justify-center py-16"><Loader2 className="animate-spin text-red-800" size={28} /></div>
       ) : eventos.length === 0 ? (
@@ -219,13 +282,11 @@ export default function EventosAdminPage() {
         <div className="space-y-3">
           {eventos.map((ev) => (
             <div key={ev.id_evento} className="bg-white rounded-xl border border-gray-200 p-4 flex gap-4 items-start">
-              {/* Imagen */}
               {ev.imagen_evento && (
                 <div className="relative w-20 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0">
                   <Image src={ev.imagen_evento} alt={ev.titulo} fill className="object-cover" />
                 </div>
               )}
-
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2 flex-wrap">
                   <div>
@@ -236,12 +297,17 @@ export default function EventosAdminPage() {
                       <span className="text-xs text-gray-400 font-sans bg-gray-100 px-2 py-0.5 rounded-full">
                         {ev.tipo_evento}
                       </span>
+                      {ev.requiere_registro && (
+                        <span className="text-xs text-blue-600 font-sans bg-blue-50 px-2 py-0.5 rounded-full">
+                          Requiere registro
+                        </span>
+                      )}
                     </div>
                     <p className="font-sans font-semibold text-gray-800 mt-1">{ev.titulo}</p>
                     <div className="flex items-center gap-3 mt-1 text-xs text-gray-400 font-sans flex-wrap">
                       <span className="flex items-center gap-1">
                         <Calendar size={11} />
-                        {new Date(ev.fecha_inicio).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                        {new Date(ev.fecha_inicio).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/Mazatlan' })}
                       </span>
                       {ev.ciudad && (
                         <span className="flex items-center gap-1">
@@ -251,9 +317,7 @@ export default function EventosAdminPage() {
                       )}
                     </div>
                   </div>
-
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {/* Quick status */}
                     <select
                       value={ev.status}
                       onChange={(e) => handleStatus(ev.id_evento, e.target.value)}
@@ -277,7 +341,6 @@ export default function EventosAdminPage() {
         </div>
       )}
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8">
@@ -292,7 +355,6 @@ export default function EventosAdminPage() {
 
             <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Título */}
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
                     Título <span className="text-red-500">*</span>
@@ -306,7 +368,6 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Tipo */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
                     Tipo <span className="text-red-500">*</span>
@@ -320,7 +381,6 @@ export default function EventosAdminPage() {
                   </select>
                 </div>
 
-                {/* Status */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Status</label>
                   <select
@@ -332,7 +392,6 @@ export default function EventosAdminPage() {
                   </select>
                 </div>
 
-                {/* Fecha inicio */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
                     Fecha inicio <span className="text-red-500">*</span>
@@ -345,7 +404,6 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Fecha fin */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Fecha fin</label>
                   <input
@@ -356,7 +414,6 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Ubicación */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Ubicación / Venue</label>
                   <input
@@ -368,7 +425,6 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Ciudad */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Ciudad</label>
                   <input
@@ -380,7 +436,6 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Capacidad */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Capacidad máxima</label>
                   <input
@@ -392,19 +447,59 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Imagen */}
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">URL de imagen</label>
-                  <input
-                    type="text"
-                    value={form.imagen_evento}
-                    onChange={(e) => f('imagen_evento', e.target.value)}
-                    placeholder="https://... o /assets/..."
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
-                  />
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
+                    Imagen del evento
+                  </label>
+                  {form.imagen_evento ? (
+                    <div className="relative w-full h-44 rounded-xl overflow-hidden border border-gray-200 group">
+                      <Image src={form.imagen_evento} alt="Preview" fill className="object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                        <button type="button" onClick={() => fileInputRef.current?.click()}
+                          className="bg-white text-gray-800 text-xs font-sans font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-gray-100 transition-colors">
+                          <Upload size={13} /> Cambiar
+                        </button>
+                        <button type="button" onClick={() => f('imagen_evento', '')}
+                          className="bg-red-600 text-white text-xs font-sans font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-red-700 transition-colors">
+                          <X size={13} /> Quitar
+                        </button>
+                      </div>
+                      {uploading && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <Loader2 size={24} className="animate-spin text-white" />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                      onDragLeave={() => setDragOver(false)}
+                      onDrop={handleFileDrop}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`w-full h-36 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
+                        dragOver ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 hover:border-red-300 hover:bg-red-50/50'
+                      }`}
+                    >
+                      {uploading ? (
+                        <>
+                          <Loader2 size={22} className="animate-spin text-red-700" />
+                          <p className="text-xs font-sans text-gray-500">Subiendo imagen...</p>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon size={22} className="text-gray-300" />
+                          <p className="text-xs font-sans text-gray-500 text-center px-4">
+                            Arrastra una imagen o <span className="text-red-700 font-medium">haz clic para seleccionar</span>
+                          </p>
+                          <p className="text-[10px] font-sans text-gray-400">JPG, PNG, WEBP · Máx 10MB</p>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                  {uploadError && <p className="text-xs text-red-600 font-sans mt-1.5">{uploadError}</p>}
                 </div>
 
-                {/* Descripción */}
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Descripción</label>
                   <textarea
@@ -415,7 +510,6 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Contacto */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Contacto organizador</label>
                   <input
@@ -426,7 +520,6 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Link transmisión */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Link transmisión</label>
                   <input
@@ -437,16 +530,19 @@ export default function EventosAdminPage() {
                   />
                 </div>
 
-                {/* Checkboxes */}
-                <div className="sm:col-span-2 flex gap-6">
+                <div className="sm:col-span-2">
                   <label className="flex items-center gap-2 cursor-pointer text-sm font-sans text-gray-700">
-                    <input type="checkbox" checked={form.es_publico} onChange={(e) => f('es_publico', e.target.checked)} className="w-4 h-4 rounded accent-red-700" />
-                    Evento público
+                    <input
+                      type="checkbox"
+                      checked={form.requiere_registro}
+                      onChange={(e) => f('requiere_registro', e.target.checked)}
+                      className="w-4 h-4 rounded accent-red-700"
+                    />
+                    Requiere registro para asistir
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer text-sm font-sans text-gray-700">
-                    <input type="checkbox" checked={form.requiere_registro} onChange={(e) => f('requiere_registro', e.target.checked)} className="w-4 h-4 rounded accent-red-700" />
-                    Requiere registro
-                  </label>
+                  <p className="text-xs text-gray-400 font-sans mt-1 ml-6">
+                    Si está activo, aparecerá el botón &quot;Registrarme ahora&quot; en el homepage.
+                  </p>
                 </div>
               </div>
 
@@ -457,7 +553,7 @@ export default function EventosAdminPage() {
               <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm font-sans text-gray-600 hover:text-gray-800">
                 Cancelar
               </button>
-              <Button onClick={handleSave} disabled={saving} className="btn-nikkei text-sm py-2 px-5">
+              <Button onClick={handleSave} disabled={saving || uploading} className="btn-nikkei text-sm py-2 px-5">
                 {saving ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
                 {editingEvento ? 'Guardar cambios' : 'Crear evento'}
               </Button>

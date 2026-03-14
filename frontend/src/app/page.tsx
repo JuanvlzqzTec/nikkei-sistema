@@ -31,6 +31,7 @@ interface Evento {
   ubicacion?: string
   imagen_evento?: string
   capacidad_maxima?: number
+  requiere_registro: boolean
 }
 
 interface Empresa {
@@ -58,7 +59,6 @@ export default function HomePage() {
 
   const [hoveredEmpresa, setHoveredEmpresa] = useState<number | null>(null)
 
-  // Cargar slider
   useEffect(() => {
     fetch(`${API_URL}/api/v1/slider`)
       .then((r) => r.json())
@@ -67,7 +67,6 @@ export default function HomePage() {
       .finally(() => setSliderLoading(false))
   }, [])
 
-  // Cargar eventos próximos
   useEffect(() => {
     fetch(`${API_URL}/api/v1/eventos/proximos`)
       .then((r) => r.json())
@@ -76,7 +75,6 @@ export default function HomePage() {
       .finally(() => setEventosLoading(false))
   }, [])
 
-  // Cargar empresas homepage
   useEffect(() => {
     fetch(`${API_URL}/api/v1/empresas/homepage`)
       .then((r) => r.json())
@@ -85,7 +83,6 @@ export default function HomePage() {
       .finally(() => setEmpresasLoading(false))
   }, [])
 
-  // Cargar galería destacados
   useEffect(() => {
     const loadGaleria = async () => {
       try {
@@ -103,7 +100,6 @@ export default function HomePage() {
     loadGaleria()
   }, [])
 
-  // Auto-avance del slider — solo si hay slides
   useEffect(() => {
     if (slides.length === 0) return
     const timer = setInterval(() => setCurrentSlide((prev) => (prev + 1) % slides.length), 3000)
@@ -115,7 +111,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* ─── HEADER ─────────────────────────────────────────────── */}
+      {/* Header */}
       <header className="header-container shadow-sm">
         <div className="w-full px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -143,30 +139,15 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ─── HERO ───────────────────────────────────────────────── */}
+      {/* Hero */}
       <section className="hero-section relative overflow-hidden min-h-screen flex items-center">
         <div className="absolute inset-0" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }} />
-        <div className="absolute inset-0 opacity-30"
-          style={{
-            background: 'radial-gradient(ellipse 80% 60% at 60% 50%, #D4AF3720 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, #ff8c0015 0%, transparent 60%)',
-          }}
-        />
-        <div className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #ffffff 2px, transparent 1px)',
-            backgroundSize: '32px 32px',
-          }}
-        />
-        <div className="absolute top-0 right-0 w-1/2 h-full opacity-5 hidden lg:block"
-          style={{
-            background: 'linear-gradient(135deg, transparent 40%, #D4AF37 40%, #D4AF37 41%, transparent 41%)',
-          }}
-        />
+        <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(ellipse 80% 60% at 60% 50%, #D4AF3720 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, #ff8c0015 0%, transparent 60%)' }} />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 2px, transparent 1px)', backgroundSize: '32px 32px' }} />
+        <div className="absolute top-0 right-0 w-1/2 h-full opacity-5 hidden lg:block" style={{ background: 'linear-gradient(135deg, transparent 40%, #D4AF37 40%, #D4AF37 41%, transparent 41%)' }} />
 
         <div className="relative z-10 container-nikkei py-16 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            
-            {/* Left: Text content */}
             <div className="space-y-8">
               <div className="space-y-4">
                 <h2 className="text-5xl lg:text-7xl font-serif text-white leading-[1.1] tracking-tight">
@@ -175,27 +156,16 @@ export default function HomePage() {
                   築く
                 </h2>
                 <div className="w-16 h-0.5 bg-linear-to-r from-amber-400 to-transparent rounded-full" />
-                <p className="text-xl lg:text-2xl text-white/75 font-serif italic">
-                  Creando vínculos que perduran con el tiempo
-                </p>
+                <p className="text-xl lg:text-2xl text-white/75 font-serif italic">Creando vínculos que perduran con el tiempo</p>
               </div>
-              <p className="text-base text-white/60 font-sans leading-relaxed max-w-md">
-                Únete a nuestra comunidad y forma parte de la historia que conecta las tradiciones japonesas con el corazón de Sinaloa.
-              </p>
+              <p className="text-base text-white/60 font-sans leading-relaxed max-w-md">Únete a nuestra comunidad y forma parte de la historia que conecta las tradiciones japonesas con el corazón de Sinaloa.</p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link href="/register">
-                  <Button className="btn-nikkei group">
-                    Únete a la Comunidad
-                    <ArrowRight size={18} className="ml-1 transition-transform duration-300 group-hover:translate-x-1" />
-                  </Button>
+                  <Button className="btn-nikkei group">Únete a la Comunidad<ArrowRight size={18} className="ml-1 transition-transform duration-300 group-hover:translate-x-1" /></Button>
                 </Link>
               </div>
               <div className="flex gap-8 pt-4 border-t border-white/10">
-                {[
-                  { value: '70+', label: 'Años de historia' },
-                  { value: '3ª', label: 'Generación activa' },
-                  { value: '12', label: 'Familias fundadoras' },
-                ].map((stat) => (
+                {[{ value: '70+', label: 'Años de historia' }, { value: '3ª', label: 'Generación activa' }, { value: '12', label: 'Familias fundadoras' }].map((stat) => (
                   <div key={stat.label}>
                     <p className="text-2xl font-serif text-amber-300">{stat.value}</p>
                     <p className="text-xs text-white/50 font-sans">{stat.label}</p>
@@ -204,67 +174,43 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right: Slider */}
             <div className="relative">
               <div className="absolute -top-4 -right-4 w-full h-full border border-amber-400/20 rounded-2xl hidden lg:block" />
               <div className="absolute -top-2 -right-2 w-full h-full border border-amber-400/10 rounded-2xl hidden lg:block" />
-
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <div className="relative h-105 lg:h-130">
                   {sliderLoading ? (
-                    // Skeleton mientras carga
                     <div className="absolute inset-0 bg-white/5 animate-pulse" />
                   ) : slides.length === 0 ? (
-                    // Sin imágenes aún
                     <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
                       <p className="text-white/30 font-sans text-sm">Sin imágenes disponibles</p>
                     </div>
                   ) : (
                     slides.map((slide, index) => (
-                      <div
-                        key={slide.id_slider}
-                        className={`absolute inset-0 transition-all duration-700 ${
-                          index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-                        }`}
-                      >
+                      <div key={slide.id_slider} className={`absolute inset-0 transition-all duration-700 ${index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}>
                         <Image src={slide.url_imagen} alt={slide.titulo || `Slide ${index + 1}`} fill className="object-cover" priority={index === 0} />
                         <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
                       </div>
                     ))
                   )}
                 </div>
-
-                {/* Controles — solo si hay slides */}
                 {slides.length > 1 && (
                   <>
-                    <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10">
-                      <ChevronLeft size={20} />
-                    </button>
-                    <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10">
-                      <ChevronRight size={20} />
-                    </button>
+                    <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10"><ChevronLeft size={20} /></button>
+                    <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10"><ChevronRight size={20} /></button>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                       {slides.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentSlide(index)}
-                          className={`transition-all duration-300 rounded-full ${
-                            index === currentSlide ? 'w-6 h-2 bg-amber-400' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-                          }`}
-                        />
+                        <button key={index} onClick={() => setCurrentSlide(index)} className={`transition-all duration-300 rounded-full ${index === currentSlide ? 'w-6 h-2 bg-amber-400' : 'w-2 h-2 bg-white/40 hover:bg-white/70'}`} />
                       ))}
                     </div>
                   </>
                 )}
               </div>
-
               <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl px-5 py-3 hidden lg:flex items-center gap-3 border border-amber-100">
                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-lg">📢</div>
                 <div>
                   <p className="text-xs text-gray-500 font-sans">Próximo evento</p>
-                  <p className="text-sm font-serif text-red-800 font-semibold">
-                    {eventosProximos[0]?.titulo || 'Próximamente'}
-                  </p>
+                  <p className="text-sm font-serif text-red-800 font-semibold">{eventosProximos[0]?.titulo || 'Próximamente'}</p>
                 </div>
               </div>
             </div>
@@ -278,7 +224,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── SOBRE NOSOTROS ─────────────────────────────────────── */}
+      {/* Sobre nosotros */}
       <section id="sobre-nosotros" className="bg-wave-pattern bg-linear-to-br from-orange-50 via-amber-50 to-red-50 py-20">
         <div className="container-nikkei text-center md:text-left">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -312,7 +258,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── EVENTOS PRÓXIMOS ───────────────────────────────────── */}
+      {/* Eventos proximos */}
       <section className="relative py-20 overflow-hidden" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }}>
         <div className="absolute inset-0 bg-asanoha-pattern opacity-100" />
         <div className="absolute inset-0 bg-linear-to-r from-red-900/10 via-transparent to-red-800/10" />
@@ -324,17 +270,13 @@ export default function HomePage() {
               <div className="w-20 h-1 bg-nikkei-gold rounded-full mx-auto md:mx-0" />
             </div>
             <Link href="/eventos">
-              <Button className="btn-nikkei" style={{ background: 'linear-gradient(to right, #D4AF37, #B8941F)', color: '#6B1D28' }}>
-                Ver calendario completo
-              </Button>
+              <Button className="btn-nikkei" style={{ background: 'linear-gradient(to right, #D4AF37, #B8941F)', color: '#6B1D28' }}>Ver calendario completo</Button>
             </Link>
           </div>
 
           {eventosLoading ? (
             <div className="grid lg:grid-cols-2 gap-8">
-              {[1, 2].map((i) => (
-                <div key={i} className="bg-white/10 rounded-xl h-64 animate-pulse" />
-              ))}
+              {[1, 2].map((i) => <div key={i} className="bg-white/10 rounded-xl h-64 animate-pulse" />)}
             </div>
           ) : eventosProximos.length === 0 ? (
             <div className="text-center py-16">
@@ -371,9 +313,17 @@ export default function HomePage() {
                       )}
                     </div>
                     <div className="mt-8">
-                      <Link href={`/eventos/${evento.id_evento}`}>
-                        <Button className="w-full btn-nikkei py-3 text-base"><Ticket size={18} />Registrarme ahora</Button>
-                      </Link>
+                      {evento.requiere_registro ? (
+                        <Link href={`/eventos/${evento.id_evento}`}>
+                          <Button className="w-full btn-nikkei py-3 text-base"><Ticket size={18} />Registrarme ahora</Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/eventos/${evento.id_evento}`}>
+                          <Button className="w-full py-3 border border-nikkei-burgundy text-nikkei-burgundy hover:bg-nikkei-burgundy hover:text-white cursor-pointer font-sans font-semibold rounded-lg transition-all duration-300 text-sm flex items-center gap-2">
+                            <ArrowRight size={18} />Ver detalles
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -383,54 +333,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── IMPULSO NIKKEI ─────────────────────────────────────── */}
+      {/* Impulso Nikkei */}
       <section className="py-20 relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at top, #FEF7F0 0%, #FCE4E4 60%, #FEF0E0 100%)' }}>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
           <span className="text-[20rem] font-serif text-red-900/2.5 leading-none">商</span>
         </div>
-
         <div className="container-nikkei relative z-10">
           <div className="text-center mb-16 space-y-3">
             <p className="text-xs tracking-[0.3em] uppercase font-sans text-amber-700/70">Directorio Empresarial</p>
             <h2 className="text-3xl lg:text-4xl font-serif text-nikkei-burgundy-dark">日系ビジネスの推進</h2>
             <h3 className="text-2xl font-serif text-nikkei-burgundy">Impulso Nikkei</h3>
             <div className="w-12 h-0.5 bg-nikkei-gold mx-auto rounded-full" />
-            <p className="text-gray-500 font-sans max-w-md mx-auto text-sm leading-relaxed">
-              Apoya y descubre los emprendimientos de nuestra comunidad japonesa en Sinaloa.
-            </p>
+            <p className="text-gray-500 font-sans max-w-md mx-auto text-sm leading-relaxed">Apoya y descubre los emprendimientos de nuestra comunidad japonesa en Sinaloa.</p>
           </div>
 
           {empresasLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
-              {[1,2,3,4,5].map((i) => (
-                <div key={i} className="bg-white/50 rounded-2xl aspect-square animate-pulse" />
-              ))}
+              {[1,2,3,4,5].map((i) => <div key={i} className="bg-white/50 rounded-2xl aspect-square animate-pulse" />)}
             </div>
           ) : empresasDestacadas.length === 0 ? (
-            <div className="text-center py-12 mb-12">
-              <p className="text-gray-400 font-sans text-sm">No hay empresas destacadas disponibles.</p>
-            </div>
+            <div className="text-center py-12 mb-12"><p className="text-gray-400 font-sans text-sm">No hay empresas destacadas disponibles.</p></div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
               {empresasDestacadas.map((empresa) => (
-                <a
-                  key={empresa.id_empresa}
-                  href={empresa.sitio_web || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onMouseEnter={() => setHoveredEmpresa(empresa.id_empresa)}
-                  onMouseLeave={() => setHoveredEmpresa(null)}
-                  className="group relative flex flex-col items-center rounded-2xl overflow-hidden border-2 border-transparent hover:border-amber-300 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 bg-white/70 backdrop-blur-sm"
-                >
+                <a key={empresa.id_empresa} href={empresa.sitio_web || '#'} target="_blank" rel="noopener noreferrer"
+                  onMouseEnter={() => setHoveredEmpresa(empresa.id_empresa)} onMouseLeave={() => setHoveredEmpresa(null)}
+                  className="group relative flex flex-col items-center rounded-2xl overflow-hidden border-2 border-transparent hover:border-amber-300 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 bg-white/70 backdrop-blur-sm">
                   <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
                     {empresa.logo_empresa ? (
                       <>
-                        <Image
-                          src={empresa.logo_empresa}
-                          alt={empresa.nombre_empresa}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
+                        <Image src={empresa.logo_empresa} alt={empresa.nombre_empresa} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-linear-to-t from-nikkei-burgundy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
                         <div className="absolute inset-0 flex flex-col items-center justify-end p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
                           <ExternalLink size={14} className="text-white/80 mb-1" />
@@ -438,19 +370,14 @@ export default function HomePage() {
                         </div>
                       </>
                     ) : (
-                      // Placeholder con inicial si no hay logo
                       <div className="w-full h-full flex items-center justify-center bg-red-50">
-                        <span className="text-4xl font-serif text-red-300">
-                          {empresa.nombre_empresa.charAt(0)}
-                        </span>
+                        <span className="text-4xl font-serif text-red-300">{empresa.nombre_empresa.charAt(0)}</span>
                       </div>
                     )}
                   </div>
                   <div className="p-3 text-center w-full">
                     <p className="font-serif text-nikkei-burgundy text-xs font-semibold leading-tight line-clamp-2">{empresa.nombre_empresa}</p>
-                    {empresa.giro_comercial && (
-                      <p className="text-[10px] text-amber-700 font-sans mt-0.5">{empresa.giro_comercial}</p>
-                    )}
+                    {empresa.giro_comercial && <p className="text-[10px] text-amber-700 font-sans mt-0.5">{empresa.giro_comercial}</p>}
                   </div>
                 </a>
               ))}
@@ -458,14 +385,9 @@ export default function HomePage() {
           )}
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <Link href="/directorio">
-              <Button className="btn-nikkei">
-                <Users size={18} />
-                Explorar Directorio Completo
-              </Button>
-            </Link>
+            <Link href="/directorio"><Button className="btn-nikkei"><Users size={18} />Explorar Directorio Completo</Button></Link>
             <Link href="/register-business">
-              <button className="px-8 py-3 border-2 border-nikkei-burgundy text-nikkei-burgundy hover:bg-nikkei-burgundy hover:text-white font-sans font-semibold rounded-lg transition-all duration-300 text-sm flex items-center gap-2">
+              <button className="px-8 py-3 border-2 border-nikkei-burgundy text-nikkei-burgundy hover:bg-nikkei-burgundy hover:text-white cursor-pointer font-sans font-semibold rounded-lg transition-all duration-300 text-sm flex items-center gap-2">
                 <span>+</span> Registra tu Empresa
               </button>
             </Link>
@@ -473,7 +395,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── NUESTRAS RAÍCES ────────────────────────────────────── */}
+      {/* Nuestras raices */}
       <section className="bg-wave-pattern bg-linear-to-tr from-red-50 via-amber-50 to-orange-50 py-20 relative overflow-hidden">
         <div className="container-nikkei relative z-10 text-center">
           <div className="mb-12 space-y-4">
@@ -481,7 +403,6 @@ export default function HomePage() {
             <h3 className="text-2xl font-serif text-nikkei-burgundy-light">Nuestras Raíces</h3>
             <div className="w-16 h-1 bg-nikkei-gold mx-auto rounded-full" />
           </div>
-          
           <div className="grid md:grid-cols-3 gap-8 text-left">
             {galeriaLoading ? (
               Array.from({ length: 3 }).map((_, index) => (
@@ -492,14 +413,10 @@ export default function HomePage() {
             ) : galeriaError ? (
               <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500">
                 <p className="text-lg mb-4">No se pudieron cargar los datos históricos</p>
-                <Button onClick={() => window.location.reload()} variant="outline" className="text-nikkei-burgundy border-nikkei-burgundy">
-                  Intentar de nuevo
-                </Button>
+                <Button onClick={() => window.location.reload()} variant="outline" className="text-nikkei-burgundy border-nikkei-burgundy">Intentar de nuevo</Button>
               </div>
             ) : hitosDestacados.length === 0 ? (
-              <div className="col-span-full text-center py-12 text-gray-500">
-                <p>No hay elementos destacados disponibles</p>
-              </div>
+              <div className="col-span-full text-center py-12 text-gray-500"><p>No hay elementos destacados disponibles</p></div>
             ) : (
               hitosDestacados.map((hito) => (
                 <div key={hito.id_galeria} className="group relative h-85 overflow-hidden rounded-xl shadow-xl border-2 border-white/50">
@@ -508,30 +425,24 @@ export default function HomePage() {
                   <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                     <span className="text-nikkei-gold font-serif text-sm mb-2">{galeriaService.getAnio(hito)}</span>
                     <h4 className="text-white text-xl font-serif mb-2">{hito.titulo}</h4>
-                    <p className="text-white/80 text-sm font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                      {galeriaService.getCategoriaDisplay(hito.categoria)}
-                    </p>
+                    <p className="text-white/80 text-sm font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">{galeriaService.getCategoriaDisplay(hito.categoria)}</p>
                   </div>
                 </div>
               ))
             )}
           </div>
-          
           <div className="mt-12">
-            <Link href="/historia">
-              <Button className="btn-nikkei"><History size={20} />Explorar Archivo Histórico</Button>
-            </Link>
+            <Link href="/historia"><Button className="btn-nikkei"><History size={20} />Explorar Archivo Histórico</Button></Link>
           </div>
         </div>
       </section>
 
-      {/* ─── FOOTER ─────────────────────────────────────────────── */}
+      {/* Footer */}
       <footer className="relative overflow-hidden text-center md:text-left" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }}>
         <div className="w-full h-1 bg-linear-to-r from-transparent via-amber-400 to-transparent opacity-100" />
         <div className="absolute bottom-0 right-0 pointer-events-none select-none overflow-hidden">
           <span className="text-[18rem] font-serif text-white/3 leading-none">根</span>
         </div>
-
         <div className="container-nikkei relative z-10 text-white pt-16 pb-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-5">
             <div className="space-y-5">
@@ -542,82 +453,42 @@ export default function HomePage() {
                   <p className="text-xs text-amber-300/80 font-sans">Sinaloa, México</p>
                 </div>
               </div>
-              <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mx-auto md:mx-0">
-                Preservando el legado de nuestros antepasados y construyendo el futuro de nuestra comunidad.
-              </p>
+              <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mx-auto md:mx-0">Preservando el legado de nuestros antepasados y construyendo el futuro de nuestra comunidad.</p>
               <div className="flex justify-center md:justify-start gap-3">
-                {[
-                  { href: '#', icon: <Facebook size={16} />, label: 'Facebook' },
-                  { href: '#', icon: <Instagram size={16} />, label: 'Instagram' },
-                  { href: '#', icon: <Youtube size={16} />, label: 'YouTube' },
-                ].map((social) => (
-                  <Link key={social.label} href={social.href} aria-label={social.label}
-                    className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:border-amber-400/60 hover:text-amber-300 hover:-translate-y-1 transition-all duration-300">
-                    {social.icon}
-                  </Link>
+                {[{ href: '#', icon: <Facebook size={16} />, label: 'Facebook' }, { href: '#', icon: <Instagram size={16} />, label: 'Instagram' }, { href: '#', icon: <Youtube size={16} />, label: 'YouTube' }].map((social) => (
+                  <Link key={social.label} href={social.href} aria-label={social.label} className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:border-amber-400/60 hover:text-amber-300 hover:-translate-y-1 transition-all duration-300">{social.icon}</Link>
                 ))}
               </div>
             </div>
-
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Navegación</h5>
               <ul className="space-y-2.5">
-                {[
-                  { href: '#', label: 'Sobre Nosotros' },
-                  { href: '#', label: 'Archivo Histórico' },
-                  { href: '/eventos', label: 'Calendario de Eventos' },
-                  { href: '#', label: 'Directorio Comercial' },
-                  { href: '/register', label: 'Únete a la Comunidad' },
-                ].map((link) => (
-                  <li key={link.label}>
-                    <Link href={link.href} className="text-sm text-white/55 hover:text-amber-300 hover:pl-1.5 transition-all duration-200 font-sans inline-block">
-                      {link.label}
-                    </Link>
-                  </li>
+                {[{ href: '#', label: 'Sobre Nosotros' }, { href: '#', label: 'Archivo Histórico' }, { href: '/eventos', label: 'Calendario de Eventos' }, { href: '#', label: 'Directorio Comercial' }, { href: '/register', label: 'Únete a la Comunidad' }].map((link) => (
+                  <li key={link.label}><Link href={link.href} className="text-sm text-white/55 hover:text-amber-300 hover:pl-1.5 transition-all duration-200 font-sans inline-block">{link.label}</Link></li>
                 ))}
               </ul>
             </div>
-
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Contacto</h5>
               <ul className="space-y-4">
-                {[
-                  { icon: <MapPin size={15} className="text-amber-400 shrink-0 mt-0.5" />, text: 'Culiacán, Sinaloa, México' },
-                  { icon: <Phone size={15} className="text-amber-400 shrink-0" />, text: '+52 (667) 000-0000' },
-                  { icon: <Mail size={15} className="text-amber-400 shrink-0" />, text: 'hola@nikkeisinaloa.org' },
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start justify-center md:justify-start gap-2.5 text-white/55 text-sm font-sans">
-                    {item.icon}
-                    <span>{item.text}</span>
-                  </li>
+                {[{ icon: <MapPin size={15} className="text-amber-400 shrink-0 mt-0.5" />, text: 'Culiacán, Sinaloa, México' }, { icon: <Phone size={15} className="text-amber-400 shrink-0" />, text: '+52 (667) 000-0000' }, { icon: <Mail size={15} className="text-amber-400 shrink-0" />, text: 'hola@nikkeisinaloa.org' }].map((item, i) => (
+                  <li key={i} className="flex items-start justify-center md:justify-start gap-2.5 text-white/55 text-sm font-sans">{item.icon}<span>{item.text}</span></li>
                 ))}
               </ul>
             </div>
-
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Horarios</h5>
               <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3 inline-block md:block mx-auto md:mx-0 text-left">
                 <p className="text-[10px] text-white/35 font-sans font-bold uppercase tracking-widest">Atención en Oficina</p>
                 <div className="space-y-1.5">
-                  <div className="flex justify-between gap-6">
-                    <span className="text-xs text-white/50 font-sans">Lun — Vie</span>
-                    <span className="text-xs text-white/75 font-sans font-medium">9:00 — 18:00</span>
-                  </div>
-                  <div className="flex justify-between gap-6">
-                    <span className="text-xs text-white/50 font-sans">Sábado</span>
-                    <span className="text-xs text-white/75 font-sans font-medium">10:00 — 14:00</span>
-                  </div>
-                  <div className="flex justify-between gap-6">
-                    <span className="text-xs text-white/50 font-sans">Domingo</span>
-                    <span className="text-xs text-red-400/70 font-sans">Cerrado</span>
-                  </div>
+                  <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Lun — Vie</span><span className="text-xs text-white/75 font-sans font-medium">9:00 — 18:00</span></div>
+                  <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Sábado</span><span className="text-xs text-white/75 font-sans font-medium">10:00 — 14:00</span></div>
+                  <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Domingo</span><span className="text-xs text-red-400/70 font-sans">Cerrado</span></div>
                 </div>
               </div>
             </div>
           </div>
-
           <div className="h-px bg-linear-to-r from-transparent via-white/15 to-transparent mb-6" />
-
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-white/35 text-xs font-sans">
             <p>© 2026 Asociación de Jóvenes Nikkei Sinaloa. Todos los derechos reservados.</p>
             <p className="font-serif text-white/20 text-sm tracking-widest hidden md:block">根 · 絆 · 未来</p>
