@@ -114,7 +114,7 @@ export const sliderApi = {
 
 export const eventosApi = {
   getAll: (params?: { status?: string; tipo?: string }) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString()
+    const qs = params ? new URLSearchParams(params as Record<string, string>).toString() : ''
     return apiFetch<{ data: Evento[] }>(`/admin/eventos/${qs ? '?' + qs : ''}`)
   },
   create: (data: Partial<Evento>) =>
@@ -134,7 +134,7 @@ export const eventosApi = {
 
 export const empresasApi = {
   getAll: (params?: { status?: string; homepage?: string }) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString()
+    const qs = params ? new URLSearchParams(params as Record<string, string>).toString() : ''
     return apiFetch<{ data: Empresa[] }>(`/admin/empresas/${qs ? '?' + qs : ''}`)
   },
   create: (data: Partial<Empresa>) =>

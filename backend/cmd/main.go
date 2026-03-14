@@ -167,6 +167,7 @@ func main() {
 
 				eventosAdmin := admin.Group("/eventos")
 				{
+					eventosAdmin.GET("/", eventosHandler.GetAll)
 					eventosAdmin.POST("/", eventosHandler.Create)
 					eventosAdmin.PUT("/:id", eventosHandler.Update)
 					eventosAdmin.DELETE("/:id", eventosHandler.Delete)
@@ -175,6 +176,7 @@ func main() {
 
 				empresasAdmin := admin.Group("/empresas")
 				{
+					empresasAdmin.GET("/", empresasHandler.GetAll)
 					empresasAdmin.POST("/", empresasHandler.Create)
 					empresasAdmin.PUT("/:id", empresasHandler.Update)
 					empresasAdmin.DELETE("/:id", empresasHandler.Delete)
