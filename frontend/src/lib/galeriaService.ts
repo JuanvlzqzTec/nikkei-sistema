@@ -1,4 +1,3 @@
-// lib/galeriaService.ts
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
 export interface GaleriaItem {
@@ -33,13 +32,12 @@ class GaleriaService {
       return result.data || []
     } catch (error) {
       console.error('Error fetching galería destacados:', error)
-      throw error // Propagar el error, no ocultarlo
+      throw error
     }
   }
 
   getAnio(item: GaleriaItem): string {
     if (!item.fecha_hito) return "19XX"
-    
     try {
       return new Date(item.fecha_hito).getFullYear().toString()
     } catch {
@@ -50,12 +48,11 @@ class GaleriaService {
   getCategoriaDisplay(categoria: string): string {
     const categoriaMap: Record<string, string> = {
       'inmigracion': 'Inmigración',
-      'fundacion': 'Hito Histórico',
+      'fundacion': 'Fundación',
       'evento_historico': 'Evento Histórico',
       'cultura': 'Cultura',
       'personaje_clave': 'Personaje Clave'
     }
-    
     return categoriaMap[categoria] || categoria
   }
 }
