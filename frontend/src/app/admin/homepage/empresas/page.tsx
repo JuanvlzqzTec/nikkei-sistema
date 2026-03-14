@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
-import { Plus, Pencil, Trash2, X, Check, Loader2, Star, StarOff } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Check, Loader2, Star, StarOff, Upload, ImageIcon } from 'lucide-react'
 import { empresasApi, type Empresa } from '@/lib/adminApi'
 import { Button } from '@/components/ui/button'
+
+const CLOUDINARY_CLOUD_NAME = 'dyfkeoc7a'
+const CLOUDINARY_UPLOAD_PRESET = 'nikkei_default'
 
 const STATUS_APROBACION_COLORS: Record<string, string> = {
   pendiente: 'bg-yellow-100 text-yellow-700',
@@ -15,7 +18,7 @@ const STATUS_APROBACION_COLORS: Record<string, string> = {
 const emptyForm = {
   nombre_empresa: '', giro_comercial: '', sector: '', descripcion: '',
   telefono: '', email: '', sitio_web: '', direccion: '', ciudad: '',
-  estado: 'Sinaloa', logo_empresa: '', id_propietario: '1',
+  estado: 'Sinaloa', logo_empresa: '',
 }
 
 export default function EmpresasAdminPage() {
@@ -28,6 +31,12 @@ export default function EmpresasAdminPage() {
   const [editingEmpresa, setEditingEmpresa] = useState<Empresa | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [tab, setTab] = useState<'todas' | 'pendientes' | 'homepage'>('todas')
+
+  // Cloudinary upload state
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const [dragOver, setDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
     try {
@@ -52,6 +61,7 @@ export default function EmpresasAdminPage() {
   const openCreate = () => {
     setEditingEmpresa(null)
     setForm(emptyForm)
+    setUploadError('')
     setShowModal(true)
   }
 
@@ -69,9 +79,55 @@ export default function EmpresasAdminPage() {
       ciudad: em.ciudad || '',
       estado: em.estado || 'Sinaloa',
       logo_empresa: em.logo_empresa || '',
-      id_propietario: em.id_propietario?.toString() || '1',
     })
+    setUploadError('')
     setShowModal(true)
+  }
+
+  // Cloudinary upload
+  const uploadToCloudinary = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Solo se permiten imágenes')
+      return
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('La imagen no puede superar 10MB')
+      return
+    }
+    setUploading(true)
+    setUploadError('')
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+    formData.append('folder', 'nikkei-sinaloa/empresas')
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: 'POST', body: formData }
+      )
+      const data = await res.json()
+      if (data.secure_url) {
+        f('logo_empresa', data.secure_url)
+      } else {
+        setUploadError('Error al subir imagen')
+      }
+    } catch {
+      setUploadError('Error de conexión al subir imagen')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleFileDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(false)
+    const file = e.dataTransfer.files[0]
+    if (file) uploadToCloudinary(file)
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) uploadToCloudinary(file)
   }
 
   const handleSave = async () => {
@@ -79,12 +135,11 @@ export default function EmpresasAdminPage() {
     try {
       setSaving(true)
       setError('')
-      const payload = { ...form, id_propietario: Number(form.id_propietario) }
       if (editingEmpresa) {
-        await empresasApi.update(editingEmpresa.id_empresa, payload)
+        await empresasApi.update(editingEmpresa.id_empresa, form)
         setSuccess('Empresa actualizada')
       } else {
-        await empresasApi.create(payload)
+        await empresasApi.create(form)
         setSuccess('Empresa creada')
       }
       setShowModal(false)
@@ -206,7 +261,7 @@ export default function EmpresasAdminPage() {
                 {em.logo_empresa ? (
                   <Image src={em.logo_empresa} alt={em.nombre_empresa} fill className="object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs font-sans">
+                  <div className="w-full h-full flex items-center justify-center text-gray-300 text-xl font-serif">
                     {em.nombre_empresa.charAt(0)}
                   </div>
                 )}
@@ -234,7 +289,6 @@ export default function EmpresasAdminPage() {
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
-                    {/* Aprobación */}
                     {em.status_aprobacion === 'pendiente' && (
                       <>
                         <button
@@ -252,7 +306,6 @@ export default function EmpresasAdminPage() {
                       </>
                     )}
 
-                    {/* Homepage toggle — solo si está aprobada */}
                     {em.status_aprobacion === 'aprobada' && (
                       <button
                         onClick={() => handleToggleHomepage(em)}
@@ -294,30 +347,177 @@ export default function EmpresasAdminPage() {
 
             <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { label: 'Nombre de empresa *', key: 'nombre_empresa', placeholder: 'Restaurante Tanaka', sm: true },
-                  { label: 'Giro comercial', key: 'giro_comercial', placeholder: 'Gastronomía' },
-                  { label: 'Sector', key: 'sector', placeholder: 'Restaurantes' },
-                  { label: 'Teléfono', key: 'telefono', placeholder: '+52 667 000 0000' },
-                  { label: 'Email', key: 'email', placeholder: 'contacto@empresa.com' },
-                  { label: 'Sitio web', key: 'sitio_web', placeholder: 'https://...' },
-                  { label: 'Ciudad', key: 'ciudad', placeholder: 'Culiacán' },
-                  { label: 'Estado', key: 'estado', placeholder: 'Sinaloa' },
-                  { label: 'URL del logo', key: 'logo_empresa', placeholder: 'https://...', sm: true },
-                  { label: 'ID del propietario', key: 'id_propietario', placeholder: '1' },
-                ].map((field) => (
-                  <div key={field.key} className={field.sm ? 'sm:col-span-2' : ''}>
-                    <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">{field.label}</label>
-                    <input
-                      type="text"
-                      value={form[field.key as keyof typeof emptyForm]}
-                      onChange={(e) => f(field.key as keyof typeof emptyForm, e.target.value)}
-                      placeholder={field.placeholder}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200"
-                    />
-                  </div>
-                ))}
 
+                {/* Nombre */}
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
+                    Nombre de empresa <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={form.nombre_empresa}
+                    onChange={(e) => f('nombre_empresa', e.target.value)}
+                    placeholder="Restaurante Tanaka"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200"
+                  />
+                </div>
+
+                {/* Giro comercial */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Giro comercial</label>
+                  <input
+                    type="text"
+                    value={form.giro_comercial}
+                    onChange={(e) => f('giro_comercial', e.target.value)}
+                    placeholder="Gastronomía"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                {/* Sector */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Sector</label>
+                  <input
+                    type="text"
+                    value={form.sector}
+                    onChange={(e) => f('sector', e.target.value)}
+                    placeholder="Restaurantes"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                {/* Teléfono */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Teléfono</label>
+                  <input
+                    type="text"
+                    value={form.telefono}
+                    onChange={(e) => f('telefono', e.target.value)}
+                    placeholder="+52 667 000 0000"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Email</label>
+                  <input
+                    type="text"
+                    value={form.email}
+                    onChange={(e) => f('email', e.target.value)}
+                    placeholder="contacto@empresa.com"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                {/* Sitio web */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Sitio web</label>
+                  <input
+                    type="text"
+                    value={form.sitio_web}
+                    onChange={(e) => f('sitio_web', e.target.value)}
+                    placeholder="https://..."
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                {/* Ciudad */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Ciudad</label>
+                  <input
+                    type="text"
+                    value={form.ciudad}
+                    onChange={(e) => f('ciudad', e.target.value)}
+                    placeholder="Culiacán"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                {/* Estado */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Estado</label>
+                  <input
+                    type="text"
+                    value={form.estado}
+                    onChange={(e) => f('estado', e.target.value)}
+                    placeholder="Sinaloa"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                {/* Logo — Cloudinary upload */}
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
+                    Logo de la empresa
+                  </label>
+
+                  {form.logo_empresa ? (
+                    <div className="relative w-full h-44 rounded-xl overflow-hidden border border-gray-200 group">
+                      <Image src={form.logo_empresa} alt="Preview logo" fill className="object-contain bg-gray-50" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="bg-white text-gray-800 text-xs font-sans font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-gray-100 transition-colors"
+                        >
+                          <Upload size={13} /> Cambiar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => f('logo_empresa', '')}
+                          className="bg-red-600 text-white text-xs font-sans font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-red-700 transition-colors"
+                        >
+                          <X size={13} /> Quitar
+                        </button>
+                      </div>
+                      {uploading && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <Loader2 size={24} className="animate-spin text-white" />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                      onDragLeave={() => setDragOver(false)}
+                      onDrop={handleFileDrop}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`w-full h-36 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
+                        dragOver ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 hover:border-red-300 hover:bg-red-50/50'
+                      }`}
+                    >
+                      {uploading ? (
+                        <>
+                          <Loader2 size={22} className="animate-spin text-red-700" />
+                          <p className="text-xs font-sans text-gray-500">Subiendo logo...</p>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon size={22} className="text-gray-300" />
+                          <p className="text-xs font-sans text-gray-500 text-center px-4">
+                            Arrastra el logo o <span className="text-red-700 font-medium">haz clic para seleccionar</span>
+                          </p>
+                          <p className="text-[10px] font-sans text-gray-400">JPG, PNG, WEBP · Máx 10MB</p>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+
+                  {uploadError && (
+                    <p className="text-xs text-red-600 font-sans mt-1.5">{uploadError}</p>
+                  )}
+                </div>
+
+                {/* Descripción */}
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Descripción</label>
                   <textarea
@@ -327,6 +527,7 @@ export default function EmpresasAdminPage() {
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400 resize-none"
                   />
                 </div>
+
               </div>
 
               {error && <p className="text-xs text-red-600 font-sans">{error}</p>}
@@ -334,7 +535,7 @@ export default function EmpresasAdminPage() {
 
             <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
               <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm font-sans text-gray-600 hover:text-gray-800">Cancelar</button>
-              <Button onClick={handleSave} disabled={saving} className="btn-nikkei text-sm py-2 px-5">
+              <Button onClick={handleSave} disabled={saving || uploading} className="btn-nikkei text-sm py-2 px-5">
                 {saving ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
                 {editingEmpresa ? 'Guardar cambios' : 'Agregar empresa'}
               </Button>

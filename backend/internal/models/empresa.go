@@ -6,7 +6,7 @@ import (
 
 type Empresa struct {
 	IDEmpresa                 uint       `gorm:"primaryKey;column:id_empresa;autoIncrement" json:"id_empresa"`
-	IDPropietario             uint       `gorm:"not null" json:"id_propietario"`
+	IDPropietario             *uint      `json:"id_propietario"`
 	NombreEmpresa             string     `gorm:"not null;size:200" json:"nombre_empresa"`
 	RazonSocial               *string    `gorm:"size:250" json:"razon_social"`
 	RFC                       *string    `gorm:"size:13" json:"rfc"`

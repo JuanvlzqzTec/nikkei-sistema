@@ -431,7 +431,6 @@ export default function EventosAdminPage() {
                     type="text"
                     value={form.ciudad}
                     onChange={(e) => f('ciudad', e.target.value)}
-                    placeholder="Culiacán"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
                   />
                 </div>

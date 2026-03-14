@@ -76,7 +76,6 @@ func (h *EmpresasHandler) GetByID(c *gin.Context) {
 	})
 }
 
-// Create — admin puede crear directamente
 func (h *EmpresasHandler) Create(c *gin.Context) {
 	var req struct {
 		NombreEmpresa   string  `json:"nombre_empresa" binding:"required,max=200"`
@@ -94,7 +93,7 @@ func (h *EmpresasHandler) Create(c *gin.Context) {
 		CodigoPostal    *string `json:"codigo_postal"`
 		NumeroEmpleados *int    `json:"numero_empleados"`
 		LogoEmpresa     *string `json:"logo_empresa"`
-		IDPropietario   uint    `json:"id_propietario" binding:"required"`
+		IDPropietario   *uint   `json:"id_propietario"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -126,7 +125,7 @@ func (h *EmpresasHandler) Create(c *gin.Context) {
 		NumeroEmpleados:           req.NumeroEmpleados,
 		LogoEmpresa:               req.LogoEmpresa,
 		AceptaPromocionDirectorio: true,
-		StatusAprobacion:          &aprobada, // Admin crea = auto aprobada
+		StatusAprobacion:          &aprobada,
 	}
 
 	if err := database.DB.Create(&empresa).Error; err != nil {
@@ -153,7 +152,7 @@ func (h *EmpresasHandler) SolicitarRegistro(c *gin.Context) {
 		Ciudad        *string `json:"ciudad"`
 		Estado        string  `json:"estado"`
 		LogoEmpresa   *string `json:"logo_empresa"`
-		IDPropietario uint    `json:"id_propietario" binding:"required"`
+		IDPropietario *uint   `json:"id_propietario"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
