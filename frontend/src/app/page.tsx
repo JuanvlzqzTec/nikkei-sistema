@@ -11,28 +11,81 @@ import {
 import { Button } from '@/components/ui/button'
 import { galeriaService, type GaleriaItem } from '@/lib/galeriaService'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+
+interface SliderItem {
+  id_slider: number
+  url_imagen: string
+  titulo?: string
+  descripcion?: string
+  orden: number
+  es_activo: boolean
+}
+
+interface Evento {
+  id_evento: number
+  titulo: string
+  tipo_evento: string
+  fecha_inicio: string
+  ciudad?: string
+  ubicacion?: string
+  imagen_evento?: string
+  capacidad_maxima?: number
+}
+
+interface Empresa {
+  id_empresa: number
+  nombre_empresa: string
+  giro_comercial?: string
+  logo_empresa?: string
+  sitio_web?: string
+}
+
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [slides, setSlides] = useState<SliderItem[]>([])
+  const [sliderLoading, setSliderLoading] = useState(true)
+
+  const [eventosProximos, setEventosProximos] = useState<Evento[]>([])
+  const [eventosLoading, setEventosLoading] = useState(true)
+
+  const [empresasDestacadas, setEmpresasDestacadas] = useState<Empresa[]>([])
+  const [empresasLoading, setEmpresasLoading] = useState(true)
+
   const [hitosDestacados, setHitosDestacados] = useState<GaleriaItem[]>([])
   const [galeriaLoading, setGaleriaLoading] = useState(true)
   const [galeriaError, setGaleriaError] = useState(false)
+
   const [hoveredEmpresa, setHoveredEmpresa] = useState<number | null>(null)
-  
-  const slides: string[] = []
 
-  const empresasDestacadas = [
-    { id: 1, nombre: "Restaurante Tanaka", giro: "Gastronomía", logo: '', web: "#", size: "w-32 h-32", delay: "0s", orbit: "top-4 left-1/2 -translate-x-1/2" },
-    { id: 2, nombre: "Sato Importaciones", giro: "Comercio", logo: '', web: "#", size: "w-40 h-40", delay: "0.4s", orbit: "top-1/2 right-8 -translate-y-1/2" },
-    { id: 3, nombre: "Kenji Tech", giro: "Tecnología", logo: '', web: "#", size: "w-28 h-28", delay: "0.8s", orbit: "bottom-4 right-1/4" },
-    { id: 4, nombre: "Vivero Yamamoto", giro: "Jardinería", logo: '', web: "#", size: "w-36 h-36", delay: "1.2s", orbit: "bottom-4 left-1/4" },
-    { id: 5, nombre: "Sushi Sinaloa", giro: "Gastronomía", logo: '', web: "#", size: "w-32 h-32", delay: "1.6s", orbit: "top-1/2 left-8 -translate-y-1/2" },
-  ]
+  // Cargar slider
+  useEffect(() => {
+    fetch(`${API_URL}/api/v1/slider`)
+      .then((r) => r.json())
+      .then((d) => setSlides(d.data || []))
+      .catch(console.error)
+      .finally(() => setSliderLoading(false))
+  }, [])
 
-  const eventosProximos = [
-    { id_evento: 1, titulo: "Gran Matsuri 2026", tipo_evento: "matsuri", fecha_inicio: "2026-05-15T18:00:00Z", ciudad: "Culiacán", ubicacion: "Jardín Botánico", imagen_evento: '', capacidad_maxima: 500, participantes_actuales: 342 },
-    { id_evento: 2, titulo: "Torneo Deportivo", tipo_evento: "deportivo", fecha_inicio: "2026-06-10T09:00:00Z", ciudad: "Mazatlán", ubicacion: "Club Muralla", imagen_evento: '', capacidad_maxima: 100, participantes_actuales: 45 }
-  ]
+  // Cargar eventos próximos
+  useEffect(() => {
+    fetch(`${API_URL}/api/v1/eventos/proximos`)
+      .then((r) => r.json())
+      .then((d) => setEventosProximos(d.data || []))
+      .catch(console.error)
+      .finally(() => setEventosLoading(false))
+  }, [])
 
+  // Cargar empresas homepage
+  useEffect(() => {
+    fetch(`${API_URL}/api/v1/empresas/homepage`)
+      .then((r) => r.json())
+      .then((d) => setEmpresasDestacadas(d.data || []))
+      .catch(console.error)
+      .finally(() => setEmpresasLoading(false))
+  }, [])
+
+  // Cargar galería destacados
   useEffect(() => {
     const loadGaleria = async () => {
       try {
@@ -50,7 +103,9 @@ export default function HomePage() {
     loadGaleria()
   }, [])
 
+  // Auto-avance del slider — solo si hay slides
   useEffect(() => {
+    if (slides.length === 0) return
     const timer = setInterval(() => setCurrentSlide((prev) => (prev + 1) % slides.length), 3000)
     return () => clearInterval(timer)
   }, [slides.length])
@@ -90,25 +145,18 @@ export default function HomePage() {
 
       {/* ─── HERO ───────────────────────────────────────────────── */}
       <section className="hero-section relative overflow-hidden min-h-screen flex items-center">
-        {/* Background layers */}
         <div className="absolute inset-0" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }} />
-        
-        {/* Animated radial glow */}
         <div className="absolute inset-0 opacity-30"
           style={{
             background: 'radial-gradient(ellipse 80% 60% at 60% 50%, #D4AF3720 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, #ff8c0015 0%, transparent 60%)',
           }}
         />
-
-        {/* Dot grid texture */}
         <div className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: 'radial-gradient(circle, #ffffff 2px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
-
-        {/* Diagonal decorative line */}
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-5 hidden lg:block"
           style={{
             background: 'linear-gradient(135deg, transparent 40%, #D4AF37 40%, #D4AF37 41%, transparent 41%)',
@@ -120,7 +168,6 @@ export default function HomePage() {
             
             {/* Left: Text content */}
             <div className="space-y-8">
-
               <div className="space-y-4">
                 <h2 className="text-5xl lg:text-7xl font-serif text-white leading-[1.1] tracking-tight">
                   時を超えて<br/>
@@ -132,11 +179,9 @@ export default function HomePage() {
                   Creando vínculos que perduran con el tiempo
                 </p>
               </div>
-
               <p className="text-base text-white/60 font-sans leading-relaxed max-w-md">
                 Únete a nuestra comunidad y forma parte de la historia que conecta las tradiciones japonesas con el corazón de Sinaloa.
               </p>
-
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link href="/register">
                   <Button className="btn-nikkei group">
@@ -145,8 +190,6 @@ export default function HomePage() {
                   </Button>
                 </Link>
               </div>
-
-              {/* Stats strip */}
               <div className="flex gap-8 pt-4 border-t border-white/10">
                 {[
                   { value: '70+', label: 'Años de historia' },
@@ -163,70 +206,71 @@ export default function HomePage() {
 
             {/* Right: Slider */}
             <div className="relative">
-              {/* Decorative frame */}
               <div className="absolute -top-4 -right-4 w-full h-full border border-amber-400/20 rounded-2xl hidden lg:block" />
               <div className="absolute -top-2 -right-2 w-full h-full border border-amber-400/10 rounded-2xl hidden lg:block" />
 
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-                {/* Slide aspect ratio container */}
                 <div className="relative h-105 lg:h-130">
-                  {slides.map((slide, index) => (
-                    <div
-                      key={index}
-                      className={`absolute inset-0 transition-all duration-700 ${
-                        index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-                      }`}
-                    >
-                      <Image src={slide} alt={`Slide ${index + 1}`} fill className="object-cover" priority={index === 0} />
-                      {/* Subtle vignette */}
-                      <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
+                  {sliderLoading ? (
+                    // Skeleton mientras carga
+                    <div className="absolute inset-0 bg-white/5 animate-pulse" />
+                  ) : slides.length === 0 ? (
+                    // Sin imágenes aún
+                    <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
+                      <p className="text-white/30 font-sans text-sm">Sin imágenes disponibles</p>
                     </div>
-                  ))}
+                  ) : (
+                    slides.map((slide, index) => (
+                      <div
+                        key={slide.id_slider}
+                        className={`absolute inset-0 transition-all duration-700 ${
+                          index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+                        }`}
+                      >
+                        <Image src={slide.url_imagen} alt={slide.titulo || `Slide ${index + 1}`} fill className="object-cover" priority={index === 0} />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
+                      </div>
+                    ))
+                  )}
                 </div>
 
-                {/* Slide controls */}
-                <button
-                  onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10"
-                >
-                  <ChevronRight size={20} />
-                </button>
-
-                {/* Dot indicators */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {slides.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      className={`transition-all duration-300 rounded-full ${
-                        index === currentSlide
-                          ? 'w-6 h-2 bg-amber-400'
-                          : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-                      }`}
-                    />
-                  ))}
-                </div>
+                {/* Controles — solo si hay slides */}
+                {slides.length > 1 && (
+                  <>
+                    <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10">
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10">
+                      <ChevronRight size={20} />
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                      {slides.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentSlide(index)}
+                          className={`transition-all duration-300 rounded-full ${
+                            index === currentSlide ? 'w-6 h-2 bg-amber-400' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Floating badge */}
               <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl px-5 py-3 hidden lg:flex items-center gap-3 border border-amber-100">
                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-lg">📢</div>
                 <div>
                   <p className="text-xs text-gray-500 font-sans">Próximo evento</p>
-                  <p className="text-sm font-serif text-red-800 font-semibold">Kodomo no Hi 2026</p>
+                  <p className="text-sm font-serif text-red-800 font-semibold">
+                    {eventosProximos[0]?.titulo || 'Próximamente'}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom wave separator */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
             <path d="M0 60 L0 30 Q360 0 720 30 Q1080 60 1440 30 L1440 60 Z" fill="rgb(255,247,240)" fillOpacity="0.08"/>
@@ -285,48 +329,67 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
-          <div className="grid lg:grid-cols-2 gap-8">
-            {eventosProximos.map((evento) => (
-              <div key={evento.id_evento} className="flex flex-col md:flex-row bg-white rounded-xl overflow-hidden shadow-2xl group text-left">
-                <div className="relative w-full md:w-2/5 h-64 md:h-auto overflow-hidden">
-                  <Image src={evento.imagen_evento} alt={evento.titulo} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                  <div className="absolute top-4 left-4">
-                    <span className={`event-badge text-white shadow-lg ${evento.tipo_evento === 'matsuri' ? 'bg-red-600' : 'bg-nikkei-gold-dark'}`}>{evento.tipo_evento}</span>
+
+          {eventosLoading ? (
+            <div className="grid lg:grid-cols-2 gap-8">
+              {[1, 2].map((i) => (
+                <div key={i} className="bg-white/10 rounded-xl h-64 animate-pulse" />
+              ))}
+            </div>
+          ) : eventosProximos.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-white/50 font-sans">No hay eventos próximos programados.</p>
+            </div>
+          ) : (
+            <div className="grid lg:grid-cols-2 gap-8">
+              {eventosProximos.map((evento) => (
+                <div key={evento.id_evento} className="flex flex-col md:flex-row bg-white rounded-xl overflow-hidden shadow-2xl group text-left">
+                  <div className="relative w-full md:w-2/5 h-64 md:h-auto overflow-hidden bg-gray-100">
+                    {evento.imagen_evento ? (
+                      <Image src={evento.imagen_evento} alt={evento.titulo} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-red-900/10">
+                        <Calendar size={40} className="text-red-300" />
+                      </div>
+                    )}
+                    <div className="absolute top-4 left-4">
+                      <span className={`event-badge text-white shadow-lg ${evento.tipo_evento === 'matsuri' ? 'bg-red-600' : 'bg-nikkei-gold-dark'}`}>{evento.tipo_evento}</span>
+                    </div>
+                  </div>
+                  <div className="p-8 md:w-3/5 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div className="flex items-center text-nikkei-burgundy gap-2 text-sm font-semibold">
+                        <Calendar size={16} />
+                        {new Date(evento.fecha_inicio).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })}
+                      </div>
+                      <h4 className="text-2xl font-serif text-gray-900 leading-tight">{evento.titulo}</h4>
+                      {(evento.ubicacion || evento.ciudad) && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <MapPin size={16} className="text-nikkei-gold-dark" />
+                          {[evento.ubicacion, evento.ciudad].filter(Boolean).join(', ')}
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-8">
+                      <Link href={`/eventos/${evento.id_evento}`}>
+                        <Button className="w-full btn-nikkei py-3 text-base"><Ticket size={18} />Registrarme ahora</Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-                <div className="p-8 md:w-3/5 flex flex-col justify-between">
-                  <div className="space-y-4">
-                    <div className="flex items-center text-nikkei-burgundy gap-2 text-sm font-semibold">
-                      <Calendar size={16} />
-                      {new Date(evento.fecha_inicio).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </div>
-                    <h4 className="text-2xl font-serif text-gray-900 leading-tight">{evento.titulo}</h4>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <MapPin size={16} className="text-nikkei-gold-dark" />
-                      {evento.ubicacion}, {evento.ciudad}
-                    </div>
-                  </div>
-                  <div className="mt-8">
-                    <Link href={`/eventos/${evento.id_evento}`}>
-                      <Button className="w-full btn-nikkei py-3 text-base"><Ticket size={18} />Registrarme ahora</Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* ─── IMPULSO NIKKEI ─────────────────────────────────────── */}
       <section className="py-20 relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at top, #FEF7F0 0%, #FCE4E4 60%, #FEF0E0 100%)' }}>
-        {/* Subtle kanji watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
           <span className="text-[20rem] font-serif text-red-900/2.5 leading-none">商</span>
         </div>
 
         <div className="container-nikkei relative z-10">
-          {/* Header */}
           <div className="text-center mb-16 space-y-3">
             <p className="text-xs tracking-[0.3em] uppercase font-sans text-amber-700/70">Directorio Empresarial</p>
             <h2 className="text-3xl lg:text-4xl font-serif text-nikkei-burgundy-dark">日系ビジネスの推進</h2>
@@ -337,47 +400,63 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Empresas grid — card layout replacing floating bubbles */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
-            {empresasDestacadas.map((empresa, index) => (
-              <a
-                key={empresa.id}
-                href={empresa.web}
-                target="_blank"
-                rel="noopener noreferrer"
-                onMouseEnter={() => setHoveredEmpresa(empresa.id)}
-                onMouseLeave={() => setHoveredEmpresa(null)}
-                className="group relative flex flex-col items-center rounded-2xl overflow-hidden border-2 border-transparent hover:border-amber-300 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 bg-white/70 backdrop-blur-sm"
-                style={{ animationDelay: empresa.delay }}
-              >
-                {/* Image */}
-                <div className="relative w-full aspect-square overflow-hidden">
-                  <Image
-                    src={empresa.logo}
-                    alt={empresa.nombre}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-linear-to-t from-nikkei-burgundy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
-
-                  {/* Hover content */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-end p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <ExternalLink size={14} className="text-white/80 mb-1" />
-                    <p className="text-white text-[10px] font-sans">Ver empresa</p>
+          {empresasLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
+              {[1,2,3,4,5].map((i) => (
+                <div key={i} className="bg-white/50 rounded-2xl aspect-square animate-pulse" />
+              ))}
+            </div>
+          ) : empresasDestacadas.length === 0 ? (
+            <div className="text-center py-12 mb-12">
+              <p className="text-gray-400 font-sans text-sm">No hay empresas destacadas disponibles.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
+              {empresasDestacadas.map((empresa) => (
+                <a
+                  key={empresa.id_empresa}
+                  href={empresa.sitio_web || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onMouseEnter={() => setHoveredEmpresa(empresa.id_empresa)}
+                  onMouseLeave={() => setHoveredEmpresa(null)}
+                  className="group relative flex flex-col items-center rounded-2xl overflow-hidden border-2 border-transparent hover:border-amber-300 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 bg-white/70 backdrop-blur-sm"
+                >
+                  <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
+                    {empresa.logo_empresa ? (
+                      <>
+                        <Image
+                          src={empresa.logo_empresa}
+                          alt={empresa.nombre_empresa}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-nikkei-burgundy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-end p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                          <ExternalLink size={14} className="text-white/80 mb-1" />
+                          <p className="text-white text-[10px] font-sans">Ver empresa</p>
+                        </div>
+                      </>
+                    ) : (
+                      // Placeholder con inicial si no hay logo
+                      <div className="w-full h-full flex items-center justify-center bg-red-50">
+                        <span className="text-4xl font-serif text-red-300">
+                          {empresa.nombre_empresa.charAt(0)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
+                  <div className="p-3 text-center w-full">
+                    <p className="font-serif text-nikkei-burgundy text-xs font-semibold leading-tight line-clamp-2">{empresa.nombre_empresa}</p>
+                    {empresa.giro_comercial && (
+                      <p className="text-[10px] text-amber-700 font-sans mt-0.5">{empresa.giro_comercial}</p>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
 
-                {/* Info */}
-                <div className="p-3 text-center w-full">
-                  <p className="font-serif text-nikkei-burgundy text-xs font-semibold leading-tight line-clamp-2">{empresa.nombre}</p>
-                  <p className="text-[10px] text-amber-700 font-sans mt-0.5">{empresa.giro}</p>
-                </div>  
-              </a>
-            ))}
-          </div>
-
-          {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link href="/directorio">
               <Button className="btn-nikkei">
@@ -446,21 +525,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/*Footer*/}
+      {/* ─── FOOTER ─────────────────────────────────────────────── */}
       <footer className="relative overflow-hidden text-center md:text-left" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }}>
-        {/* Top decorative border */}
         <div className="w-full h-1 bg-linear-to-r from-transparent via-amber-400 to-transparent opacity-100" />
-
-        {/* Kanji watermark */}
         <div className="absolute bottom-0 right-0 pointer-events-none select-none overflow-hidden">
           <span className="text-[18rem] font-serif text-white/3 leading-none">根</span>
         </div>
 
         <div className="container-nikkei relative z-10 text-white pt-16 pb-8">
-          {/* Main grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-5">
-            
-            {/* Col 1: Brand */}
             <div className="space-y-5">
               <div className="flex items-center justify-center md:justify-start gap-3">
                 <Image src="/assets/Logo-OJN.png" alt="Logo OJN" width={44} height={44} className='pt-2'/>
@@ -472,26 +545,20 @@ export default function HomePage() {
               <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mx-auto md:mx-0">
                 Preservando el legado de nuestros antepasados y construyendo el futuro de nuestra comunidad.
               </p>
-              {/* Social icons */}
               <div className="flex justify-center md:justify-start gap-3">
                 {[
                   { href: '#', icon: <Facebook size={16} />, label: 'Facebook' },
                   { href: '#', icon: <Instagram size={16} />, label: 'Instagram' },
                   { href: '#', icon: <Youtube size={16} />, label: 'YouTube' },
                 ].map((social) => (
-                  <Link
-                    key={social.label}
-                    href={social.href}
-                    aria-label={social.label}
-                    className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:border-amber-400/60 hover:text-amber-300 hover:-translate-y-1 transition-all duration-300"
-                  >
+                  <Link key={social.label} href={social.href} aria-label={social.label}
+                    className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:border-amber-400/60 hover:text-amber-300 hover:-translate-y-1 transition-all duration-300">
                     {social.icon}
                   </Link>
                 ))}
               </div>
             </div>
 
-            {/* Col 2: Navegación */}
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Navegación</h5>
               <ul className="space-y-2.5">
@@ -503,10 +570,7 @@ export default function HomePage() {
                   { href: '/register', label: 'Únete a la Comunidad' },
                 ].map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-white/55 hover:text-amber-300 hover:pl-1.5 transition-all duration-200 font-sans inline-block"
-                    >
+                    <Link href={link.href} className="text-sm text-white/55 hover:text-amber-300 hover:pl-1.5 transition-all duration-200 font-sans inline-block">
                       {link.label}
                     </Link>
                   </li>
@@ -514,7 +578,6 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Col 3: Contacto */}
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Contacto</h5>
               <ul className="space-y-4">
@@ -531,7 +594,6 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Col 4: Horarios */}
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Horarios</h5>
               <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3 inline-block md:block mx-auto md:mx-0 text-left">
@@ -554,10 +616,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Divider */}
           <div className="h-px bg-linear-to-r from-transparent via-white/15 to-transparent mb-6" />
 
-          {/* Bottom bar */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-white/35 text-xs font-sans">
             <p>© 2026 Asociación de Jóvenes Nikkei Sinaloa. Todos los derechos reservados.</p>
             <p className="font-serif text-white/20 text-sm tracking-widest hidden md:block">根 · 絆 · 未来</p>
