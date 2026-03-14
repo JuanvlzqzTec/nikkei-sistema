@@ -24,11 +24,12 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   return data
 }
 
+// Tipos
+
 export interface SliderItem {
   id_slider: number
   url_imagen: string
   titulo?: string
-  descripcion?: string
   orden: number
   es_activo: boolean
   created_at: string
@@ -95,6 +96,8 @@ export interface GaleriaItem {
   updated_at: string
 }
 
+// Slider
+
 export const sliderApi = {
   getAll: () => apiFetch<{ data: SliderItem[] }>('/admin/slider/'),
   create: (data: Partial<SliderItem>) =>
@@ -107,6 +110,7 @@ export const sliderApi = {
     apiFetch<{ message: string }>('/admin/slider/reorder', { method: 'PUT', body: JSON.stringify(items) }),
 }
 
+// Eventos
 
 export const eventosApi = {
   getAll: (params?: { status?: string; tipo?: string }) => {
@@ -126,6 +130,7 @@ export const eventosApi = {
     }),
 }
 
+// Empresas
 
 export const empresasApi = {
   getAll: (params?: { status?: string; homepage?: string }) => {
@@ -150,6 +155,7 @@ export const empresasApi = {
     }),
 }
 
+// Galeria
 
 export const galeriaApi = {
   getAll: () => apiFetch<{ data: GaleriaItem[] }>('/galeria/'),

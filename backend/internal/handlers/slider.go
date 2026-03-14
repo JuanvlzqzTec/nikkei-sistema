@@ -52,11 +52,10 @@ func (h *SliderHandler) GetAllAdmin(c *gin.Context) {
 
 func (h *SliderHandler) Create(c *gin.Context) {
 	var req struct {
-		URLImagen   string  `json:"url_imagen" binding:"required,max=500"`
-		Titulo      *string `json:"titulo"`
-		Descripcion *string `json:"descripcion"`
-		Orden       int     `json:"orden"`
-		EsActivo    *bool   `json:"es_activo"`
+		URLImagen string  `json:"url_imagen" binding:"required,max=500"`
+		Titulo    *string `json:"titulo"`
+		Orden     int     `json:"orden"`
+		EsActivo  *bool   `json:"es_activo"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -65,11 +64,10 @@ func (h *SliderHandler) Create(c *gin.Context) {
 	}
 
 	item := models.SliderItem{
-		URLImagen:   req.URLImagen,
-		Titulo:      req.Titulo,
-		Descripcion: req.Descripcion,
-		Orden:       req.Orden,
-		EsActivo:    true,
+		URLImagen: req.URLImagen,
+		Titulo:    req.Titulo,
+		Orden:     req.Orden,
+		EsActivo:  true,
 	}
 	if req.EsActivo != nil {
 		item.EsActivo = *req.EsActivo
@@ -100,11 +98,10 @@ func (h *SliderHandler) Update(c *gin.Context) {
 	}
 
 	var req struct {
-		URLImagen   string  `json:"url_imagen"`
-		Titulo      *string `json:"titulo"`
-		Descripcion *string `json:"descripcion"`
-		Orden       *int    `json:"orden"`
-		EsActivo    *bool   `json:"es_activo"`
+		URLImagen string  `json:"url_imagen"`
+		Titulo    *string `json:"titulo"`
+		Orden     *int    `json:"orden"`
+		EsActivo  *bool   `json:"es_activo"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -117,9 +114,6 @@ func (h *SliderHandler) Update(c *gin.Context) {
 	}
 	if req.Titulo != nil {
 		item.Titulo = req.Titulo
-	}
-	if req.Descripcion != nil {
-		item.Descripcion = req.Descripcion
 	}
 	if req.Orden != nil {
 		item.Orden = *req.Orden
