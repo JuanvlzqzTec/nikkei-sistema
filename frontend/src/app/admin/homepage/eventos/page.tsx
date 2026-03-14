@@ -213,7 +213,7 @@ export default function EventosAdminPage() {
       ) : eventos.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
           <p className="text-gray-400 font-sans text-sm">No hay eventos todavía.</p>
-          <button onClick={openCreate} className="mt-3 text-red-700 text-sm font-sans underline">Crear el primero</button>
+          <button onClick={openCreate} className="mt-3 text-red-700 text-sm font-sans underline cursor-pointer">Crear el primero</button>
         </div>
       ) : (
         <div className="space-y-3">
