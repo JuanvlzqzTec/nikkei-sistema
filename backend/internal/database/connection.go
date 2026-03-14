@@ -122,6 +122,7 @@ func CreateInitialData() {
 		return
 	}
 
+	// Datos estructurales de prueba — sin imágenes
 	familias := []models.Familia{
 		{ApellidoJP: "Tanaka", ApellidoRomanji: stringPtr("Tanaka"), ApellidoKanji: stringPtr("田中"), PrefecturaOrigen: stringPtr("Fukuoka"), AnioLlegadaMexico: intPtr(1954), LugarLlegada: stringPtr("Mazatlán")},
 		{ApellidoJP: "Sato", ApellidoRomanji: stringPtr("Satō"), ApellidoKanji: stringPtr("佐藤"), PrefecturaOrigen: stringPtr("Hiroshima"), AnioLlegadaMexico: intPtr(1958), LugarLlegada: stringPtr("Manzanillo")},
@@ -141,21 +142,7 @@ func CreateInitialData() {
 	}
 	DB.Create(&personas)
 
-	hitos := []models.Galeria{
-		{Titulo: "Primeros Inmigrantes a Mazatlán", URLImagen: "/assets/slider/slide-1.jpg", Categoria: "inmigracion", EsDestacado: true, Orden: 1},
-		{Titulo: "Fundación de la Asociación", URLImagen: "/assets/slider/slide-2.jpg", Categoria: "fundacion", EsDestacado: true, Orden: 2},
-		{Titulo: "Primer Festival Matsuri", URLImagen: "/assets/slider/slide-3.jpg", Categoria: "cultura", EsDestacado: true, Orden: 3},
-	}
-	DB.Create(&hitos)
-
-	// Slider inicial
-	sliderItems := []models.SliderItem{
-		{URLImagen: "/assets/slider/slide-1.jpg", Titulo: stringPtr("Comunidad Nikkei"), Orden: 1, EsActivo: true},
-		{URLImagen: "/assets/slider/slide-2.jpg", Titulo: stringPtr("Cultura Japonesa"), Orden: 2, EsActivo: true},
-		{URLImagen: "/assets/slider/slide-3.jpg", Titulo: stringPtr("Nuestras Raíces"), Orden: 3, EsActivo: true},
-	}
-	DB.Create(&sliderItems)
-
+	// Usuario admin inicial — el slider y la galería los carga el admin desde el panel
 	adminUser := models.User{
 		Email:         "admin@nikkei-sinaloa.org",
 		PasswordHash:  "$2a$10$ejemplo_hash_cambiar_en_produccion",

@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/dyfkeoc7a/**',
+      },
+    ],
+  },
   experimental: {
   },
 };

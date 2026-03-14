@@ -18,19 +18,19 @@ export default function HomePage() {
   const [galeriaError, setGaleriaError] = useState(false)
   const [hoveredEmpresa, setHoveredEmpresa] = useState<number | null>(null)
   
-  const slides = ['/assets/slider/slide-1.jpg', '/assets/slider/slide-2.jpg', '/assets/slider/slide-3.jpg']
+  const slides: string[] = []
 
   const empresasDestacadas = [
-    { id: 1, nombre: "Restaurante Tanaka", giro: "Gastronomía", logo: "/assets/slider/slide-1.jpg", web: "#", size: "w-32 h-32", delay: "0s", orbit: "top-4 left-1/2 -translate-x-1/2" },
-    { id: 2, nombre: "Sato Importaciones", giro: "Comercio", logo: "/assets/slider/slide-2.jpg", web: "#", size: "w-40 h-40", delay: "0.4s", orbit: "top-1/2 right-8 -translate-y-1/2" },
-    { id: 3, nombre: "Kenji Tech", giro: "Tecnología", logo: "/assets/slider/slide-3.jpg", web: "#", size: "w-28 h-28", delay: "0.8s", orbit: "bottom-4 right-1/4" },
-    { id: 4, nombre: "Vivero Yamamoto", giro: "Jardinería", logo: "/assets/slider/slide-1.jpg", web: "#", size: "w-36 h-36", delay: "1.2s", orbit: "bottom-4 left-1/4" },
-    { id: 5, nombre: "Sushi Sinaloa", giro: "Gastronomía", logo: "/assets/slider/slide-2.jpg", web: "#", size: "w-32 h-32", delay: "1.6s", orbit: "top-1/2 left-8 -translate-y-1/2" },
+    { id: 1, nombre: "Restaurante Tanaka", giro: "Gastronomía", logo: '', web: "#", size: "w-32 h-32", delay: "0s", orbit: "top-4 left-1/2 -translate-x-1/2" },
+    { id: 2, nombre: "Sato Importaciones", giro: "Comercio", logo: '', web: "#", size: "w-40 h-40", delay: "0.4s", orbit: "top-1/2 right-8 -translate-y-1/2" },
+    { id: 3, nombre: "Kenji Tech", giro: "Tecnología", logo: '', web: "#", size: "w-28 h-28", delay: "0.8s", orbit: "bottom-4 right-1/4" },
+    { id: 4, nombre: "Vivero Yamamoto", giro: "Jardinería", logo: '', web: "#", size: "w-36 h-36", delay: "1.2s", orbit: "bottom-4 left-1/4" },
+    { id: 5, nombre: "Sushi Sinaloa", giro: "Gastronomía", logo: '', web: "#", size: "w-32 h-32", delay: "1.6s", orbit: "top-1/2 left-8 -translate-y-1/2" },
   ]
 
   const eventosProximos = [
-    { id_evento: 1, titulo: "Gran Matsuri 2026", tipo_evento: "matsuri", fecha_inicio: "2026-05-15T18:00:00Z", ciudad: "Culiacán", ubicacion: "Jardín Botánico", imagen_evento: "/assets/slider/slide-1.jpg", capacidad_maxima: 500, participantes_actuales: 342 },
-    { id_evento: 2, titulo: "Torneo Deportivo", tipo_evento: "deportivo", fecha_inicio: "2026-06-10T09:00:00Z", ciudad: "Mazatlán", ubicacion: "Club Muralla", imagen_evento: "/assets/slider/slide-2.jpg", capacidad_maxima: 100, participantes_actuales: 45 }
+    { id_evento: 1, titulo: "Gran Matsuri 2026", tipo_evento: "matsuri", fecha_inicio: "2026-05-15T18:00:00Z", ciudad: "Culiacán", ubicacion: "Jardín Botánico", imagen_evento: '', capacidad_maxima: 500, participantes_actuales: 342 },
+    { id_evento: 2, titulo: "Torneo Deportivo", tipo_evento: "deportivo", fecha_inicio: "2026-06-10T09:00:00Z", ciudad: "Mazatlán", ubicacion: "Club Muralla", imagen_evento: '', capacidad_maxima: 100, participantes_actuales: 45 }
   ]
 
   useEffect(() => {
@@ -241,7 +241,7 @@ export default function HomePage() {
             <div className="relative">
               <div className="relative overflow-hidden shadow-2xl bg-white/10 backdrop-blur-sm border border-red-200/30">
                 <div className="relative h-96 lg:h-125">
-                  <Image src="/assets/sobre-nosotros.jpg" alt="Comunidad Nikkei de Sinaloa" fill className="object-cover" />
+                  <Image src="https://res.cloudinary.com/dyfkeoc7a/image/upload/v1773449971/sobre-nosotros_ocm7cn.jpg" alt="Comunidad Nikkei de Sinaloa" fill className="object-cover" />
                   <div className="absolute inset-0 bg-red-900/10" />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-6">

@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
-import { Plus, Pencil, Trash2, Eye, EyeOff, GripVertical, Loader2, X, Check } from 'lucide-react'
+import { Plus, Pencil, Trash2, Eye, EyeOff, GripVertical, Loader2, X, Check, Upload, ImageIcon } from 'lucide-react'
 import { sliderApi, type SliderItem } from '@/lib/adminApi'
 import { Button } from '@/components/ui/button'
+
+const CLOUDINARY_CLOUD_NAME = 'dyfkeoc7a'
+const CLOUDINARY_UPLOAD_PRESET = 'nikkei_default'
 
 const emptyForm = { url_imagen: '', titulo: '', descripcion: '', orden: 0, es_activo: true }
 
@@ -12,12 +15,15 @@ export default function SliderAdminPage() {
   const [items, setItems] = useState<SliderItem[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
   const [showModal, setShowModal] = useState(false)
   const [editingItem, setEditingItem] = useState<SliderItem | null>(null)
   const [form, setForm] = useState(emptyForm)
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const load = async () => {
     try {
@@ -51,9 +57,54 @@ export default function SliderAdminPage() {
     setShowModal(true)
   }
 
+  const handleUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setError('Solo se permiten archivos de imagen')
+      return
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setError('La imagen no puede pesar más de 10MB')
+      return
+    }
+
+    setUploading(true)
+    setError('')
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: 'POST', body: formData }
+      )
+
+      if (!res.ok) throw new Error('Error al subir la imagen')
+
+      const data = await res.json()
+      setForm((prev) => ({ ...prev, url_imagen: data.secure_url }))
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Error al subir imagen')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) handleUpload(file)
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const file = e.dataTransfer.files?.[0]
+    if (file) handleUpload(file)
+  }
+
   const handleSave = async () => {
     if (!form.url_imagen.trim()) {
-      setError('La URL de la imagen es requerida')
+      setError('Debes subir una imagen')
       return
     }
     try {
@@ -149,7 +200,6 @@ export default function SliderAdminPage() {
             >
               <GripVertical size={16} className="text-gray-300 cursor-grab shrink-0" />
 
-              {/* Preview */}
               <div className="relative w-24 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
                 <Image
                   src={item.url_imagen}
@@ -168,16 +218,12 @@ export default function SliderAdminPage() {
                 <p className="text-xs text-gray-400 font-sans mt-0.5">Orden: {item.orden}</p>
               </div>
 
-              {/* Status badge */}
               <span className={`text-xs font-sans px-2 py-1 rounded-full shrink-0 ${
-                item.es_activo
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-500'
+                item.es_activo ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
               }`}>
                 {item.es_activo ? 'Activo' : 'Oculto'}
               </span>
 
-              {/* Actions */}
               <div className="flex items-center gap-1 shrink-0">
                 <button
                   onClick={() => handleToggleActivo(item)}
@@ -218,19 +264,82 @@ export default function SliderAdminPage() {
             </div>
 
             <div className="px-6 py-5 space-y-4">
+
+              {/* Upload zone */}
               <div>
                 <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
-                  URL de imagen <span className="text-red-500">*</span>
+                  Imagen <span className="text-red-500">*</span>
                 </label>
+
+                {form.url_imagen ? (
+                  <div className="relative w-full h-44 rounded-xl overflow-hidden bg-gray-100 group">
+                    <Image
+                      src={form.url_imagen}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="flex items-center gap-2 bg-white text-gray-800 text-xs font-sans font-semibold px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+                      >
+                        {uploading ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+                        Cambiar imagen
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setForm((prev) => ({ ...prev, url_imagen: '' }))}
+                        className="flex items-center gap-2 bg-red-500 text-white text-xs font-sans font-semibold px-3 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                      >
+                        <X size={13} /> Quitar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onDrop={handleDrop}
+                    onDragOver={(e) => e.preventDefault()}
+                    onClick={() => !uploading && fileInputRef.current?.click()}
+                    className={`w-full h-44 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-3 transition-all
+                      ${uploading
+                        ? 'border-red-300 bg-red-50/30 cursor-wait'
+                        : 'border-gray-300 cursor-pointer hover:border-red-400 hover:bg-red-50/30'
+                      }`}
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader2 size={28} className="animate-spin text-red-600" />
+                        <p className="text-sm text-gray-500 font-sans">Subiendo imagen...</p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                          <ImageIcon size={22} className="text-gray-400" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-sans text-gray-600">
+                            <span className="text-red-600 font-semibold">Haz clic para subir</span> o arrastra aquí
+                          </p>
+                          <p className="text-xs text-gray-400 font-sans mt-1">PNG, JPG, WEBP · máx. 10MB</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
                 <input
-                  type="text"
-                  value={form.url_imagen}
-                  onChange={(e) => setForm({ ...form, url_imagen: e.target.value })}
-                  placeholder="https://... o /assets/..."
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
                 />
               </div>
 
+              {/* Título */}
               <div>
                 <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Título</label>
                 <input
@@ -242,6 +351,7 @@ export default function SliderAdminPage() {
                 />
               </div>
 
+              {/* Descripción */}
               <div>
                 <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Descripción</label>
                 <textarea
@@ -277,22 +387,7 @@ export default function SliderAdminPage() {
                 </div>
               </div>
 
-              {/* Preview */}
-              {form.url_imagen && (
-                <div className="relative w-full h-32 rounded-lg overflow-hidden bg-gray-100">
-                  <Image
-                    src={form.url_imagen}
-                    alt="Preview"
-                    fill
-                    className="object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).src = '/assets/placeholder.jpg' }}
-                  />
-                </div>
-              )}
-
-              {error && (
-                <p className="text-xs text-red-600 font-sans">{error}</p>
-              )}
+              {error && <p className="text-xs text-red-600 font-sans">{error}</p>}
             </div>
 
             <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
@@ -302,7 +397,7 @@ export default function SliderAdminPage() {
               >
                 Cancelar
               </button>
-              <Button onClick={handleSave} disabled={saving} className="btn-nikkei text-sm py-2 px-5">
+              <Button onClick={handleSave} disabled={saving || uploading} className="btn-nikkei text-sm py-2 px-5">
                 {saving ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
                 {editingItem ? 'Guardar cambios' : 'Agregar'}
               </Button>
