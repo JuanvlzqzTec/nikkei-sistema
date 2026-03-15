@@ -357,7 +357,6 @@ export default function EmpresasAdminPage() {
                     type="text"
                     value={form.nombre_empresa}
                     onChange={(e) => f('nombre_empresa', e.target.value)}
-                    placeholder="Restaurante Tanaka"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200"
                   />
                 </div>
@@ -369,7 +368,6 @@ export default function EmpresasAdminPage() {
                     type="text"
                     value={form.giro_comercial}
                     onChange={(e) => f('giro_comercial', e.target.value)}
-                    placeholder="Gastronomía"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
                   />
                 </div>
@@ -381,7 +379,6 @@ export default function EmpresasAdminPage() {
                     type="text"
                     value={form.sector}
                     onChange={(e) => f('sector', e.target.value)}
-                    placeholder="Restaurantes"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
                   />
                 </div>
@@ -393,7 +390,7 @@ export default function EmpresasAdminPage() {
                     type="text"
                     value={form.telefono}
                     onChange={(e) => f('telefono', e.target.value)}
-                    placeholder="+52 667 000 0000"
+                    placeholder="667 000 0000"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
                   />
                 </div>
@@ -429,7 +426,6 @@ export default function EmpresasAdminPage() {
                     type="text"
                     value={form.ciudad}
                     onChange={(e) => f('ciudad', e.target.value)}
-                    placeholder="Culiacán"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
                   />
                 </div>

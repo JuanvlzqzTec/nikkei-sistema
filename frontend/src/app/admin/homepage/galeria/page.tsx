@@ -252,7 +252,7 @@ export default function GaleriaAdminPage() {
             <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
                 <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Título <span className="text-red-500">*</span></label>
-                <input type="text" value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} placeholder="Primeros inmigrantes en Mazatlán"
+                <input type="text" value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })}
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200" />
               </div>
 
