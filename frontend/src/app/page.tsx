@@ -109,6 +109,14 @@ export default function HomePage() {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
 
+  // Scroll suave a sección
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -128,11 +136,11 @@ export default function HomePage() {
                 <Link href="/login"><Button variant="ghost" className="header-auth-button group"><LogIn size={18} className="text-nikkei-burgundy" /><span>Iniciar Sesión</span></Button></Link>
               </div>
               <div className="flex items-center justify-end mt-1 gap-2">
-                <button className="header-nav-button">Sobre Nosotros</button>
-                <button className="header-nav-button">Eventos</button>
-                <button className="header-nav-button">Directorio Comercial</button>
-                <button className="header-nav-button">Galería Histórica</button>
-                <button className="header-nav-button">Contacto</button>
+                <button onClick={() => scrollToSection('sobre-nosotros')} className="header-nav-button">Sobre Nosotros</button>
+                <button onClick={() => scrollToSection('eventos')} className="header-nav-button">Eventos</button>
+                <button onClick={() => scrollToSection('directorio')} className="header-nav-button">Directorio Comercial</button>
+                <button onClick={() => scrollToSection('galeria')} className="header-nav-button">Galería Histórica</button>
+                <button className="header-nav-button" disabled>Contacto</button>
               </div>
             </div>
           </div>
@@ -259,7 +267,7 @@ export default function HomePage() {
       </section>
 
       {/* Eventos proximos */}
-      <section className="relative py-20 overflow-hidden" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }}>
+      <section id="eventos" className="relative py-20 overflow-hidden" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }}>
         <div className="absolute inset-0 bg-asanoha-pattern opacity-100" />
         <div className="absolute inset-0 bg-linear-to-r from-red-900/10 via-transparent to-red-800/10" />
         <div className="container-nikkei relative z-10">
@@ -334,7 +342,7 @@ export default function HomePage() {
       </section>
 
       {/* Impulso Nikkei */}
-      <section className="py-20 relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at top, #FEF7F0 0%, #FCE4E4 60%, #FEF0E0 100%)' }}>
+      <section id="directorio" className="py-20 relative overflow-hidden" style={{ background: 'radial-gradient(ellipse at top, #FEF7F0 0%, #FCE4E4 60%, #FEF0E0 100%)' }}>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
           <span className="text-[20rem] font-serif text-red-900/2.5 leading-none">商</span>
         </div>
@@ -396,7 +404,7 @@ export default function HomePage() {
       </section>
 
       {/* Nuestras raices */}
-      <section className="bg-wave-pattern bg-linear-to-tr from-red-50 via-amber-50 to-orange-50 py-20 relative overflow-hidden">
+      <section id="galeria" className="bg-wave-pattern bg-linear-to-tr from-red-50 via-amber-50 to-orange-50 py-20 relative overflow-hidden">
         <div className="container-nikkei relative z-10 text-center">
           <div className="mb-12 space-y-4">
             <h2 className="text-3xl lg:text-4xl font-serif text-nikkei-burgundy">私たちのルーツ</h2>
@@ -463,7 +471,7 @@ export default function HomePage() {
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Navegación</h5>
               <ul className="space-y-2.5">
-                {[{ href: '#', label: 'Sobre Nosotros' }, { href: '#', label: 'Archivo Histórico' }, { href: '/eventos', label: 'Calendario de Eventos' }, { href: '#', label: 'Directorio Comercial' }, { href: '/register', label: 'Únete a la Comunidad' }].map((link) => (
+                {[{ href: '#sobre-nosotros', label: 'Sobre Nosotros' }, { href: '#galeria', label: 'Archivo Histórico' }, { href: '#eventos', label: 'Calendario de Eventos' }, { href: '#directorio', label: 'Directorio Comercial' }, { href: '/register', label: 'Únete a la Comunidad' }].map((link) => (
                   <li key={link.label}><Link href={link.href} className="text-sm text-white/55 hover:text-amber-300 hover:pl-1.5 transition-all duration-200 font-sans inline-block">{link.label}</Link></li>
                 ))}
               </ul>
