@@ -57,7 +57,7 @@ export default function RegisterPage() {
             <div className="mx-auto mb-6 flex items-center justify-center">
               <div className="h-20 w-20 rounded-full bg-white shadow-xl border-4 border-amber-100 flex items-center justify-center">
                 <Image
-                  src="/assets/logo-ojn.png"
+                  src="/assets/Logo-Nikkei.png"
                   alt="Logo OJN"
                   width={60}
                   height={60}
@@ -69,7 +69,7 @@ export default function RegisterPage() {
               Únete a la Comunidad
             </h1>
             <p className="text-lg text-red-600/80 font-sans">
-              Asociación Nikkei de Sinaloa
+              Asociación Nikkei de Culiacán
             </p>
             <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-linear-to-r from-red-600 to-orange-400" />
           </div>
@@ -173,7 +173,7 @@ export default function RegisterPage() {
                 {/* Community Notice */}
                 <div className="p-3 bg-linear-to-r from-orange-50 to-amber-50 border border-orange-200/50 rounded-lg">
                   <p className="text-xs text-red-700 font-sans">
-                    <strong>Bienvenido a la familia Nikkei:</strong> Al registrarte, formarás parte de nuestra comunidad dedicada a preservar y celebrar la herencia japonesa en Sinaloa.
+                    <strong>Bienvenido a la familia Nikkei:</strong> Al registrarte, formarás parte de nuestra comunidad dedicada a preservar y celebrar la herencia japonesa en Culiacán.
                   </p>
                 </div>
 
@@ -181,7 +181,7 @@ export default function RegisterPage() {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold font-sans shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 border-0"
+                    className="w-full h-12 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold font-sans shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 cursor-pointer"
                     disabled={isLoading || isSubmitting}
                   >
                     {isLoading || isSubmitting ? (
@@ -223,7 +223,7 @@ export default function RegisterPage() {
           <div className="text-center">
             <div className="mx-auto h-1 w-24 rounded-full bg-linear-to-r from-red-400 via-orange-400 to-amber-400 mb-4" />
             <p className="text-sm text-red-800 font-sans mb-2">
-              © 2026 Asociación Nikkei de Sinaloa
+              © 2026 Asociación Nikkei de Culiacán
             </p>
             <p className="text-xs text-red-800 font-sans mb-2">
               Preservando nuestra herencia cultural 🌸

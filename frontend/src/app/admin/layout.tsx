@@ -91,7 +91,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-white/10 shrink-0">
           <Image
-            src="/assets/Logo-OJN.png"
+            src="/assets/Logo-Nikkei.png"
             alt="Logo"
             width={36}
             height={36}

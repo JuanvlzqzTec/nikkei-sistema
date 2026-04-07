@@ -124,10 +124,10 @@ export default function HomePage() {
         <div className="w-full px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Image src="/assets/Logo-OJN.png" alt="Logo OJN" width={50} height={50} className="rounded-full" priority />
+              <Image src="/assets/Logo-Nikkei.png" alt="Logo OJN" width={75} height={75} className="rounded-full" priority />
               <div>
                 <h1 className="header-logo-text-main">シナロア日系青年協会</h1>
-                <p className="header-logo-text-sub">Asociación de Jóvenes Nikkei, Sinaloa</p>
+                <p className="header-logo-text-sub">Asociación Nikkei, Culiacán</p>
               </div>
             </div>
             <div className="header-buttons-container">
@@ -149,34 +149,32 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="hero-section relative overflow-hidden min-h-screen flex items-center">
-        <div className="absolute inset-0" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }} />
-        <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(ellipse 80% 60% at 60% 50%, #D4AF3720 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, #ff8c0015 0%, transparent 60%)' }} />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 2px, transparent 1px)', backgroundSize: '32px 32px' }} />
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #8B2635 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-5 hidden lg:block" style={{ background: 'linear-gradient(135deg, transparent 40%, #D4AF37 40%, #D4AF37 41%, transparent 41%)' }} />
 
         <div className="relative z-10 container-nikkei py-16 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <h2 className="text-5xl lg:text-7xl font-serif text-white leading-[1.1] tracking-tight">
+                <h2 className="text-5xl lg:text-7xl font-serif text-gray-900 leading-[1.1] tracking-tight">
                   時を超えて<br/>
-                  <span className="text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.4)' }}>続く絆を</span><br/>
+                  <span className="text-transparent" style={{ WebkitTextStroke: '1px rgba(139,38,53,1)' }}>続く絆を</span><br/>
                   築く
                 </h2>
-                <div className="w-16 h-0.5 bg-linear-to-r from-amber-400 to-transparent rounded-full" />
-                <p className="text-xl lg:text-2xl text-white/75 font-serif italic">Creando vínculos que perduran con el tiempo</p>
+                <div className="w-16 h-0.5 bg-linear-to-r from-nikkei-burgundy to-transparent rounded-full" />
+                <p className="text-xl lg:text-2xl text-nikkei-burgundy/80 font-serif italic">Creando vínculos que perduran con el tiempo</p>
               </div>
-              <p className="text-base text-white/60 font-sans leading-relaxed max-w-md">Únete a nuestra comunidad y forma parte de la historia que conecta las tradiciones japonesas con el corazón de Sinaloa.</p>
+              <p className="text-base text-gray-600 font-sans leading-relaxed max-w-md">Únete a nuestra comunidad y forma parte de la historia que conecta las tradiciones japonesas con el corazón de Sinaloa.</p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link href="/register">
                   <Button className="btn-nikkei group">Únete a la Comunidad<ArrowRight size={18} className="ml-1 transition-transform duration-300 group-hover:translate-x-1" /></Button>
                 </Link>
               </div>
-              <div className="flex gap-8 pt-4 border-t border-white/10">
+              <div className="flex gap-8 pt-4 border-t border-nikkei-burgundy/20">
                 {[{ value: '70+', label: 'Años de historia' }, { value: '3ª', label: 'Generación activa' }, { value: '12', label: 'Familias fundadoras' }].map((stat) => (
                   <div key={stat.label}>
-                    <p className="text-2xl font-serif text-amber-300">{stat.value}</p>
-                    <p className="text-xs text-white/50 font-sans">{stat.label}</p>
+                    <p className="text-2xl font-serif text-nikkei-burgundy">{stat.value}</p>
+                    <p className="text-gray-500 font-sans">{stat.label}</p>
                   </div>
                 ))}
               </div>
@@ -204,11 +202,11 @@ export default function HomePage() {
                 </div>
                 {slides.length > 1 && (
                   <>
-                    <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10"><ChevronLeft size={20} /></button>
-                    <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-white/10"><ChevronRight size={20} /></button>
+                    <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-nikkei-burgundy/20 hover:bg-nikkei-burgundy/50 text-nikkei-burgundy hover:text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-nikkei-burgundy/20"><ChevronLeft size={20} /></button>
+                    <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-nikkei-burgundy/20 hover:bg-nikkei-burgundy/50 text-nikkei-burgundy hover:text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 flex items-center justify-center border border-nikkei-burgundy/20"><ChevronRight size={20} /></button>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                       {slides.map((_, index) => (
-                        <button key={index} onClick={() => setCurrentSlide(index)} className={`transition-all duration-300 rounded-full ${index === currentSlide ? 'w-6 h-2 bg-amber-400' : 'w-2 h-2 bg-white/40 hover:bg-white/70'}`} />
+                        <button key={index} onClick={() => setCurrentSlide(index)} className={`transition-all duration-300 rounded-full ${index === currentSlide ? 'w-6 h-2 bg-nikkei-burgundy' : 'w-2 h-2 bg-nikkei-burgundy/30 hover:bg-nikkei-burgundy/60'}`} />
                       ))}
                     </div>
                   </>
@@ -217,8 +215,8 @@ export default function HomePage() {
               <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl px-5 py-3 hidden lg:flex items-center gap-3 border border-amber-100">
                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-lg">📢</div>
                 <div>
-                  <p className="text-xs text-gray-500 font-sans">Próximo evento</p>
-                  <p className="text-sm font-serif text-red-800 font-semibold">{eventosProximos[0]?.titulo || 'Próximamente'}</p>
+                  <p className="text-gray-500 font-sans">Próximo evento</p>
+                  <p className="text-base font-serif text-red-800 font-semibold">{eventosProximos[0]?.titulo || 'Próximamente'}</p>
                 </div>
               </div>
             </div>
@@ -227,7 +225,7 @@ export default function HomePage() {
 
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path d="M0 60 L0 30 Q360 0 720 30 Q1080 60 1440 30 L1440 60 Z" fill="rgb(255,247,240)" fillOpacity="0.08"/>
+            <path d="M0 60 L0 30 Q360 0 720 30 Q1080 60 1440 30 L1440 60 Z" fill="rgb(253,244,236)" fillOpacity="0.6"/>
           </svg>
         </div>
       </section>
@@ -256,9 +254,9 @@ export default function HomePage() {
               <div className="w-20 h-1 bg-linear-to-r from-red-600 to-orange-400 rounded-full mx-auto md:mx-0" />
               <p className="text-lg text-gray-700 font-sans leading-relaxed">Nos enfocamos en <strong className="text-red-800">preservar, difundir y vivir la cultura japonesa</strong> en nuestra comunidad.</p>
               <div className="grid grid-cols-3 gap-4 mt-8">
-                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🌸</div><h4 className="font-serif text-red-800 text-sm font-semibold">Preservar</h4><p className="text-xs text-gray-600 font-sans">Cultura</p></div>
-                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🤝</div><h4 className="font-serif text-red-800 text-sm font-semibold">Integrar</h4><p className="text-xs text-gray-600 font-sans">Comunidad</p></div>
-                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🏮</div><h4 className="font-serif text-red-800 text-sm font-semibold">Fortalecer</h4><p className="text-xs text-gray-600 font-sans">Identidad</p></div>
+                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🌸</div><h4 className="font-serif text-red-800 text-lg font-semibold">Preservar</h4><p className="text-base text-gray-600 font-sans">Cultura</p></div>
+                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🤝</div><h4 className="font-serif text-red-800 text-lg font-semibold">Integrar</h4><p className="text-base text-gray-600 font-sans">Comunidad</p></div>
+                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🏮</div><h4 className="font-serif text-red-800 text-lg font-semibold">Fortalecer</h4><p className="text-base text-gray-600 font-sans">Identidad</p></div>
               </div>
               <div className="pt-4"><Link href="/historia"><Button className="btn-nikkei">Conoce Nuestra Historia</Button></Link></div>
             </div>
@@ -267,18 +265,18 @@ export default function HomePage() {
       </section>
 
       {/* Eventos proximos */}
-      <section id="eventos" className="relative py-20 overflow-hidden" style={{ backgroundColor: 'var(--color-nikkei-burgundy)' }}>
+      <section id="eventos" className="eventos-section relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-asanoha-pattern opacity-100" />
         <div className="absolute inset-0 bg-linear-to-r from-red-900/10 via-transparent to-red-800/10" />
         <div className="container-nikkei relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6 text-center md:text-left">
             <div className="space-y-4">
-              <h2 className="text-3xl lg:text-4xl font-serif text-white">次回のイベント</h2>
-              <h3 className="text-2xl font-serif text-nikkei-gold">Próximos Eventos</h3>
-              <div className="w-20 h-1 bg-nikkei-gold rounded-full mx-auto md:mx-0" />
+              <h2 className="text-3xl lg:text-4xl font-serif text-nikkei-burgundy-dark">次回のイベント</h2>
+              <h3 className="text-2xl font-serif text-nikkei-burgundy">Próximos Eventos</h3>
+              <div className="w-20 h-1 bg-nikkei-burgundy rounded-full mx-auto md:mx-0" />
             </div>
             <Link href="/eventos">
-              <Button className="btn-nikkei" style={{ background: 'linear-gradient(to right, #D4AF37, #B8941F)', color: '#6B1D28' }}>Ver calendario completo</Button>
+              <Button className="btn-nikkei" style={{ background: 'linear-gradient(to right, #8B2635, #6B1D28)', color: '#ffffff' }}>Ver calendario completo</Button>
             </Link>
           </div>
 
@@ -288,7 +286,7 @@ export default function HomePage() {
             </div>
           ) : eventosProximos.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-white/50 font-sans">No hay eventos próximos programados.</p>
+              <p className="text-gray-500 font-sans">No hay eventos próximos programados.</p>
             </div>
           ) : (
             <div className="grid lg:grid-cols-2 gap-8">
@@ -308,13 +306,13 @@ export default function HomePage() {
                   </div>
                   <div className="p-8 md:w-3/5 flex flex-col justify-between">
                     <div className="space-y-4">
-                      <div className="flex items-center text-nikkei-burgundy gap-2 text-sm font-semibold">
+                      <div className="flex items-center text-nikkei-burgundy gap-2 text-lg font-semibold">
                         <Calendar size={16} />
                         {new Date(evento.fecha_inicio).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })}
                       </div>
                       <h4 className="text-2xl font-serif text-gray-900 leading-tight">{evento.titulo}</h4>
                       {(evento.ubicacion || evento.ciudad) && (
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-base text-gray-600">
                           <MapPin size={16} className="text-nikkei-gold-dark" />
                           {[evento.ubicacion, evento.ciudad].filter(Boolean).join(', ')}
                         </div>
@@ -327,7 +325,7 @@ export default function HomePage() {
                         </Link>
                       ) : (
                         <Link href={`/eventos/${evento.id_evento}`}>
-                          <Button className="w-full py-3 border border-nikkei-burgundy text-nikkei-burgundy hover:bg-nikkei-burgundy hover:text-white cursor-pointer font-sans font-semibold rounded-lg transition-all duration-300 text-sm flex items-center gap-2">
+                          <Button className="w-full py-3 border border-nikkei-burgundy text-nikkei-burgundy hover:bg-nikkei-burgundy hover:text-white cursor-pointer font-sans font-semibold rounded-lg transition-all duration-300 text-base flex items-center gap-2">
                             <ArrowRight size={18} />Ver detalles
                           </Button>
                         </Link>
@@ -348,11 +346,11 @@ export default function HomePage() {
         </div>
         <div className="container-nikkei relative z-10">
           <div className="text-center mb-16 space-y-3">
-            <p className="text-xs tracking-[0.3em] uppercase font-sans text-amber-700/70">Directorio Empresarial</p>
+            <p className="text-base tracking-[0.3em] uppercase font-sans text-amber-700/70">Directorio Empresarial</p>
             <h2 className="text-3xl lg:text-4xl font-serif text-nikkei-burgundy-dark">日系ビジネスの推進</h2>
             <h3 className="text-2xl font-serif text-nikkei-burgundy">Impulso Nikkei</h3>
             <div className="w-12 h-0.5 bg-nikkei-gold mx-auto rounded-full" />
-            <p className="text-gray-500 font-sans max-w-md mx-auto text-sm leading-relaxed">Apoya y descubre los emprendimientos de nuestra comunidad japonesa en Sinaloa.</p>
+            <p className="text-gray-500 font-serif font-semibold max-w-md mx-auto text-base leading-relaxed">Apoya y descubre los emprendimientos de nuestra comunidad japonesa en Sinaloa.</p>
           </div>
 
           {empresasLoading ? (
@@ -373,8 +371,8 @@ export default function HomePage() {
                         <Image src={empresa.logo_empresa} alt={empresa.nombre_empresa} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-linear-to-t from-nikkei-burgundy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
                         <div className="absolute inset-0 flex flex-col items-center justify-end p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                          <ExternalLink size={14} className="text-white/80 mb-1" />
-                          <p className="text-white text-[10px] font-sans">Ver empresa</p>
+                          <ExternalLink size={20} className="text-white/80 mb-1" />
+                          <p className="text-white text-sm font-sans">Ver empresa</p>
                         </div>
                       </>
                     ) : (
@@ -384,8 +382,8 @@ export default function HomePage() {
                     )}
                   </div>
                   <div className="p-3 text-center w-full">
-                    <p className="font-serif text-nikkei-burgundy text-xs font-semibold leading-tight line-clamp-2">{empresa.nombre_empresa}</p>
-                    {empresa.giro_comercial && <p className="text-[10px] text-amber-700 font-sans mt-0.5">{empresa.giro_comercial}</p>}
+                    <p className="font-serif text-nikkei-burgundy text-base font-semibold leading-tight line-clamp-2">{empresa.nombre_empresa}</p>
+                    {empresa.giro_comercial && <p className="text-sm text-amber-700 font-serif mt-0.5">{empresa.giro_comercial}</p>}
                   </div>
                 </a>
               ))}
@@ -455,10 +453,10 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-5">
             <div className="space-y-5">
               <div className="flex items-center justify-center md:justify-start gap-3">
-                <Image src="/assets/Logo-OJN.png" alt="Logo OJN" width={44} height={44} className='pt-2'/>
+                <Image src="/assets/Logo-Nikkei.png" alt="Logo OJN" width={44} height={44} className='pt-2'/>
                 <div>
                   <h4 className="font-serif text-base leading-tight pt-2 text-white">Asociación Nikkei</h4>
-                  <p className="text-xs text-amber-300/80 font-sans">Sinaloa, México</p>
+                  <p className="text-xs text-amber-300/80 font-sans">Culiacán, Sinaloa</p>
                 </div>
               </div>
               <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mx-auto md:mx-0">Preservando el legado de nuestros antepasados y construyendo el futuro de nuestra comunidad.</p>
@@ -498,7 +496,7 @@ export default function HomePage() {
           </div>
           <div className="h-px bg-linear-to-r from-transparent via-white/15 to-transparent mb-6" />
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-white/35 text-xs font-sans">
-            <p>© 2026 Asociación de Jóvenes Nikkei Sinaloa. Todos los derechos reservados.</p>
+            <p>© 2026 Asociación Nikkei de Culiacán. Todos los derechos reservados.</p>
             <p className="font-serif text-white/20 text-sm tracking-widest hidden md:block">根 · 絆 · 未来</p>
             <div className="flex gap-5">
               <Link href="#" className="hover:text-amber-300 transition-colors duration-200">Aviso de Privacidad</Link>
