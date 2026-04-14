@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { 
-  LogIn, UserPlus, ChevronLeft, ChevronRight, History, 
+  ChevronLeft, ChevronRight, History, 
   Calendar, MapPin, Users, Ticket, ExternalLink,
   Mail, Phone, Instagram, Facebook, Youtube, ArrowRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { galeriaService, type GaleriaItem } from '@/lib/galeriaService'
+import SiteHeader from '@/components/SiteHeader'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -109,43 +110,10 @@ export default function HomePage() {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
 
-  // Scroll suave a sección
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }
-
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="header-container shadow-sm">
-        <div className="w-full px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Image src="/assets/Logo-Nikkei.png" alt="Logo OJN" width={75} height={75} className="rounded-full" priority />
-              <div>
-                <h1 className="header-logo-text-main">シナロア日系青年協会</h1>
-                <p className="header-logo-text-sub">Asociación Nikkei, Culiacán</p>
-              </div>
-            </div>
-            <div className="header-buttons-container">
-              <div className="header-buttons-top" style={{ padding: '0.1px 0.5px' }}>
-                <Link href="/register"><Button variant="ghost" className="header-auth-button group"><UserPlus size={18} className="text-nikkei-burgundy" /><span>Registrarse</span></Button></Link>
-                <Link href="/login"><Button variant="ghost" className="header-auth-button group"><LogIn size={18} className="text-nikkei-burgundy" /><span>Iniciar Sesión</span></Button></Link>
-              </div>
-              <div className="flex items-center justify-end mt-1 gap-2">
-                <button onClick={() => scrollToSection('sobre-nosotros')} className="header-nav-button">Sobre Nosotros</button>
-                <button onClick={() => scrollToSection('eventos')} className="header-nav-button">Eventos</button>
-                <button onClick={() => scrollToSection('directorio')} className="header-nav-button">Directorio Comercial</button>
-                <button onClick={() => scrollToSection('galeria')} className="header-nav-button">Galería Histórica</button>
-                <button className="header-nav-button" disabled>Contacto</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <SiteHeader variant="home" />
 
       {/* Hero */}
       <section className="hero-section relative overflow-hidden min-h-screen flex items-center">

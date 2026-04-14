@@ -74,7 +74,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header-container {
-  background: linear-gradient(to right, var(--color-nikkei-cream), #fef2e7, #fed7d7);
+  background: linear-gradient(135deg, #FEF7F0 0%, #FDE8D8 40%, #FCEEE8 100%);
   padding: var(--spacing-header) 0.5rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
 }
