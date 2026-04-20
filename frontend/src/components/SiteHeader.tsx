@@ -24,7 +24,7 @@ export default function SiteHeader({ variant = 'page' }: Props) {
   }
 
   return (
-    <header className="header-container shadow-sm border-b-2 border-red-800/20">
+    <header className="header-container shadow-sm border-b border-red-800/30">
       <div className="w-full px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
 
