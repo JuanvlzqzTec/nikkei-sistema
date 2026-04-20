@@ -78,7 +78,7 @@ export default function EventosPage() {
 
           <div className="relative z-10 container-nikkei pt-12 pb-16">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div className="space-y-3">
+              <div className="space-y-3 pt-2">
                 <h1 className="text-4xl lg:text-5xl font-serif text-gray-900 leading-tight">
                   次回のイベント
                 </h1>
