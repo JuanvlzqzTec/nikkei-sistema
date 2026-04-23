@@ -20,7 +20,7 @@ const navItems = [
   },
   {
     href: '/admin/homepage',
-    label: 'Gestión Homepage',
+    label: 'Gestión de Secciones',
     icon: Globe,
     children: [
       { href: '/admin/homepage/slider', label: 'Slider Hero', icon: ImageIcon },
