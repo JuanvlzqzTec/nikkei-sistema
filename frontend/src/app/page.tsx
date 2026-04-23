@@ -292,7 +292,7 @@ export default function HomePage() {
                           <Button className="w-full btn-nikkei py-3 text-base"><Ticket size={18} />Registrarme ahora</Button>
                         </Link>
                       ) : (
-                        <Link href={`/eventos/${evento.id_evento}`}>
+                        <Link href="/eventos">
                           <Button className="w-full py-3 border border-nikkei-burgundy text-nikkei-burgundy hover:bg-nikkei-burgundy hover:text-white cursor-pointer font-sans font-semibold rounded-lg transition-all duration-300 text-base flex items-center gap-2">
                             <ArrowRight size={18} />Ver detalles
                           </Button>

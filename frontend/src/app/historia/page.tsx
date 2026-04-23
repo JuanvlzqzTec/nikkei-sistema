@@ -29,7 +29,7 @@ export default function HistoriaPage() {
   const [items, setItems] = useState<GaleriaItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [vista, setVista] = useState<'grid' | 'timeline'>('grid')
+  const [vista, setVista] = useState<'grid' | 'timeline'>('timeline')
   const [itemActivo, setItemActivo] = useState<GaleriaItem | null>(null)
   const [indexActivo, setIndexActivo] = useState<number>(-1)
 
