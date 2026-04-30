@@ -241,7 +241,7 @@ export default function HomePage() {
                 <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🤝</div><h4 className="font-serif text-red-800 text-lg font-semibold">Integrar</h4><p className="text-base text-gray-600 font-sans">Comunidad</p></div>
                 <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🏮</div><h4 className="font-serif text-red-800 text-lg font-semibold">Fortalecer</h4><p className="text-base text-gray-600 font-sans">Identidad</p></div>
               </div>
-              <div className="pt-4"><Link href="/historia"><Button className="btn-nikkei">Conoce Nuestra Historia</Button></Link></div>
+              <div className="pt-4"><Link href="/sobre-nosotros"><Button className="btn-nikkei">Conoce a Nuestra Comunidad</Button></Link></div>
             </div>
           </div>
         </div>
