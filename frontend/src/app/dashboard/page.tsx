@@ -51,7 +51,7 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Image
-              src="/assets/logo-ojn.png"
+              src="/assets/Logo-Nikkei.png"
               alt="Logo OJN"
               width={40}
               height={40}
