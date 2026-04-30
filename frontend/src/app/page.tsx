@@ -139,12 +139,14 @@ export default function HomePage() {
                 </Link>
               </div>
               <div className="flex gap-8 pt-4 border-t border-nikkei-burgundy/20">
-                {[{ value: '70+', label: 'Años de historia' }, { value: '3ª', label: 'Generación activa' }, { value: '12', label: 'Familias fundadoras' }].map((stat) => (
-                  <div key={stat.label}>
-                    <p className="text-2xl font-serif text-nikkei-burgundy">{stat.value}</p>
-                    <p className="text-gray-500 font-sans">{stat.label}</p>
-                  </div>
-                ))}
+                <blockquote className="pl-5 border-l-4 border-amber-400">
+                  <p className="text-base text-gray-600 font-sans leading-relaxed italic">
+                    &ldquo;Lo más importante es compartir la cultura, las tradiciones y los valores.&rdquo;
+                  </p>
+                  <footer className="mt-2 text-sm font-sans text-red-700 font-semibold not-italic">
+                    — Juan Manuel Kuroda, Presidente de la Asociación
+                  </footer>
+                </blockquote>
               </div>
             </div>
 
@@ -220,7 +222,20 @@ export default function HomePage() {
                 <h3 className="text-2xl lg:text-3xl font-serif text-red-700">Sobre Nosotros</h3>
               </div>
               <div className="w-20 h-1 bg-linear-to-r from-red-600 to-orange-400 rounded-full mx-auto md:mx-0" />
-              <p className="text-lg text-gray-700 font-sans leading-relaxed">Nos enfocamos en <strong className="text-red-800">preservar, difundir y vivir la cultura japonesa</strong> en nuestra comunidad.</p>
+              <p className="text-lg text-gray-700 font-sans leading-relaxed">Nos enfocamos en <strong className="text-red-800">preservar, difundir y vivir la cultura japonesa</strong> en nuestra comunidad. Promovemos actividades culturales, educativas y de integración que fortalecen la <strong className="text-red-800">identidad Nikkei</strong> y crean puentes de amistad entre <strong className="text-red-800">Japón, México y nuestra sociedad</strong>.</p>
+
+              {/* Citas */}
+              <div className="space-y-4 pt-2">
+                <blockquote className="pl-5 border-l-4 border-amber-400">
+                  <p className="text-base text-gray-600 font-sans leading-relaxed italic">
+                    &ldquo;Ahora tienen dos raíces: una de sangre, de Japón, y su vida, experiencia y amistad, de México.&rdquo;
+                  </p>
+                  <footer className="mt-2 text-sm font-sans text-red-700 font-semibold not-italic">
+                    — Nayuta Tsugaoka, primera generación Nikkei
+                  </footer>
+                </blockquote>
+              </div>
+
               <div className="grid grid-cols-3 gap-4 mt-8">
                 <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🌸</div><h4 className="font-serif text-red-800 text-lg font-semibold">Preservar</h4><p className="text-base text-gray-600 font-sans">Cultura</p></div>
                 <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🤝</div><h4 className="font-serif text-red-800 text-lg font-semibold">Integrar</h4><p className="text-base text-gray-600 font-sans">Comunidad</p></div>
