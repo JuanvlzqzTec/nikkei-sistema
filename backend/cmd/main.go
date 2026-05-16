@@ -50,6 +50,8 @@ func main() {
 	sliderHandler := handlers.NewSliderHandler()
 	eventosHandler := handlers.NewEventosHandler()
 	empresasHandler := handlers.NewEmpresasHandler()
+	familiasHandler := handlers.NewFamiliasHandler()
+	registroHandler := handlers.NewRegistroComunitarioHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -130,6 +132,13 @@ func main() {
 			empresas.GET("/:id", empresasHandler.GetByID)
 		}
 
+		// Familias (público — para el catálogo del wizard)
+		familias := api.Group("/familias")
+		{
+			familias.GET("/publicas", familiasHandler.GetPublicas)
+			familias.GET("/:id/miembros-publicos", familiasHandler.GetMiembrosPublicos)
+		}
+
 		//Rutas usuario autenticado
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())
@@ -142,12 +151,19 @@ func main() {
 			// Usuario registrado puede solicitar registro de empresa
 			protected.POST("empresas/solicitar", empresasHandler.SolicitarRegistro)
 
+			// Registro comunitario (usuario autenticado)
+			protected.POST("registro-comunitario", registroHandler.CrearRegistro)
+			protected.GET("registro-comunitario/mi-estado", registroHandler.MiEstado)
+
 			//Rutas admin
 			admin := protected.Group("/admin")
 			admin.Use(middleware.RequireAdmin())
 			{
 				admin.PUT("users/:id/role", authHandler.UpdateUserRole)
 				admin.DELETE("users/:id", authHandler.DeactivateUser)
+				admin.GET("registros-pendientes", registroHandler.GetPendientes)
+				admin.PATCH("registros-pendientes/:id/aprobar", registroHandler.Aprobar)
+				admin.PATCH("registros-pendientes/:id/rechazar", registroHandler.Rechazar)
 
 				sliderAdmin := admin.Group("/slider")
 				{

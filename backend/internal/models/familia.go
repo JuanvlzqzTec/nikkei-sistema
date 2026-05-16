@@ -17,6 +17,7 @@ type Familia struct {
 	HistoriaFamiliar     *string   `gorm:"type:text" json:"historia_familiar"`
 	FotoFamiliar         *string   `gorm:"size:500" json:"foto_familiar"`
 	DocumentosHistoricos *string   `gorm:"type:jsonb" json:"documentos_historicos"`
+	PendienteAprobacion  bool      `gorm:"default:false" json:"pendiente_aprobacion"`
 	CreatedAt            time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt            time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 

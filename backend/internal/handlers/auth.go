@@ -6,7 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/middleware"
+	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/models"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/services"
 )
 
@@ -54,11 +56,12 @@ type AuthResponse struct {
 
 // Estructura para información del usuario
 type UserResponse struct {
-	ID            uint   `json:"id"`
-	Email         string `json:"email"`
-	Role          string `json:"role"`
-	IsActive      bool   `json:"is_active"`
-	EmailVerified bool   `json:"email_verified"`
+	ID             uint   `json:"id"`
+	Email          string `json:"email"`
+	Role           string `json:"role"`
+	RegistroEstado string `json:"registro_estado"`
+	IsActive       bool   `json:"is_active"`
+	EmailVerified  bool   `json:"email_verified"`
 }
 
 // Maneja el registro de nuevos usuarios
@@ -104,11 +107,12 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	// Respuesta exitosa
 	response := AuthResponse{
 		User: UserResponse{
-			ID:            user.IDUser,
-			Email:         user.Email,
-			Role:          user.Role,
-			IsActive:      user.IsActive,
-			EmailVerified: user.EmailVerified,
+			ID:             user.IDUser,
+			Email:          user.Email,
+			Role:           user.Role,
+			RegistroEstado: user.RegistroEstado,
+			IsActive:       user.IsActive,
+			EmailVerified:  user.EmailVerified,
 		},
 		Token: token,
 	}
@@ -143,11 +147,12 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	// Respuesta exitosa
 	response := AuthResponse{
 		User: UserResponse{
-			ID:            user.IDUser,
-			Email:         user.Email,
-			Role:          user.Role,
-			IsActive:      user.IsActive,
-			EmailVerified: user.EmailVerified,
+			ID:             user.IDUser,
+			Email:          user.Email,
+			Role:           user.Role,
+			RegistroEstado: user.RegistroEstado,
+			IsActive:       user.IsActive,
+			EmailVerified:  user.EmailVerified,
 		},
 		Token: token,
 	}
@@ -180,11 +185,12 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 	}
 
 	response := UserResponse{
-		ID:            user.IDUser,
-		Email:         user.Email,
-		Role:          user.Role,
-		IsActive:      user.IsActive,
-		EmailVerified: user.EmailVerified,
+		ID:             user.IDUser,
+		Email:          user.Email,
+		Role:           user.Role,
+		RegistroEstado: user.RegistroEstado,
+		IsActive:       user.IsActive,
+		EmailVerified:  user.EmailVerified,
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -366,7 +372,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 
 // ValidateToken valida si un token es válido
 func (h *AuthHandler) ValidateToken(c *gin.Context) {
-	userID, email, role, exists := middleware.GetCurrentUser(c)
+	userID, _, _, exists := middleware.GetCurrentUser(c)
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"valid": false,
@@ -375,12 +381,22 @@ func (h *AuthHandler) ValidateToken(c *gin.Context) {
 		return
 	}
 
+	var user models.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"valid": false,
+			"error": "Usuario no encontrado",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"valid": true,
 		"user": gin.H{
-			"id":    userID,
-			"email": email,
-			"role":  role,
+			"id":              user.IDUser,
+			"email":           user.Email,
+			"role":            user.Role,
+			"registro_estado": user.RegistroEstado,
 		},
 	})
 }
