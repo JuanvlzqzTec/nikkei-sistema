@@ -6,6 +6,7 @@ export interface User {
   id: number
   email: string
   role: string
+  registro_estado: string
   is_active: boolean
   email_verified: boolean
 }
