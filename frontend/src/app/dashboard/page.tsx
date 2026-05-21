@@ -4,20 +4,38 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, User, Mail, Shield, Calendar } from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { LogOut, User, Building2, Heart, Lock } from 'lucide-react'
 
 import { useAuthStore } from '@/store/authStore'
+
 import BannerRegistroComunitario from './_BannerRegistroComunitario'
+import SaludoBienvenida from './_SaludoBienvenida'
+import ProximosEventos from './_ProximosEventos'
+import DashboardFooter from './_DashboardFooter'
+
+const ROL_LABELS: Record<string, { label: string; bg: string; text: string }> = {
+  admin: {
+    label: 'Administrador',
+    bg: 'bg-red-100',
+    text: 'text-red-800',
+  },
+  miembro: {
+    label: 'Miembro',
+    bg: 'bg-green-100',
+    text: 'text-green-800',
+  },
+  pendiente: {
+    label: 'Pendiente',
+    bg: 'bg-amber-100',
+    text: 'text-amber-800',
+  },
+}
 
 export default function DashboardPage() {
   const router = useRouter()
   const { user, logout, checkAuth, isAuthenticated } = useAuthStore()
 
   useEffect(() => {
-    // Verificar autenticación al cargar la página
     if (!isAuthenticated) {
       checkAuth()
     }
@@ -28,192 +46,213 @@ export default function DashboardPage() {
     router.push('/')
   }
 
-  // Si no está autenticado, redirigir al login
   if (!isAuthenticated || !user) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-orange-50 via-amber-50 to-red-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-serif text-red-800 mb-4">Acceso Restringido</h1>
-          <p className="text-red-600 mb-6 font-sans">Necesitas iniciar sesión para acceder a esta página</p>
-          <Link href="/login">
-            <Button className="bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-sans">
-              Iniciar Sesión
-            </Button>
+      <div
+        className="min-h-screen flex items-center justify-center p-4"
+        style={{
+          background:
+            'linear-gradient(135deg, #FEF7F0 0%, #FDE8D8 40%, #FCEEE8 100%)',
+        }}
+      >
+        <div className="text-center max-w-md space-y-5">
+          <h1 className="font-serif text-3xl text-red-800">
+            Acceso restringido
+          </h1>
+          <p className="font-sans text-base text-red-600">
+            Necesitas iniciar sesión para acceder a tu dashboard.
+          </p>
+          <Link
+            href="/login"
+            className="inline-block px-8 py-3 bg-linear-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-sans font-semibold rounded-xl shadow-md transition-all duration-200"
+          >
+            Iniciar sesión
           </Link>
         </div>
       </div>
     )
   }
 
+  const registroCompletado = user.registro_estado === 'completado'
+  const rolInfo = ROL_LABELS[user.role] ?? ROL_LABELS.pendiente
+
   return (
-    <div className="min-h-screen bg-wave-pattern bg-linear-to-br from-orange-50 via-amber-50 to-red-50">
+    <div
+      className="min-h-screen bg-wave-pattern"
+      style={{
+        background:
+          'linear-gradient(135deg, #FEF7F0 0%, #FDE8D8 40%, #FCEEE8 100%)',
+      }}
+    >
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-orange-200 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-red-800/15 shadow-sm sticky top-0 z-10">
+        <div className="container-nikkei py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
             <Image
               src="/assets/Logo-Nikkei.png"
-              alt="Logo OJN"
-              width={40}
-              height={40}
+              alt="Logo Asociación Nikkei"
+              width={44}
+              height={44}
               className="rounded-full"
+              priority
             />
             <div>
-              <h1 className="text-lg font-serif text-red-800">Dashboard Nikkei</h1>
-              <p className="text-sm text-red-600/70 font-sans">Asociación de Sinaloa</p>
+              <p className="font-serif text-red-800 text-lg leading-tight">
+                Dashboard Nikkei
+              </p>
+              <p className="font-sans text-xs text-red-600/70">
+                Asociación de Culiacán
+              </p>
             </div>
-          </div>
-          
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="border-red-300 text-red-600 hover:bg-red-50 font-sans"
+          </Link>
+
+          <Link
+            href="/"
+            className="hidden sm:inline-block font-sans text-base text-red-700 hover:text-red-900 transition-colors"
           >
-            <LogOut className="h-4 w-4 mr-2" />
-            Cerrar Sesión
-          </Button>
+            Ver sitio público
+          </Link>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-4 h-20 w-20 rounded-full bg-white shadow-lg border-4 border-amber-100 flex items-center justify-center">
-            <User className="h-8 w-8 text-red-600" />
-          </div>
-          <h1 className="text-4xl font-serif text-red-800 mb-2">
-            ¡Bienvenido de vuelta!
-          </h1>
-          <p className="text-lg text-red-600/80 font-sans">
-            Te has conectado exitosamente al sistema
-          </p>
-          <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-linear-to-r from-red-600 to-orange-400" />
-        </div>
+      {/* Contenido */}
+      <main className="container-nikkei py-10 lg:py-14">
+        <div className="max-w-5xl mx-auto space-y-10">
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
-          {/* User Info Card */}
-          <Card className="bg-white/90 backdrop-blur-sm border-amber-200/50 shadow-lg">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center text-red-800 font-sans">
-                <Mail className="h-5 w-5 mr-2" />
-                Tu Información
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div>
-                <p className="text-sm text-red-600 font-semibold font-sans">Email:</p>
-                <p className="text-gray-800 font-sans">{user.email}</p>
-              </div>
-              <div>
-                <p className="text-sm text-red-600 font-semibold font-sans">Rol:</p>
-                <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium font-sans ${
-                  user.role === 'admin' 
-                    ? 'bg-red-100 text-red-800' 
-                    : user.role === 'miembro' 
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {user.role === 'admin' && '👑 Administrador'}
-                  {user.role === 'miembro' && '🌸 Miembro'}
-                  {user.role === 'pendiente' && '⏳ Pendiente'}
-                </span>
-              </div>
-              <div>
-                <p className="text-sm text-red-600 font-semibold font-sans">Estado:</p>
-                <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium font-sans ${
-                  user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {user.is_active ? '✅ Activo' : '❌ Inactivo'}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <SaludoBienvenida />
 
-          {/* Quick Actions Card */}
-          <Card className="bg-white/90 backdrop-blur-sm border-amber-200/50 shadow-lg">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center text-red-800 font-sans">
-                <Shield className="h-5 w-5 mr-2" />
-                Acciones Rápidas
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button
-                variant="outline"
-                className="w-full justify-start border-orange-200 hover:bg-orange-50 font-sans"
-                disabled
-              >
-                👤 Editar Perfil
-                <span className="ml-auto text-xs text-gray-400">Próximamente</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start border-orange-200 hover:bg-orange-50 font-sans"
-                disabled
-              >
-                🔒 Cambiar Contraseña
-                <span className="ml-auto text-xs text-gray-400">Próximamente</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start border-orange-200 hover:bg-orange-50 font-sans"
-                disabled
-              >
-                👥 Mi Familia
-                <span className="ml-auto text-xs text-gray-400">Próximamente</span>
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* System Status Card */}
-          <Card className="bg-white/90 backdrop-blur-sm border-amber-200/50 shadow-lg">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center text-red-800 font-sans">
-                <Calendar className="h-5 w-5 mr-2" />
-                Estado del Sistema
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 font-sans">Autenticación:</span>
-                <span className="text-green-600 font-semibold font-sans">✅ Operativo</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 font-sans">Base de Datos:</span>
-                <span className="text-green-600 font-semibold font-sans">✅ Conectada</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 font-sans">Sesión:</span>
-                <span className="text-green-600 font-semibold font-sans">✅ Activa</span>
-              </div>
-              <div className="pt-2 border-t border-orange-200">
-                <p className="text-xs text-gray-500 font-sans">
-                  Sistema Nikkei v1.0.0
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Banner de registro comunitario */}
-        <div className="mt-10">
           <BannerRegistroComunitario />
+
+          <ProximosEventos />
+
+          {/* Bloques exclusivos para miembros completados */}
+          {registroCompletado && (
+            <>
+              {/* Mi información */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <User size={20} className="text-red-700" />
+                  <h2 className="font-serif text-2xl text-red-800">
+                    Mi información
+                  </h2>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-amber-100 shadow-sm p-6 sm:p-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
+                        Nombre
+                      </p>
+                      <p className="font-serif text-xl text-gray-900">
+                        {user.nombre_completo ?? '—'}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
+                        Correo
+                      </p>
+                      <p className="font-sans text-base text-gray-700 break-all">
+                        {user.email}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
+                        Rol en la comunidad
+                      </p>
+                      <span
+                        className={`inline-block px-3 py-1 rounded-full font-sans text-base font-medium ${rolInfo.bg} ${rolInfo.text}`}
+                      >
+                        {rolInfo.label}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
+                        Estado
+                      </p>
+                      <span className="inline-block px-3 py-1 rounded-full font-sans text-base font-medium bg-green-100 text-green-800">
+                        ✅ Activo
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-amber-100">
+                    <button
+                      disabled
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-50 border-2 border-gray-200 text-gray-400 font-sans font-semibold text-base rounded-xl cursor-not-allowed"
+                    >
+                      <Lock size={15} />
+                      Editar mi información
+                      <span className="text-xs">(próximamente)</span>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              {/* Mi empresa / Mi trabajo */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Building2 size={20} className="text-red-700" />
+                  <h2 className="font-serif text-2xl text-red-800">
+                    Mi empresa y trabajo
+                  </h2>
+                </div>
+
+                <div className="bg-white/60 rounded-2xl border-2 border-dashed border-amber-200 p-8 text-center">
+                  <Building2
+                    size={32}
+                    className="text-amber-300 mx-auto mb-3"
+                  />
+                  <p className="font-serif text-lg text-gray-600 mb-1">
+                    Próximamente
+                  </p>
+                  <p className="font-sans text-base text-gray-500 max-w-md mx-auto">
+                    Aquí podrás registrar tu empresa para aparecer en el
+                    directorio Nikkei, o indicar dónde trabajas.
+                  </p>
+                </div>
+              </section>
+
+              {/* Banner contribuciones */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Heart size={20} className="text-red-700" />
+                  <h2 className="font-serif text-2xl text-red-800">
+                    Comparte tu historia
+                  </h2>
+                </div>
+
+                <div className="bg-white/60 rounded-2xl border-2 border-dashed border-amber-200 p-8 text-center">
+                  <Heart size={32} className="text-amber-300 mx-auto mb-3" />
+                  <p className="font-serif text-lg text-gray-600 mb-1">
+                    Próximamente
+                  </p>
+                  <p className="font-sans text-base text-gray-500 max-w-md mx-auto">
+                    ¿Tienes fotos antiguas, documentos o historias que
+                    contar? Pronto podrás compartirlas con la asociación.
+                  </p>
+                </div>
+              </section>
+            </>
+          )}
+
+          {/* Cerrar sesión */}
+          <section className="pt-6">
+            <button
+              onClick={handleLogout}
+              className="w-full sm:w-auto sm:mx-auto sm:flex inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-red-200 hover:border-red-400 hover:bg-red-50 text-red-700 font-sans font-semibold text-base rounded-xl transition-all duration-200 cursor-pointer"
+            >
+              <LogOut size={18} />
+              Cerrar sesión
+            </button>
+          </section>
+
+          {/* Footer */}
+          <DashboardFooter />
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="mt-12 bg-white/60 backdrop-blur-sm border-t border-orange-200">
-        <div className="container mx-auto px-4 py-6 text-center">
-          <div className="mx-auto h-1 w-16 rounded-full bg-linear-to-r from-red-400 via-orange-400 to-amber-400 mb-4" />
-          <p className="text-sm text-red-800 font-sans mb-1">
-            © 2026 Asociación Nikkei de Sinaloa
-          </p>
-          <p className="text-xs text-red-600/70 font-sans">
-            Preservando nuestra herencia cultural 🏮
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }
