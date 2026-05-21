@@ -5,16 +5,6 @@ import { DRAFT_STORAGE_KEY } from './_constants'
 import type { WizardData, WizardDraft } from './_types'
 import { WIZARD_INITIAL_DATA } from './_types'
 
-/**
- * Hook para manejar el borrador del wizard en localStorage.
- *
- * Comportamiento:
- * - El borrador SOLO se guarda cuando el usuario da clic explícito en
- *   "Guardar y continuar después" (vía saveDraft()).
- * - Si el usuario cierra sesión o navega sin guardar, el borrador no se persiste
- *   entre campos automáticamente (eso lo controla el wizard container).
- * - Al volver al wizard, se llama a loadDraft() para retomar donde se quedó.
- */
 export function useWizardStorage() {
   const saveDraft = useCallback((data: WizardData, currentStep: number) => {
     if (typeof window === 'undefined') return

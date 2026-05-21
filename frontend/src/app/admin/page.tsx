@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Image as ImageIcon, CalendarDays, Building2, BookImage, ChevronRight } from 'lucide-react'
+import { Image as ImageIcon, CalendarDays, Building2, BookImage, ChevronRight, UserCheck } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -12,6 +12,7 @@ interface Stats {
   empresas: number
   galeria_historica: number
   users: number
+  registros_pendientes: number
 }
 
 const cards = [
@@ -55,12 +56,22 @@ const cards = [
 
 export default function AdminPage() {
   const [stats, setStats] = useState<Stats | null>(null)
+  const [pendientesCount, setPendientesCount] = useState<number | null>(null)
 
   useEffect(() => {
     fetch(`${API_URL}/api/v1/stats`)
       .then((r) => r.json())
       .then((d) => setStats(d.counts))
       .catch(console.error)
+  }, [])
+
+  useEffect(() => {
+    import('@/lib/adminApi').then(({ registrosPendientesApi }) => {
+      registrosPendientesApi
+        .getPendientes()
+        .then((r) => setPendientesCount(r.count))
+        .catch(() => setPendientesCount(0))
+    })
   }, [])
 
   return (
@@ -72,6 +83,49 @@ export default function AdminPage() {
           Gestiona el contenido que aparece en la página pública.
         </p>
       </div>
+
+      {/* Card destacada: Registros pendientes */}
+      <Link
+        href="/admin/registros-pendientes"
+        className={`group block rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${
+          pendientesCount && pendientesCount > 0
+            ? 'bg-amber-50 border-amber-300 hover:border-amber-400'
+            : 'bg-white border-gray-200 hover:border-gray-300'
+        }`}
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+              pendientesCount && pendientesCount > 0
+                ? 'bg-amber-100 text-amber-700'
+                : 'bg-gray-100 text-gray-500'
+            }`}
+          >
+            <UserCheck size={22} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-sans font-semibold text-gray-800">
+              Registros Comunitarios
+            </p>
+            <p className="text-xs font-sans text-gray-500 mt-0.5">
+              {pendientesCount === null
+                ? 'Cargando...'
+                : pendientesCount === 0
+                ? 'No hay solicitudes pendientes'
+                : `${pendientesCount} ${pendientesCount === 1 ? 'solicitud espera' : 'solicitudes esperan'} tu revisión`}
+            </p>
+          </div>
+          {pendientesCount !== null && pendientesCount > 0 && (
+            <div className="bg-amber-700 text-white text-2xl font-serif rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
+              {pendientesCount}
+            </div>
+          )}
+          <ChevronRight
+            size={16}
+            className="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+          />
+        </div>
+      </Link>
 
       {/* Cards */}
       <div>

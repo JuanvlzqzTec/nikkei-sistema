@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import { useAuthStore } from '@/store/authStore'
+import BannerRegistroComunitario from './_BannerRegistroComunitario'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -195,22 +196,9 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Welcome Message */}
-        <div className="mt-8 text-center">
-          <div className="bg-linear-to-r from-orange-50 to-amber-50 border border-orange-200/50 rounded-lg p-6 max-w-2xl mx-auto">
-            <h2 className="text-xl font-serif text-red-800 mb-3">
-              ¡Bienvenido a la Comunidad Nikkei! 🌸
-            </h2>
-            <p className="text-red-700 mb-4 font-sans">
-              Has iniciado sesión exitosamente en el sistema de la Asociación Nikkei de Sinaloa. 
-              Aquí podrás gestionar tu información personal, conectar con otros miembros de la 
-              comunidad y participar en nuestras actividades culturales.
-            </p>
-            <p className="text-sm text-red-600 font-sans">
-              <strong>Próximamente:</strong> Podrás completar tu perfil genealógico, 
-              registrarte en eventos y explorar el directorio de empresas Nikkei.
-            </p>
-          </div>
+        {/* Banner de registro comunitario */}
+        <div className="mt-10">
+          <BannerRegistroComunitario />
         </div>
       </main>
 

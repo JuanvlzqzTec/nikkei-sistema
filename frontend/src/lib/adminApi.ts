@@ -165,3 +165,68 @@ export const galeriaApi = {
   delete: (id: number) =>
     apiFetch<{ message: string }>(`/admin/galeria/${id}`, { method: 'DELETE' }),
 }
+
+// Registros comunitarios pendientes
+
+export interface PersonaPendiente {
+  id_persona: number
+  id_familia: number
+  nombres: string
+  apellido_paterno: string
+  apellido_materno?: string
+  nombre_japones?: string
+  nombre_kanji?: string
+  genero?: string
+  fecha_nacimiento?: string
+  lugar_nacimiento?: string
+  generacion: string
+  telefono_principal?: string
+  ciudad?: string
+  estado: string
+  nivel_japones?: string
+  acepta_directorio_publico: boolean
+  acepta_comunicaciones: boolean
+  created_at: string
+}
+
+export interface FamiliaPendiente {
+  id_familia: number
+  apellido_jp: string
+  apellido_romanji?: string
+  apellido_kanji?: string
+  prefectura_origen?: string
+  anio_llegada_mexico?: number
+  lugar_llegada?: string
+  pendiente_aprobacion: boolean
+}
+
+export interface RegistroPendiente {
+  id_user: number
+  email: string
+  created_at: string
+  persona: PersonaPendiente
+  familia: FamiliaPendiente
+  familia_es_nueva: boolean
+}
+
+export const registrosPendientesApi = {
+  getPendientes: () =>
+    apiFetch<{ message: string; data: RegistroPendiente[]; count: number }>(
+      '/admin/registros-pendientes'
+    ),
+
+  aprobar: (idUser: number) =>
+    apiFetch<{ message: string }>(
+      `/admin/registros-pendientes/${idUser}/aprobar`,
+      { method: 'PATCH' }
+    ),
+
+  rechazar: (idUser: number, motivo?: string) =>
+    apiFetch<{ message: string }>(
+      `/admin/registros-pendientes/${idUser}/rechazar`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ motivo: motivo || undefined }),
+      }
+    ),
+}

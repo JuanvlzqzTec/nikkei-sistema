@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Image as ImageIcon, CalendarDays,
   Building2, BookImage, LogOut, ChevronRight, Menu, X,
-  Globe
+  Globe, ClipboardList
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 
@@ -17,6 +17,11 @@ const navItems = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     exact: true,
+  },
+  {
+    href: '/admin/registros-pendientes',
+    label: 'Registros Comunitarios',
+    icon: ClipboardList,
   },
   {
     href: '/admin/homepage',
