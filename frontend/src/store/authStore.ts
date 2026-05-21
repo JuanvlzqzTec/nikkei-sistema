@@ -9,6 +9,8 @@ export interface User {
   registro_estado: string
   is_active: boolean
   email_verified: boolean
+  id_persona?: number | null
+  nombre_completo?: string | null
 }
 
 export interface AuthState {

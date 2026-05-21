@@ -40,7 +40,7 @@ export default function WizardLayout({
       style={{ background: 'linear-gradient(135deg, #FEF7F0 0%, #FDE8D8 40%, #FCEEE8 100%)' }}
     >
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-red-800/15 shadow-sm">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-red-800/15 shadow-sm p-3">
         <div className="container-nikkei py-4 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
             <Image
@@ -77,7 +77,7 @@ export default function WizardLayout({
       <main className="flex-1 container-nikkei py-8 lg:py-12">
         <div className="max-w-2xl mx-auto">
           {/* Progress */}
-          <div className="mb-8 lg:mb-10">
+          <div className="mb-8 lg:mb-10 pt-10">
             <ProgressBar currentStep={currentStep} />
           </div>
 

@@ -56,12 +56,14 @@ type AuthResponse struct {
 
 // Estructura para información del usuario
 type UserResponse struct {
-	ID             uint   `json:"id"`
-	Email          string `json:"email"`
-	Role           string `json:"role"`
-	RegistroEstado string `json:"registro_estado"`
-	IsActive       bool   `json:"is_active"`
-	EmailVerified  bool   `json:"email_verified"`
+	ID             uint    `json:"id"`
+	Email          string  `json:"email"`
+	Role           string  `json:"role"`
+	RegistroEstado string  `json:"registro_estado"`
+	IsActive       bool    `json:"is_active"`
+	EmailVerified  bool    `json:"email_verified"`
+	IDPersona      *uint   `json:"id_persona"`
+	NombreCompleto *string `json:"nombre_completo"`
 }
 
 // Maneja el registro de nuevos usuarios
@@ -106,14 +108,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	// Respuesta exitosa
 	response := AuthResponse{
-		User: UserResponse{
-			ID:             user.IDUser,
-			Email:          user.Email,
-			Role:           user.Role,
-			RegistroEstado: user.RegistroEstado,
-			IsActive:       user.IsActive,
-			EmailVerified:  user.EmailVerified,
-		},
+		User:  buildUserResponse(user),
 		Token: token,
 	}
 
@@ -146,14 +141,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	// Respuesta exitosa
 	response := AuthResponse{
-		User: UserResponse{
-			ID:             user.IDUser,
-			Email:          user.Email,
-			Role:           user.Role,
-			RegistroEstado: user.RegistroEstado,
-			IsActive:       user.IsActive,
-			EmailVerified:  user.EmailVerified,
-		},
+		User:  buildUserResponse(user),
 		Token: token,
 	}
 
@@ -184,14 +172,7 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
-	response := UserResponse{
-		ID:             user.IDUser,
-		Email:          user.Email,
-		Role:           user.Role,
-		RegistroEstado: user.RegistroEstado,
-		IsActive:       user.IsActive,
-		EmailVerified:  user.EmailVerified,
-	}
+	response := buildUserResponse(user)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Perfil obtenido exitosamente",
@@ -392,11 +373,33 @@ func (h *AuthHandler) ValidateToken(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"valid": true,
-		"user": gin.H{
-			"id":              user.IDUser,
-			"email":           user.Email,
-			"role":            user.Role,
-			"registro_estado": user.RegistroEstado,
-		},
+		"user":  buildUserResponse(&user),
 	})
+}
+
+func buildUserResponse(user *models.User) UserResponse {
+	resp := UserResponse{
+		ID:             user.IDUser,
+		Email:          user.Email,
+		Role:           user.Role,
+		RegistroEstado: user.RegistroEstado,
+		IsActive:       user.IsActive,
+		EmailVerified:  user.EmailVerified,
+		IDPersona:      user.IDPersona,
+	}
+
+	if user.IDPersona != nil {
+		var persona models.Persona
+		if err := database.DB.
+			Select("nombres", "apellido_paterno", "apellido_materno").
+			First(&persona, *user.IDPersona).Error; err == nil {
+			nombre := persona.Nombres + " " + persona.ApellidoPaterno
+			if persona.ApellidoMaterno != nil && *persona.ApellidoMaterno != "" {
+				nombre += " " + *persona.ApellidoMaterno
+			}
+			resp.NombreCompleto = &nombre
+		}
+	}
+
+	return resp
 }
