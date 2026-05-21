@@ -50,6 +50,7 @@ func main() {
 	sliderHandler := handlers.NewSliderHandler()
 	eventosHandler := handlers.NewEventosHandler()
 	empresasHandler := handlers.NewEmpresasHandler()
+	empresasEmpleadorasHandler := handlers.NewEmpresasEmpleadorasHandler()
 	familiasHandler := handlers.NewFamiliasHandler()
 	registroHandler := handlers.NewRegistroComunitarioHandler()
 
@@ -139,6 +140,9 @@ func main() {
 			familias.GET("/:id/miembros-publicos", familiasHandler.GetMiembrosPublicos)
 		}
 
+		// Empresas empleadoras (público — para autocomplete)
+		api.GET("/empresas-empleadoras", empresasEmpleadorasHandler.GetAll)
+
 		//Rutas usuario autenticado
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())
@@ -150,6 +154,15 @@ func main() {
 
 			// Usuario registrado puede solicitar registro de empresa
 			protected.POST("empresas/solicitar", empresasHandler.SolicitarRegistro)
+
+			// Mi empresa propia (miembro autenticado con registro completado)
+			protected.GET("mi-empresa", empresasHandler.GetMiEmpresa)
+			protected.PUT("mi-empresa", empresasHandler.UpdateMiEmpresa)
+
+			// Mi empleo (empresa donde trabajo)
+			protected.GET("mi-empleo", empresasEmpleadorasHandler.GetMiEmpleo)
+			protected.PATCH("mi-empleo", empresasEmpleadorasHandler.UpdateMiEmpleo)
+			protected.POST("empresas-empleadoras", empresasEmpleadorasHandler.Create)
 
 			// Registro comunitario (usuario autenticado)
 			protected.POST("registro-comunitario", registroHandler.CrearRegistro)

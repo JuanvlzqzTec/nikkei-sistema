@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database"
+	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/middleware"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/models"
 	"github.com/gin-gonic/gin"
 )
@@ -140,19 +141,47 @@ func (h *EmpresasHandler) Create(c *gin.Context) {
 }
 
 func (h *EmpresasHandler) SolicitarRegistro(c *gin.Context) {
+	userID, _, _, exists := middleware.GetCurrentUser(c)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No autenticado"})
+		return
+	}
+
+	var user models.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuario no encontrado"})
+		return
+	}
+	if user.IDPersona == nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error":   "Registro no completado",
+			"message": "Debes completar tu registro comunitario antes de registrar una empresa",
+		})
+		return
+	}
+
+	var existente models.Empresa
+	if err := database.DB.Where("id_propietario = ?", *user.IDPersona).First(&existente).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"error":   "Ya tienes una empresa registrada",
+			"message": "Para editarla, usa el endpoint PUT /mi-empresa",
+		})
+		return
+	}
+
 	var req struct {
-		NombreEmpresa string  `json:"nombre_empresa" binding:"required,max=200"`
-		GiroComercial *string `json:"giro_comercial"`
-		Sector        *string `json:"sector"`
-		Descripcion   *string `json:"descripcion"`
-		Telefono      *string `json:"telefono"`
-		Email         *string `json:"email"`
-		SitioWeb      *string `json:"sitio_web"`
-		Direccion     *string `json:"direccion"`
-		Ciudad        *string `json:"ciudad"`
-		Estado        string  `json:"estado"`
-		LogoEmpresa   *string `json:"logo_empresa"`
-		IDPropietario *uint   `json:"id_propietario"`
+		NombreEmpresa             string  `json:"nombre_empresa" binding:"required,max=200"`
+		GiroComercial             *string `json:"giro_comercial"`
+		Sector                    *string `json:"sector"`
+		Descripcion               *string `json:"descripcion"`
+		Telefono                  *string `json:"telefono"`
+		Email                     *string `json:"email"`
+		SitioWeb                  *string `json:"sitio_web"`
+		Direccion                 *string `json:"direccion"`
+		Ciudad                    *string `json:"ciudad"`
+		Estado                    string  `json:"estado"`
+		LogoEmpresa               *string `json:"logo_empresa"`
+		AceptaPromocionDirectorio *bool   `json:"acepta_promocion_directorio"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -165,9 +194,14 @@ func (h *EmpresasHandler) SolicitarRegistro(c *gin.Context) {
 		estado = req.Estado
 	}
 
+	aceptaPromocion := true
+	if req.AceptaPromocionDirectorio != nil {
+		aceptaPromocion = *req.AceptaPromocionDirectorio
+	}
+
 	pendiente := "pendiente"
 	empresa := models.Empresa{
-		IDPropietario:             req.IDPropietario,
+		IDPropietario:             user.IDPersona,
 		NombreEmpresa:             req.NombreEmpresa,
 		GiroComercial:             req.GiroComercial,
 		Sector:                    req.Sector,
@@ -179,7 +213,7 @@ func (h *EmpresasHandler) SolicitarRegistro(c *gin.Context) {
 		Ciudad:                    req.Ciudad,
 		Estado:                    estado,
 		LogoEmpresa:               req.LogoEmpresa,
-		AceptaPromocionDirectorio: true,
+		AceptaPromocionDirectorio: aceptaPromocion,
 		StatusAprobacion:          &pendiente,
 	}
 
@@ -388,4 +422,141 @@ func (h *EmpresasHandler) Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Empresa eliminada exitosamente"})
+}
+
+func (h *EmpresasHandler) GetMiEmpresa(c *gin.Context) {
+	userID, _, _, exists := middleware.GetCurrentUser(c)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No autenticado"})
+		return
+	}
+
+	var user models.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuario no encontrado"})
+		return
+	}
+	if user.IDPersona == nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error":   "Registro no completado",
+			"message": "Debes completar tu registro comunitario primero",
+		})
+		return
+	}
+
+	var empresa models.Empresa
+	if err := database.DB.Where("id_propietario = ?", *user.IDPersona).First(&empresa).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":         "Sin empresa registrada",
+			"tiene_empresa": false,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":       "Empresa obtenida exitosamente",
+		"data":          empresa,
+		"tiene_empresa": true,
+	})
+}
+
+// UpdateMiEmpresa actualiza la empresa propia del miembro autenticado.
+// Cualquier edición vuelve la empresa a estado "pendiente" para re-aprobación.
+func (h *EmpresasHandler) UpdateMiEmpresa(c *gin.Context) {
+	userID, _, _, exists := middleware.GetCurrentUser(c)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No autenticado"})
+		return
+	}
+
+	var user models.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuario no encontrado"})
+		return
+	}
+	if user.IDPersona == nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "Registro no completado",
+		})
+		return
+	}
+
+	var empresa models.Empresa
+	if err := database.DB.Where("id_propietario = ?", *user.IDPersona).First(&empresa).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No tienes una empresa registrada"})
+		return
+	}
+
+	var req struct {
+		NombreEmpresa             string  `json:"nombre_empresa"`
+		GiroComercial             *string `json:"giro_comercial"`
+		Sector                    *string `json:"sector"`
+		Descripcion               *string `json:"descripcion"`
+		Telefono                  *string `json:"telefono"`
+		Email                     *string `json:"email"`
+		SitioWeb                  *string `json:"sitio_web"`
+		Direccion                 *string `json:"direccion"`
+		Ciudad                    *string `json:"ciudad"`
+		Estado                    string  `json:"estado"`
+		LogoEmpresa               *string `json:"logo_empresa"`
+		AceptaPromocionDirectorio *bool   `json:"acepta_promocion_directorio"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos: " + err.Error()})
+		return
+	}
+
+	if req.NombreEmpresa != "" {
+		empresa.NombreEmpresa = req.NombreEmpresa
+	}
+	if req.GiroComercial != nil {
+		empresa.GiroComercial = req.GiroComercial
+	}
+	if req.Sector != nil {
+		empresa.Sector = req.Sector
+	}
+	if req.Descripcion != nil {
+		empresa.Descripcion = req.Descripcion
+	}
+	if req.Telefono != nil {
+		empresa.Telefono = req.Telefono
+	}
+	if req.Email != nil {
+		empresa.Email = req.Email
+	}
+	if req.SitioWeb != nil {
+		empresa.SitioWeb = req.SitioWeb
+	}
+	if req.Direccion != nil {
+		empresa.Direccion = req.Direccion
+	}
+	if req.Ciudad != nil {
+		empresa.Ciudad = req.Ciudad
+	}
+	if req.Estado != "" {
+		empresa.Estado = req.Estado
+	}
+	if req.LogoEmpresa != nil {
+		empresa.LogoEmpresa = req.LogoEmpresa
+	}
+	if req.AceptaPromocionDirectorio != nil {
+		empresa.AceptaPromocionDirectorio = *req.AceptaPromocionDirectorio
+	}
+
+	// Toda edición regresa la empresa a pendiente para re-aprobación admin.
+	// También se quita del homepage si estaba ahí (el admin decide si vuelve a ponerla).
+	pendiente := "pendiente"
+	empresa.StatusAprobacion = &pendiente
+	empresa.EnHomepage = false
+
+	if err := database.DB.Save(&empresa).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al actualizar empresa"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Empresa actualizada. Un administrador revisará los cambios antes de que aparezcan en el directorio.",
+		"data":    empresa,
+	})
 }
