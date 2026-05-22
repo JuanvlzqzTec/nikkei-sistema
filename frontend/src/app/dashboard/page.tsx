@@ -4,13 +4,14 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, User, Building2, Heart, Lock } from 'lucide-react'
+import { LogOut, User, Heart, Lock } from 'lucide-react'
 
 import { useAuthStore } from '@/store/authStore'
 
 import BannerRegistroComunitario from './_BannerRegistroComunitario'
 import SaludoBienvenida from './_SaludoBienvenida'
 import ProximosEventos from './_ProximosEventos'
+import MiNegocio from './_MiNegocio'
 import DashboardFooter from './_DashboardFooter'
 
 const ROL_LABELS: Record<string, { label: string; bg: string; text: string }> = {
@@ -192,28 +193,7 @@ export default function DashboardPage() {
               </section>
 
               {/* Mi empresa / Mi trabajo */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Building2 size={20} className="text-red-700" />
-                  <h2 className="font-serif text-2xl text-red-800">
-                    Mi empresa y trabajo
-                  </h2>
-                </div>
-
-                <div className="bg-white/60 rounded-2xl border-2 border-dashed border-amber-200 p-8 text-center">
-                  <Building2
-                    size={32}
-                    className="text-amber-300 mx-auto mb-3"
-                  />
-                  <p className="font-serif text-lg text-gray-600 mb-1">
-                    Próximamente
-                  </p>
-                  <p className="font-sans text-base text-gray-500 max-w-md mx-auto">
-                    Aquí podrás registrar tu empresa para aparecer en el
-                    directorio Nikkei, o indicar dónde trabajas.
-                  </p>
-                </div>
-              </section>
+              <MiNegocio />
 
               {/* Banner contribuciones */}
               <section className="space-y-4">
