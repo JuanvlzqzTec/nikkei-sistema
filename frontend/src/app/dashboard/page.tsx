@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, User, Heart, Lock } from 'lucide-react'
+import { LogOut, User, Lock } from 'lucide-react'
 
 import { useAuthStore } from '@/store/authStore'
 
@@ -12,6 +12,7 @@ import BannerRegistroComunitario from './_BannerRegistroComunitario'
 import SaludoBienvenida from './_SaludoBienvenida'
 import ProximosEventos from './_ProximosEventos'
 import MiNegocio from './_MiNegocio'
+import BannerContribucion from './_BannerContribucion'
 import DashboardFooter from './_DashboardFooter'
 
 const ROL_LABELS: Record<string, { label: string; bg: string; text: string }> = {
@@ -196,25 +197,8 @@ export default function DashboardPage() {
               <MiNegocio />
 
               {/* Banner contribuciones */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Heart size={20} className="text-red-700" />
-                  <h2 className="font-serif text-2xl text-red-800">
-                    Comparte tu historia
-                  </h2>
-                </div>
+              <BannerContribucion />
 
-                <div className="bg-white/60 rounded-2xl border-2 border-dashed border-amber-200 p-8 text-center">
-                  <Heart size={32} className="text-amber-300 mx-auto mb-3" />
-                  <p className="font-serif text-lg text-gray-600 mb-1">
-                    Próximamente
-                  </p>
-                  <p className="font-sans text-base text-gray-500 max-w-md mx-auto">
-                    ¿Tienes fotos antiguas, documentos o historias que
-                    contar? Pronto podrás compartirlas con la asociación.
-                  </p>
-                </div>
-              </section>
             </>
           )}
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Image as ImageIcon, CalendarDays, Building2, BookImage, ChevronRight, UserCheck } from 'lucide-react'
+import { Image as ImageIcon, CalendarDays, Building2, BookImage, ChevronRight, UserCheck, MessageSquare } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
@@ -74,6 +74,16 @@ export default function AdminPage() {
     })
   }, [])
 
+  const [contribucionesCount, setContribucionesCount] = useState<number | null>(null)
+  useEffect(() => {
+    import('@/lib/contribucionesApi').then(({ contribucionesAdminApi }) => {
+      contribucionesAdminApi
+        .getPendientes('pendiente')
+        .then((r) => setContribucionesCount(r.count))
+        .catch(() => setContribucionesCount(0))
+    })
+  }, [])
+
   return (
     <div className="space-y-8 max-w-5xl">
       {/* Header */}
@@ -118,6 +128,48 @@ export default function AdminPage() {
           {pendientesCount !== null && pendientesCount > 0 && (
             <div className="bg-amber-700 text-white text-2xl font-serif rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
               {pendientesCount}
+            </div>
+          )}
+          <ChevronRight
+            size={16}
+            className="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+          />
+        </div>
+      </Link>
+
+      <Link
+        href="/admin/contribuciones"
+        className={`group block rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${
+          contribucionesCount && contribucionesCount > 0
+            ? 'bg-amber-50 border-amber-300 hover:border-amber-400'
+            : 'bg-white border-gray-200 hover:border-gray-300'
+        }`}
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+              contribucionesCount && contribucionesCount > 0
+                ? 'bg-amber-100 text-amber-700'
+                : 'bg-gray-100 text-gray-500'
+            }`}
+          >
+            <MessageSquare size={22} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-sans font-semibold text-gray-800">
+              Contribuciones
+            </p>
+            <p className="text-xs font-sans text-gray-500 mt-0.5">
+              {contribucionesCount === null
+                ? 'Cargando...'
+                : contribucionesCount === 0
+                ? 'Sin contribuciones pendientes'
+                : `${contribucionesCount} ${contribucionesCount === 1 ? 'contribución espera' : 'contribuciones esperan'} tu atención`}
+            </p>
+          </div>
+          {contribucionesCount !== null && contribucionesCount > 0 && (
+            <div className="bg-amber-700 text-white text-2xl font-serif rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
+              {contribucionesCount}
             </div>
           )}
           <ChevronRight

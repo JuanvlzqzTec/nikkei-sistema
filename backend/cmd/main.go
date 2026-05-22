@@ -53,6 +53,7 @@ func main() {
 	empresasEmpleadorasHandler := handlers.NewEmpresasEmpleadorasHandler()
 	familiasHandler := handlers.NewFamiliasHandler()
 	registroHandler := handlers.NewRegistroComunitarioHandler()
+	contribucionesHandler := handlers.NewContribucionesHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -168,6 +169,9 @@ func main() {
 			protected.POST("registro-comunitario", registroHandler.CrearRegistro)
 			protected.GET("registro-comunitario/mi-estado", registroHandler.MiEstado)
 
+			// Contribuciones (donaciones, historias) — miembro autenticado
+			protected.POST("contribuciones", contribucionesHandler.Crear)
+
 			//Rutas admin
 			admin := protected.Group("/admin")
 			admin.Use(middleware.RequireAdmin())
@@ -212,6 +216,9 @@ func main() {
 					empresasAdmin.PATCH("/:id/aprobacion", empresasHandler.UpdateAprobacion)
 					empresasAdmin.PATCH("/:id/homepage", empresasHandler.SetHomepage)
 				}
+
+				admin.GET("contribuciones", contribucionesHandler.GetPendientes)
+				admin.PATCH("contribuciones/:id/estado", contribucionesHandler.MarcarEstado)
 			}
 		}
 	}

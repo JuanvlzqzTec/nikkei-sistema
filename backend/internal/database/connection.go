@@ -72,6 +72,7 @@ func AutoMigrate() {
 		&models.Genealogia{},
 		&models.Galeria{},
 		&models.SliderItem{},
+		&models.Contribucion{},
 	}
 
 	err := DB.AutoMigrate(allModels...)
@@ -97,6 +98,7 @@ func createForeignKeys() {
 	DB.Exec(`ALTER TABLE participacion_eventos ADD CONSTRAINT IF NOT EXISTS fk_participacion_evento FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE;`)
 	DB.Exec(`ALTER TABLE genealogia ADD CONSTRAINT IF NOT EXISTS fk_genealogia_persona FOREIGN KEY (id_persona) REFERENCES personas(id_persona) ON DELETE CASCADE;`)
 	DB.Exec(`ALTER TABLE genealogia ADD CONSTRAINT IF NOT EXISTS fk_genealogia_pariente FOREIGN KEY (id_pariente) REFERENCES personas(id_persona) ON DELETE CASCADE;`)
+	DB.Exec(`ALTER TABLE contribuciones ADD CONSTRAINT IF NOT EXISTS fk_contribuciones_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;`)
 
 	log.Println("Foreign keys creadas")
 }
