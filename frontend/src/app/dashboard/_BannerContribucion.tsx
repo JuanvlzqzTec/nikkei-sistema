@@ -182,7 +182,6 @@ function ModalContribucion({ onClose }: { onClose: () => void }) {
                   onChange={(e) => setMensaje(e.target.value)}
                   rows={6}
                   maxLength={2000}
-                  placeholder="Por ejemplo: 'Tengo fotografías antiguas de mi abuelo que llegó a México en los años 50...' o 'Conservo un kimono que perteneció a mi familia...' o 'Tengo una historia sobre la fundación de la asociación que me contó mi madre...'"
                   className="w-full text-base font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors resize-none"
                   autoFocus
                 />
@@ -214,7 +213,6 @@ function ModalContribucion({ onClose }: { onClose: () => void }) {
                   type="tel"
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
-                  placeholder="667 123 4567"
                   className="w-full text-base font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
                 />
                 <p className="font-sans text-sm text-gray-500 mt-1.5 leading-relaxed">

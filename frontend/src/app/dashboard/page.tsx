@@ -4,7 +4,8 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, User, Lock } from 'lucide-react'
+import { LogOut, User, Lock, Globe } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 import { useAuthStore } from '@/store/authStore'
 
@@ -87,7 +88,7 @@ export default function DashboardPage() {
       }}
     >
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-red-800/15 shadow-sm sticky top-0 z-10">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-red-800/15 shadow-sm sticky top-0 z-10 p-3">
         <div className="container-nikkei py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <Image
@@ -108,12 +109,24 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <Link
-            href="/"
-            className="hidden sm:inline-block font-sans text-base text-red-700 hover:text-red-900 transition-colors"
-          >
-            Ver sitio público
-          </Link>
+          <div className="header-buttons-top" style={{ padding: '0.1px 0.5px' }}>
+              <Link href="/">
+                <Button variant="ghost" className="header-auth-button group">
+                  <Globe size={18} className="text-nikkei-burgundy" />
+                  <span>Ver sitio público</span>
+                </Button>
+              </Link>
+
+              <Button 
+                onClick={handleLogout}
+                variant="ghost" 
+                className="header-auth-button group">
+                <LogOut size={18} className="text-nikkei-burgundy" />
+                <span>Cerrar sesión</span>
+              </Button>
+              
+            </div>
+          
         </div>
       </header>
 

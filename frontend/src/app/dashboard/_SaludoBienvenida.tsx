@@ -16,7 +16,7 @@ export default function SaludoBienvenida() {
 
   return (
     <div className="text-center space-y-3">
-      <h1 className="font-serif text-4xl sm:text-5xl text-red-800 leading-tight">
+      <h1 className="font-serif text-4xl sm:text-5xl text-red-800 leading-tight pt-5">
         {primerNombre ? (
           <>
             <span className="block text-2xl sm:text-3xl text-red-600/80 mb-2">

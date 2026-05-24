@@ -44,9 +44,7 @@
   --animation-fade-in-up: fade-in-up 0.8s ease-out;
 }
 
-/* =========================================
-   VARIABLES GLOBALES (CSS Nativo)
-   ========================================= */
+/* Variables globales */
 :root {
   --spacing-header: 1rem;
   --spacing-button-gap: 2rem;

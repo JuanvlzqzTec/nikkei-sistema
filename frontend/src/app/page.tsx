@@ -375,7 +375,7 @@ export default function HomePage() {
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link href="/directorio"><Button className="btn-nikkei"><Users size={18} />Explorar Directorio Completo</Button></Link>
-            <Link href="/register-business">
+            <Link href="/register">
               <button className="px-8 py-3 border-2 border-nikkei-burgundy text-nikkei-burgundy hover:bg-nikkei-burgundy hover:text-white cursor-pointer font-sans font-semibold rounded-lg transition-all duration-300 text-sm flex items-center gap-2">
                 <span>+</span> Registra tu Empresa
               </button>

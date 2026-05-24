@@ -217,7 +217,7 @@ export default function SobreNosotrosPage() {
                     {/* Atribución */}
                     <div className="space-y-1">
                       <p className="font-sans font-bold text-amber-300 text-lg">Juan Manuel Kuroda</p>
-                      <p className="font-sans text-base text-white/60">Presidente · Asociación Nikkei de Sinaloa</p>
+                      <p className="font-sans text-base text-white/60">Presidente · Asociación Nikkei de Culiacán</p>
                     </div>
 
                     <div className="w-12 h-0.5 bg-amber-400/50 mx-auto rounded-full" />
