@@ -215,17 +215,6 @@ export default function DashboardPage() {
             </>
           )}
 
-          {/* Cerrar sesión */}
-          <section className="pt-6">
-            <button
-              onClick={handleLogout}
-              className="w-full sm:w-auto sm:mx-auto sm:flex inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-red-200 hover:border-red-400 hover:bg-red-50 text-red-700 font-sans font-semibold text-base rounded-xl transition-all duration-200 cursor-pointer"
-            >
-              <LogOut size={18} />
-              Cerrar sesión
-            </button>
-          </section>
-
           {/* Footer */}
           <DashboardFooter />
         </div>
