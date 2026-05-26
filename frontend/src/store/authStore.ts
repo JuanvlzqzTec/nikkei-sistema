@@ -11,6 +11,7 @@ export interface User {
   email_verified: boolean
   id_persona?: number | null
   nombre_completo?: string | null
+  motivo_pendiente?: string | null
 }
 
 export interface AuthState {

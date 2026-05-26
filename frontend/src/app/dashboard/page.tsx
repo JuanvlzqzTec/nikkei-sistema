@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, User, Lock, Globe } from 'lucide-react'
+import { LogOut, User, Globe, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { useAuthStore } from '@/store/authStore'
@@ -194,14 +194,13 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="mt-6 pt-6 border-t border-amber-100">
-                    <button
-                      disabled
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-50 border-2 border-gray-200 text-gray-400 font-sans font-semibold text-base rounded-xl cursor-not-allowed"
+                    <Link
+                      href="/dashboard/perfil/editar"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-red-700 hover:bg-red-700 hover:text-white text-red-700 font-sans font-semibold text-base rounded-xl transition-all cursor-pointer"
                     >
-                      <Lock size={15} />
+                      <Pencil size={15} />
                       Editar mi información
-                      <span className="text-xs">(próximamente)</span>
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </section>
