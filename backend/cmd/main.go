@@ -54,6 +54,7 @@ func main() {
 	familiasHandler := handlers.NewFamiliasHandler()
 	registroHandler := handlers.NewRegistroComunitarioHandler()
 	contribucionesHandler := handlers.NewContribucionesHandler()
+	perfilHandler := handlers.NewPerfilHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -171,6 +172,12 @@ func main() {
 
 			// Contribuciones (donaciones, historias) — miembro autenticado
 			protected.POST("contribuciones", contribucionesHandler.Crear)
+
+			// Mi perfil (miembro autenticado con registro completado)
+			protected.GET("mi-perfil", perfilHandler.GetMiPerfil)
+			protected.PATCH("mi-perfil/datos-libres", perfilHandler.UpdateDatosLibres)
+			protected.POST("mi-perfil/solicitar-cambio", perfilHandler.SolicitarCambio)
+			protected.PATCH("mi-perfil/foto", perfilHandler.UpdateFoto)
 
 			//Rutas admin
 			admin := protected.Group("/admin")

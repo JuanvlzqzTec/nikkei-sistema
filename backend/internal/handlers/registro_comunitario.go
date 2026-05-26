@@ -154,9 +154,11 @@ func (h *RegistroComunitarioHandler) CrearRegistro(c *gin.Context) {
 		}
 
 		// Asociar el user con la persona y actualizar estado del registro
+		motivoNuevo := "nuevo_registro"
 		if err := tx.Model(&user).Updates(map[string]interface{}{
-			"id_persona":      persona.IDPersona,
-			"registro_estado": "pendiente_revision",
+			"id_persona":       persona.IDPersona,
+			"registro_estado":  "pendiente_revision",
+			"motivo_pendiente": motivoNuevo,
 		}).Error; err != nil {
 			return err
 		}
@@ -280,10 +282,11 @@ func (h *RegistroComunitarioHandler) Aprobar(c *gin.Context) {
 			return err
 		}
 
-		// Actualizar user: rol miembro + estado completado
+		// Actualizar user: rol miembro + estado completado + limpiar motivo
 		if err := tx.Model(&user).Updates(map[string]interface{}{
-			"role":            "miembro",
-			"registro_estado": "completado",
+			"role":             "miembro",
+			"registro_estado":  "completado",
+			"motivo_pendiente": nil,
 		}).Error; err != nil {
 			return err
 		}
