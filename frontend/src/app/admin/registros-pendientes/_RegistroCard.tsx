@@ -16,6 +16,7 @@ import {
   EyeOff,
   Mail,
   Loader2,
+  RefreshCw,
 } from 'lucide-react'
 import type { RegistroPendiente } from '@/lib/adminApi'
 
@@ -111,6 +112,15 @@ export default function RegistroCard({
               <span className="text-xs font-sans px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
                 {GENERACION_LABELS[persona.generacion] ?? persona.generacion}
               </span>
+              {registro.motivo_pendiente === 'cambio_solicitado' ? (
+                <span className="text-xs font-sans px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 flex items-center gap-1">
+                  <RefreshCw size={10} /> Cambio solicitado
+                </span>
+              ) : (
+                <span className="text-xs font-sans px-2 py-0.5 rounded-full bg-green-100 text-green-700 flex items-center gap-1">
+                  <Sparkles size={10} /> Nuevo registro
+                </span>
+              )}
               {familia_es_nueva && (
                 <span className="text-xs font-sans px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 flex items-center gap-1">
                   <Sparkles size={10} /> Familia nueva

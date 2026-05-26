@@ -204,6 +204,7 @@ export interface RegistroPendiente {
   id_user: number
   email: string
   created_at: string
+  motivo_pendiente?: string | null
   persona: PersonaPendiente
   familia: FamiliaPendiente
   familia_es_nueva: boolean

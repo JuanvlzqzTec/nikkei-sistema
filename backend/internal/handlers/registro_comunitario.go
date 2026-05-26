@@ -198,12 +198,13 @@ func (h *RegistroComunitarioHandler) MiEstado(c *gin.Context) {
 
 func (h *RegistroComunitarioHandler) GetPendientes(c *gin.Context) {
 	type PendienteResponse struct {
-		IDUser         uint           `json:"id_user"`
-		Email          string         `json:"email"`
-		CreatedAt      time.Time      `json:"created_at"`
-		Persona        models.Persona `json:"persona"`
-		Familia        models.Familia `json:"familia"`
-		FamiliaEsNueva bool           `json:"familia_es_nueva"`
+		IDUser          uint           `json:"id_user"`
+		Email           string         `json:"email"`
+		CreatedAt       time.Time      `json:"created_at"`
+		MotivoPendiente *string        `json:"motivo_pendiente"`
+		Persona         models.Persona `json:"persona"`
+		Familia         models.Familia `json:"familia"`
+		FamiliaEsNueva  bool           `json:"familia_es_nueva"`
 	}
 
 	var users []models.User
@@ -227,12 +228,13 @@ func (h *RegistroComunitarioHandler) GetPendientes(c *gin.Context) {
 		}
 
 		resultado = append(resultado, PendienteResponse{
-			IDUser:         u.IDUser,
-			Email:          u.Email,
-			CreatedAt:      u.UpdatedAt,
-			Persona:        persona,
-			Familia:        familia,
-			FamiliaEsNueva: familia.PendienteAprobacion,
+			IDUser:          u.IDUser,
+			Email:           u.Email,
+			CreatedAt:       u.UpdatedAt,
+			MotivoPendiente: u.MotivoPendiente,
+			Persona:         persona,
+			Familia:         familia,
+			FamiliaEsNueva:  familia.PendienteAprobacion,
 		})
 	}
 

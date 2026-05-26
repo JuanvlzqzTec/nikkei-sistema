@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { Loader2, Check, X, ClipboardList, Filter, Sparkles } from 'lucide-react'
+import { Loader2, Check, X, ClipboardList, Filter, Sparkles, RefreshCw } from 'lucide-react'
 import { registrosPendientesApi, type RegistroPendiente } from '@/lib/adminApi'
 import RegistroCard from './_RegistroCard'
 import ModalConfirmacion from './_ModalConfirmacion'
 
-type FiltroFamilia = 'todos' | 'familia_nueva' | 'familia_existente'
+type FiltroFamilia = 'todos' | 'familia_nueva' | 'familia_existente' | 'nuevo_registro' | 'cambio_solicitado'
 
 export default function RegistrosPendientesPage() {
   const [registros, setRegistros] = useState<RegistroPendiente[]>([])
@@ -46,17 +46,25 @@ export default function RegistrosPendientesPage() {
   }, [cargar])
 
   const listaFiltrada = useMemo(() => {
-    if (filtro === 'familia_nueva') {
-      return registros.filter((r) => r.familia_es_nueva)
-    }
-    if (filtro === 'familia_existente') {
-      return registros.filter((r) => !r.familia_es_nueva)
-    }
+    if (filtro === 'familia_nueva') return registros.filter((r) => r.familia_es_nueva)
+    if (filtro === 'familia_existente') return registros.filter((r) => !r.familia_es_nueva)
+    if (filtro === 'nuevo_registro') return registros.filter((r) => r.motivo_pendiente === 'nuevo_registro')
+    if (filtro === 'cambio_solicitado') return registros.filter((r) => r.motivo_pendiente === 'cambio_solicitado')
     return registros
   }, [registros, filtro])
 
   const conteoFamiliaNueva = useMemo(
     () => registros.filter((r) => r.familia_es_nueva).length,
+    [registros]
+  )
+
+  const conteoCambioSolicitado = useMemo(
+    () => registros.filter((r) => r.motivo_pendiente === 'cambio_solicitado').length,
+    [registros]
+  )
+
+  const conteoNuevoRegistro = useMemo(
+    () => registros.filter((r) => r.motivo_pendiente === 'nuevo_registro').length,
     [registros]
   )
 
@@ -158,6 +166,28 @@ export default function RegistrosPendientesPage() {
             Todos ({registros.length})
           </button>
           <button
+            onClick={() => setFiltro('nuevo_registro')}
+            className={`px-3 py-1.5 rounded-full text-xs font-sans font-medium transition-colors flex items-center gap-1 ${
+              filtro === 'nuevo_registro'
+                ? 'bg-green-700 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Sparkles size={11} />
+            Nuevos registros ({conteoNuevoRegistro})
+          </button>
+          <button
+            onClick={() => setFiltro('cambio_solicitado')}
+            className={`px-3 py-1.5 rounded-full text-xs font-sans font-medium transition-colors flex items-center gap-1 ${
+              filtro === 'cambio_solicitado'
+                ? 'bg-blue-700 text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <RefreshCw size={11} />
+            Cambios solicitados ({conteoCambioSolicitado})
+          </button>
+          <button
             onClick={() => setFiltro('familia_nueva')}
             className={`px-3 py-1.5 rounded-full text-xs font-sans font-medium transition-colors flex items-center gap-1 ${
               filtro === 'familia_nueva'
@@ -167,16 +197,6 @@ export default function RegistrosPendientesPage() {
           >
             <Sparkles size={11} />
             Con familia nueva ({conteoFamiliaNueva})
-          </button>
-          <button
-            onClick={() => setFiltro('familia_existente')}
-            className={`px-3 py-1.5 rounded-full text-xs font-sans font-medium transition-colors ${
-              filtro === 'familia_existente'
-                ? 'bg-red-800 text-white'
-                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            Familia existente ({registros.length - conteoFamiliaNueva})
           </button>
         </div>
       )}
