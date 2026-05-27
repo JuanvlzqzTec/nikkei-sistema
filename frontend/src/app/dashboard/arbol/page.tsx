@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore'
 import { genealogiaApi, type MiArbolResponse } from '@/lib/genealogiaApi'
 import ArbolView from './_ArbolView'
 import ArbolLista from './_ArbolLista'
+import DashboardFooter from '@/app/dashboard/_DashboardFooter'
 
 export default function ArbolPage() {
   const router = useRouter()
@@ -249,6 +250,9 @@ export default function ArbolPage() {
             </>
           )}
         </div>
+
+        <DashboardFooter />
+
       </main>
     </div>
   )

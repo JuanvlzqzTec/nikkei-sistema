@@ -24,6 +24,7 @@ import FotoPerfil from './_FotoPerfil'
 import SeccionContacto from './_SeccionContacto'
 import SeccionPreferencias from './_SeccionPreferencias'
 import SeccionDatosSensibles from './_SeccionDatosSensibles'
+import DashboardFooter from '@/app/dashboard/_DashboardFooter'
 
 type SeccionAbierta = 'foto' | 'contacto' | 'preferencias' | 'sensibles' | null
 
@@ -336,6 +337,9 @@ export default function EditarPerfilPage() {
             </SeccionAcordeon>
           )}
         </div>
+
+        <DashboardFooter />
+
       </main>
     </div>
   )
