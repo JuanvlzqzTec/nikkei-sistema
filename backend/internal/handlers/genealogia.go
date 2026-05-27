@@ -334,6 +334,12 @@ func (h *GenealogiaHandler) CrearRelacion(c *gin.Context) {
 		return
 	}
 
+	// Validación de ciclos en relaciones padre/hijo y abuelo/nieto
+	if err := h.validarCiclos(persona.IDPersona, req.IDPariente, req.TipoRelacion); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	// Si el pariente es histórico (no tiene user vinculado), la confirmamos automáticamente
 	var userPariente models.User
 	tieneUserVinculado := database.DB.Where("id_persona = ?", req.IDPariente).First(&userPariente).Error == nil
@@ -503,6 +509,47 @@ func (h *GenealogiaHandler) GetPendientesConfirmacion(c *gin.Context) {
 		"data":    resultado,
 		"count":   len(resultado),
 	})
+}
+
+// validarCiclos evita relaciones lógicamente imposibles (padre de tu padre, etc.)
+func (h *GenealogiaHandler) validarCiclos(idYo, idPariente uint, tipo string) error {
+	// Solo validamos relaciones verticales (padre/madre/hijo/hija/abuelo/abuela/nieto/nieta)
+	esAscendente := tipo == "padre" || tipo == "madre" || tipo == "abuelo" || tipo == "abuela"
+	esDescendente := tipo == "hijo" || tipo == "hija" || tipo == "nieto" || tipo == "nieta"
+
+	if !esAscendente && !esDescendente {
+		return nil
+	}
+
+	// Si yo digo que X es mi padre/abuelo, X no puede ser ya mi hijo/nieto
+	// Si yo digo que X es mi hijo/nieto, X no puede ser ya mi padre/abuelo
+	tiposOpuestos := map[string][]string{
+		"padre":  {"hijo", "hija", "nieto", "nieta"},
+		"madre":  {"hijo", "hija", "nieto", "nieta"},
+		"abuelo": {"hijo", "hija", "nieto", "nieta"},
+		"abuela": {"hijo", "hija", "nieto", "nieta"},
+		"hijo":   {"padre", "madre", "abuelo", "abuela"},
+		"hija":   {"padre", "madre", "abuelo", "abuela"},
+		"nieto":  {"padre", "madre", "abuelo", "abuela"},
+		"nieta":  {"padre", "madre", "abuelo", "abuela"},
+	}
+
+	opuestos, ok := tiposOpuestos[tipo]
+	if !ok {
+		return nil
+	}
+
+	var count int64
+	database.DB.Model(&models.Genealogia{}).
+		Where("((id_persona = ? AND id_pariente = ?) OR (id_persona = ? AND id_pariente = ?)) AND tipo_relacion IN ?",
+			idYo, idPariente, idPariente, idYo, opuestos).
+		Count(&count)
+
+	if count > 0 {
+		return errors.New("esta relación contradice otra ya registrada (ej: no puede ser tu padre alguien que ya es tu hijo)")
+	}
+
+	return nil
 }
 
 var _ = gorm.ErrRecordNotFound
