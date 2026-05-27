@@ -16,7 +16,7 @@ type Evento struct {
 	Direccion           *string    `gorm:"type:text" json:"direccion"`
 	Ciudad              *string    `gorm:"size:100" json:"ciudad"`
 	CapacidadMaxima     *int       `json:"capacidad_maxima"`
-	RequiereRegistro    bool       `gorm:"default:true" json:"requiere_registro"`
+	RequiereRegistro    bool       `gorm:"default:false" json:"requiere_registro"`
 	ImagenEvento        *string    `gorm:"size:500" json:"imagen_evento"`
 	GaleriaFotos        *string    `gorm:"type:jsonb" json:"galeria_fotos"`
 	LinkTransmision     *string    `gorm:"size:300" json:"link_transmision"`

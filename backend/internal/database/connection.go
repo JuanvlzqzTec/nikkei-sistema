@@ -110,6 +110,7 @@ func createAdditionalConstraints() {
 	DB.Exec(`ALTER TABLE genealogia ADD CONSTRAINT IF NOT EXISTS unique_relacion_genealogia UNIQUE (id_persona, id_pariente, tipo_relacion);`)
 	DB.Exec(`ALTER TABLE genealogia ADD CONSTRAINT IF NOT EXISTS check_no_self_reference CHECK (id_persona != id_pariente);`)
 	DB.Exec(`ALTER TABLE empresas_empleadoras ADD CONSTRAINT IF NOT EXISTS unique_empresa_ubicacion UNIQUE (nombre_empresa, ciudad, estado);`)
+	DB.Exec(`ALTER TABLE eventos ALTER COLUMN requiere_registro SET DEFAULT false;`)
 
 	log.Println("Restricciones adicionales creadas")
 }
