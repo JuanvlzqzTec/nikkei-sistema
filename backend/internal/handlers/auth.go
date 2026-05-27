@@ -64,6 +64,7 @@ type UserResponse struct {
 	EmailVerified  bool    `json:"email_verified"`
 	IDPersona      *uint   `json:"id_persona"`
 	NombreCompleto *string `json:"nombre_completo"`
+	FotoPerfil     *string `json:"foto_perfil"`
 }
 
 // Maneja el registro de nuevos usuarios
@@ -391,13 +392,14 @@ func buildUserResponse(user *models.User) UserResponse {
 	if user.IDPersona != nil {
 		var persona models.Persona
 		if err := database.DB.
-			Select("nombres", "apellido_paterno", "apellido_materno").
+			Select("nombres", "apellido_paterno", "apellido_materno", "foto_perfil").
 			First(&persona, *user.IDPersona).Error; err == nil {
 			nombre := persona.Nombres + " " + persona.ApellidoPaterno
 			if persona.ApellidoMaterno != nil && *persona.ApellidoMaterno != "" {
 				nombre += " " + *persona.ApellidoMaterno
 			}
 			resp.NombreCompleto = &nombre
+			resp.FotoPerfil = persona.FotoPerfil
 		}
 	}
 

@@ -153,47 +153,76 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="bg-white rounded-2xl border border-amber-100 shadow-sm p-6 sm:p-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
-                        Nombre
-                      </p>
-                      <p className="font-serif text-xl text-gray-900">
-                        {user.nombre_completo ?? '—'}
-                      </p>
-                    </div>
-
-                    <div className="space-y-1">
-                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
-                        Correo
-                      </p>
-                      <p className="font-sans text-base text-gray-700 break-all">
-                        {user.email}
-                      </p>
-                    </div>
-
-                    <div className="space-y-1">
-                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
-                        Rol en la comunidad
-                      </p>
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full font-sans text-base font-medium ${rolInfo.bg} ${rolInfo.text}`}
+                  <div className="flex flex-col sm:flex-row gap-6 items-start mb-6">
+                    {/* Foto de perfil */}
+                    <div className="shrink-0">
+                      <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-amber-100 bg-amber-50">
+                        <Link href="/dashboard/perfil/editar">
+                          {user.foto_perfil ? (
+                            <Image src={user.foto_perfil} alt="Foto de perfil" fill className="object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-red-100 hover:bg-red-200 transition-colors cursor-pointer">
+                              <span className="font-serif text-3xl text-red-700">
+                                {(user.nombre_completo ?? user.email).charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          )}
+                        </Link>
+                      </div>
+                      <Link
+                        href="/dashboard/perfil/editar"
+                        className="block text-center text-xs font-sans text-red-700 hover:text-red-900 mt-2 underline underline-offset-2"
                       >
-                        {rolInfo.label}
-                      </span>
+                        Cambiar foto
+                      </Link>
                     </div>
 
-                    <div className="space-y-1">
-                      <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">
-                        Estado
-                      </p>
-                      <span className="inline-block px-3 py-1 rounded-full font-sans text-base font-medium bg-green-100 text-green-800">
-                        ✅ Activo
-                      </span>
+                    {/* Datos */}
+                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">Nombre</p>
+                        <p className="font-serif text-xl text-gray-900">{user.nombre_completo ?? '—'}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">Correo</p>
+                        <p className="font-sans text-base text-gray-700 break-all">{user.email}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">Rol en la comunidad</p>
+                        <span className={`inline-block px-3 py-1 rounded-full font-sans text-base font-medium ${rolInfo.bg} ${rolInfo.text}`}>
+                          {rolInfo.label}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-sans text-sm text-gray-500 uppercase tracking-wide">Estado</p>
+                        <span className="inline-block px-3 py-1 rounded-full font-sans text-base font-medium bg-green-100 text-green-800">
+                          ✅ Activo
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-amber-100">
+                  {/* Banner completar perfil */}
+                  {!user.foto_perfil && (
+                  <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-5">
+                    <div className="flex-1">
+                      <p className="font-sans font-semibold text-amber-900 text-base mb-0.5">
+                        Completa tu perfil
+                      </p>
+                      <p className="font-sans text-sm text-amber-700 leading-relaxed">
+                        Agrega tu foto, dirección, teléfono y más. Esta información es opcional y tú decides qué compartir con la comunidad.
+                      </p>
+                    </div>
+                    <Link
+                      href="/dashboard/perfil/editar"
+                      className="shrink-0 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-sans font-semibold text-sm rounded-xl transition-colors cursor-pointer"
+                    >
+                      Completar perfil
+                    </Link>
+                  </div>
+                  )}
+
+                  <div className="pt-5 border-t border-amber-100">
                     <Link
                       href="/dashboard/perfil/editar"
                       className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-red-700 hover:bg-red-700 hover:text-white text-red-700 font-sans font-semibold text-base rounded-xl transition-all cursor-pointer"

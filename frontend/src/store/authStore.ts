@@ -12,6 +12,7 @@ export interface User {
   id_persona?: number | null
   nombre_completo?: string | null
   motivo_pendiente?: string | null
+  foto_perfil?: string | null
 }
 
 export interface AuthState {
