@@ -199,7 +199,7 @@ export default function ArbolPage() {
                   </span>
                 </span>
               </div>
-              <ArbolView arbol={arbol} />
+              <ArbolView arbol={arbol} onUpdated={cargar} />
             </>
           )}
         </div>
