@@ -11,6 +11,7 @@ import {
   Info,
 } from 'lucide-react'
 import { miEmpresaApi, type MiEmpresa, type MiEmpresaInput } from '@/lib/empresasMiembroApi'
+import { GIROS_COMERCIALES } from '@/lib/constants'
 
 const CLOUDINARY_CLOUD_NAME = 'dyfkeoc7a'
 const CLOUDINARY_UPLOAD_PRESET = 'nikkei_default'
@@ -209,13 +210,16 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
             <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
               ¿A qué se dedica?
             </label>
-            <input
-              type="text"
+            <select
               value={form.giro_comercial}
               onChange={(e) => setCampo('giro_comercial', e.target.value)}
-              placeholder="Por ejemplo: Restaurante japonés"
-              className="w-full text-base font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
-            />
+              className="w-full text-base font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors cursor-pointer"
+            >
+              <option value="">Selecciona un giro...</option>
+              {GIROS_COMERCIALES.map((g) => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
           </div>
 
           {/* Descripción */}

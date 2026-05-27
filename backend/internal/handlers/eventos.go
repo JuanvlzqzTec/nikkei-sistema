@@ -3,11 +3,13 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/middleware"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/models"
+	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -326,4 +328,127 @@ func (h *EventosHandler) UpdateStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Status actualizado exitosamente"})
+}
+
+func (h *EventosHandler) Registrarse(c *gin.Context) {
+	idEvento, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	var evento models.Evento
+	if err := database.DB.First(&evento, idEvento).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Evento no encontrado"})
+		return
+	}
+	if evento.Status != "publicado" && evento.Status != "en_curso" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "El evento no está disponible para registro"})
+		return
+	}
+
+	var req struct {
+		NombreVisitante *string `json:"nombre_visitante"`
+		EdadVisitante   *int    `json:"edad_visitante"`
+		Acompaniantes   int     `json:"acompaniantes"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos"})
+		return
+	}
+
+	participacion := models.ParticipacionEvento{
+		IDEvento:        uint(idEvento),
+		Acompaniantes:   req.Acompaniantes,
+		NombreVisitante: req.NombreVisitante,
+		EdadVisitante:   req.EdadVisitante,
+	}
+
+	// Si hay usuario autenticado, vincular su persona
+	tokenHeader := c.GetHeader("Authorization")
+	if tokenHeader != "" {
+		authService := services.NewAuthService()
+		token := strings.TrimPrefix(tokenHeader, "Bearer ")
+		if claims, err := authService.ValidateToken(token); err == nil {
+			var user models.User
+			if err := database.DB.First(&user, claims.UserID).Error; err == nil && user.IDPersona != nil {
+				// Verificar si ya está registrado
+				var existente models.ParticipacionEvento
+				if err := database.DB.Where("id_persona = ? AND id_evento = ?", *user.IDPersona, idEvento).First(&existente).Error; err == nil {
+					c.JSON(http.StatusConflict, gin.H{
+						"error":         "ya_registrado",
+						"message":       "Ya estás registrado en este evento",
+						"acompaniantes": existente.Acompaniantes,
+					})
+					return
+				}
+				participacion.IDPersona = *user.IDPersona
+			}
+		}
+	}
+
+	if err := database.DB.Create(&participacion).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registrar participación"})
+		return
+	}
+
+	// Contar total de registrados para devolver al frontend
+	var total int64
+	database.DB.Model(&models.ParticipacionEvento{}).Where("id_evento = ?", idEvento).Count(&total)
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "¡Registro exitoso!",
+		"total":   total,
+	})
+}
+
+func (h *EventosHandler) GetParticipantes(c *gin.Context) {
+	idEvento, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	type ParticipanteResumen struct {
+		IDParticipacion uint   `json:"id_participacion"`
+		IDPersona       uint   `json:"id_persona"`
+		NombreCompleto  string `json:"nombre_completo"`
+		Acompaniantes   int    `json:"acompaniantes"`
+		FechaRegistro   string `json:"fecha_registro"`
+	}
+
+	var participaciones []models.ParticipacionEvento
+	if err := database.DB.Where("id_evento = ?", idEvento).Order("created_at ASC").Find(&participaciones).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener participantes"})
+		return
+	}
+
+	resultado := make([]ParticipanteResumen, 0, len(participaciones))
+	totalAsistentes := 0
+
+	for _, p := range participaciones {
+		nombre := "Visitante"
+		if p.NombreVisitante != nil {
+			nombre = *p.NombreVisitante
+		} else if p.IDPersona != 0 {
+			var persona models.Persona
+			if err := database.DB.First(&persona, p.IDPersona).Error; err == nil {
+				nombre = persona.GetNombreCompleto()
+			}
+		}
+		totalAsistentes += 1 + p.Acompaniantes
+		resultado = append(resultado, ParticipanteResumen{
+			IDParticipacion: p.IDParticipacion,
+			IDPersona:       p.IDPersona,
+			NombreCompleto:  nombre,
+			Acompaniantes:   p.Acompaniantes,
+			FechaRegistro:   p.CreatedAt.Format("2006-01-02 15:04"),
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data":             resultado,
+		"count":            len(resultado),
+		"total_asistentes": totalAsistentes,
+	})
 }

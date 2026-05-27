@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogIn, UserPlus } from 'lucide-react'
+import { LogIn, UserPlus, LayoutDashboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useAuthStore } from '@/store/authStore'
 
 interface Props {
   variant?: 'home' | 'page'
@@ -22,6 +23,8 @@ export default function SiteHeader({ variant = 'page' }: Props) {
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  const { isAuthenticated } = useAuthStore()
 
   return (
     <header className="header-container shadow-sm border-b border-red-800/30">
@@ -48,18 +51,29 @@ export default function SiteHeader({ variant = 'page' }: Props) {
           <div className="header-buttons-container">
             {/* Auth */}
             <div className="header-buttons-top" style={{ padding: '0.1px 0.5px' }}>
-              <Link href="/register">
-                <Button variant="ghost" className="header-auth-button group">
-                  <UserPlus size={18} className="text-nikkei-burgundy" />
-                  <span>Registrarse</span>
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button variant="ghost" className="header-auth-button group">
-                  <LogIn size={18} className="text-nikkei-burgundy" />
-                  <span>Iniciar Sesión</span>
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link href="/dashboard">
+                  <Button variant="ghost" className="header-auth-button group">
+                    <LayoutDashboard size={18} className="text-nikkei-burgundy" />
+                    <span>Volver al Dashboard</span>
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/register">
+                    <Button variant="ghost" className="header-auth-button group">
+                      <UserPlus size={18} className="text-nikkei-burgundy" />
+                      <span>Registrarse</span>
+                    </Button>
+                  </Link>
+                  <Link href="/login">
+                    <Button variant="ghost" className="header-auth-button group">
+                      <LogIn size={18} className="text-nikkei-burgundy" />
+                      <span>Iniciar Sesión</span>
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Navegación */}

@@ -32,6 +32,15 @@ export default function DirectorioPage() {
   const [filtroGiro, setFiltroGiro] = useState('')
   const [busqueda, setBusqueda] = useState('')
 
+  useEffect(() => {
+    if (loading) return
+    const params = new URLSearchParams(window.location.search)
+    const idParam = params.get('empresa')
+    if (!idParam) return
+    const empresa = todas.find((e) => e.id_empresa === Number(idParam))
+    if (empresa) setEmpresaActiva(empresa)
+  }, [loading, todas])
+
   const cargar = useCallback(async () => {
     try {
       setLoading(true)

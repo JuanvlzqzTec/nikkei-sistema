@@ -126,6 +126,7 @@ func main() {
 			eventos.GET("/proximos", eventosHandler.GetProximos)
 			eventos.GET("/", eventosHandler.GetAll)
 			eventos.GET("/:id", eventosHandler.GetByID)
+			eventos.POST("/:id/registrarse", eventosHandler.Registrarse)
 		}
 
 		//Empresas (público)
@@ -222,6 +223,7 @@ func main() {
 					eventosAdmin.PUT("/:id", eventosHandler.Update)
 					eventosAdmin.DELETE("/:id", eventosHandler.Delete)
 					eventosAdmin.PATCH("/:id/status", eventosHandler.UpdateStatus)
+					eventosAdmin.GET("/:id/participantes", eventosHandler.GetParticipantes)
 				}
 
 				empresasAdmin := admin.Group("/empresas")

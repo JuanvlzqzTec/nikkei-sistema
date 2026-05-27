@@ -303,7 +303,7 @@ export default function HomePage() {
                     </div>
                     <div className="mt-8">
                       {evento.requiere_registro ? (
-                        <Link href={`/eventos/${evento.id_evento}`}>
+                        <Link href={`/eventos?registro=${evento.id_evento}`}>
                           <Button className="w-full btn-nikkei py-3 text-base"><Ticket size={18} />Registrarme ahora</Button>
                         </Link>
                       ) : (
@@ -345,7 +345,7 @@ export default function HomePage() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
               {empresasDestacadas.map((empresa) => (
-                <a key={empresa.id_empresa} href={empresa.sitio_web || '#'} target="_blank" rel="noopener noreferrer"
+                <a key={empresa.id_empresa} href={`/directorio?empresa=${empresa.id_empresa}`}
                   onMouseEnter={() => setHoveredEmpresa(empresa.id_empresa)} onMouseLeave={() => setHoveredEmpresa(null)}
                   className="group relative flex flex-col items-center rounded-2xl overflow-hidden border-2 border-transparent hover:border-amber-300 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 bg-white/70 backdrop-blur-sm">
                   <div className="relative w-full aspect-square overflow-hidden bg-gray-100">

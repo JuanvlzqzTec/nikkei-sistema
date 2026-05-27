@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { X, Calendar, MapPin, Users, Phone, ExternalLink, Ticket, Clock } from 'lucide-react'
+import ModalRegistroEvento from './_ModalRegistroEvento'
 import {
   type Evento,
   TIPO_LABELS, TIPO_BADGE_SOLID,
@@ -16,6 +17,7 @@ interface Props {
 
 export default function EventoModal({ evento, onClose }: Props) {
   const futuro = esFuturo(evento)
+  const [showRegistro, setShowRegistro] = useState(false)
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -163,10 +165,21 @@ export default function EventoModal({ evento, onClose }: Props) {
           )}
 
           {futuro && evento.requiere_registro && (
-            <button className="w-full btn-nikkei py-3 text-base flex items-center justify-center gap-2 mt-1">
-              <Ticket size={17} />
-              Registrarme para este evento
-            </button>
+            <>
+              <button
+                onClick={() => setShowRegistro(true)}
+                className="w-full btn-nikkei py-3 text-base flex items-center justify-center gap-2 mt-1"
+              >
+                <Ticket size={17} />
+                Registrarme para este evento
+              </button>
+              {showRegistro && (
+                <ModalRegistroEvento
+                  evento={evento}
+                  onClose={() => setShowRegistro(false)}
+                />
+              )}
+            </>
           )}
 
           {!futuro && (

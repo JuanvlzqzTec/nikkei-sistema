@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Plus, Pencil, Trash2, X, Check, Loader2, Star, StarOff, Upload, ImageIcon } from 'lucide-react'
 import { empresasApi, type Empresa } from '@/lib/adminApi'
 import { Button } from '@/components/ui/button'
+import { GIROS_COMERCIALES } from '@/lib/constants'
 
 const CLOUDINARY_CLOUD_NAME = 'dyfkeoc7a'
 const CLOUDINARY_UPLOAD_PRESET = 'nikkei_default'
@@ -364,12 +365,16 @@ export default function EmpresasAdminPage() {
                 {/* Giro comercial */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Giro comercial</label>
-                  <input
-                    type="text"
+                  <select
                     value={form.giro_comercial}
                     onChange={(e) => f('giro_comercial', e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
-                  />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400 cursor-pointer"
+                  >
+                    <option value="">Selecciona un giro...</option>
+                    {GIROS_COMERCIALES.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Sector */}

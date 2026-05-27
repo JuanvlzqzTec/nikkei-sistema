@@ -53,6 +53,15 @@ export default function EventosPage() {
 
   useEffect(() => { cargar() }, [cargar])
 
+  useEffect(() => {
+    if (loading) return
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get('registro')
+    if (!id) return
+    const evento = todos.find((e) => e.id_evento === Number(id))
+    if (evento) setEventoActivo(evento)
+  }, [loading, todos])
+
   const proximos = todos
     .filter((e) => esFuturo(e))
     .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())

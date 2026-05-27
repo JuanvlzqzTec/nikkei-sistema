@@ -1,0 +1,14 @@
+export const GIROS_COMERCIALES = [
+  'Gastronomía',
+  'Jardinería y Paisajismo',
+  'Tecnología',
+  'Comercio',
+  'Salud y Bienestar',
+  'Educación',
+  'Construcción',
+  'Manufactura',
+  'Servicios Profesionales',
+  'Transporte y Logística',
+  'Arte y Cultura',
+  'Otro',
+]
