@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, User, Globe, Pencil } from 'lucide-react'
+import { LogOut, User, Globe, Pencil, GitBranch, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { useAuthStore } from '@/store/authStore'
@@ -207,6 +207,29 @@ export default function DashboardPage() {
 
               {/* Mi empresa / Mi trabajo */}
               <MiNegocio />
+
+              <Link
+                href="/dashboard/arbol"
+                className="block bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all p-6 sm:p-8 group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-700 flex items-center justify-center shrink-0">
+                    <GitBranch size={26} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-serif text-xl sm:text-2xl text-red-800 leading-tight">
+                      Mi árbol genealógico
+                    </h2>
+                    <p className="font-sans text-base text-gray-600 mt-1">
+                      Reconecta con tu familia a través de las generaciones.
+                    </p>
+                  </div>
+                  <ArrowRight
+                    size={20}
+                    className="text-red-300 group-hover:text-red-700 group-hover:translate-x-1 transition-all shrink-0"
+                  />
+                </div>
+              </Link>
 
               {/* Banner contribuciones */}
               <BannerContribucion />

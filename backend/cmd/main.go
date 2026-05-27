@@ -55,6 +55,7 @@ func main() {
 	registroHandler := handlers.NewRegistroComunitarioHandler()
 	contribucionesHandler := handlers.NewContribucionesHandler()
 	perfilHandler := handlers.NewPerfilHandler()
+	genealogiaHandler := handlers.NewGenealogiaHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -178,6 +179,15 @@ func main() {
 			protected.PATCH("mi-perfil/datos-libres", perfilHandler.UpdateDatosLibres)
 			protected.POST("mi-perfil/solicitar-cambio", perfilHandler.SolicitarCambio)
 			protected.PATCH("mi-perfil/foto", perfilHandler.UpdateFoto)
+
+			// Genealogía / Árbol familiar
+			protected.GET("mi-arbol", genealogiaHandler.GetMiArbol)
+			protected.GET("personas/buscar", genealogiaHandler.BuscarPersonas)
+			protected.POST("personas/historica", genealogiaHandler.CrearPersonaHistorica)
+			protected.POST("relaciones", genealogiaHandler.CrearRelacion)
+			protected.PATCH("relaciones/:id/confirmar", genealogiaHandler.ConfirmarRelacion)
+			protected.DELETE("relaciones/:id", genealogiaHandler.EliminarRelacion)
+			protected.GET("relaciones/pendientes-confirmacion", genealogiaHandler.GetPendientesConfirmacion)
 
 			//Rutas admin
 			admin := protected.Group("/admin")
