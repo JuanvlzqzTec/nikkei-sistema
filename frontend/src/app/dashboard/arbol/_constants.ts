@@ -13,6 +13,8 @@ export const TIPOS_RELACION = [
   { value: 'nieta', label: 'Nieta', categoria: 'descendente' },
   { value: 'tio', label: 'Tío', categoria: 'ascendente' },
   { value: 'tia', label: 'Tía', categoria: 'ascendente' },
+  { value: 'sobrino', label: 'Sobrino', categoria: 'descendente' },
+  { value: 'sobrina', label: 'Sobrina', categoria: 'descendente' },
   { value: 'primo', label: 'Primo', categoria: 'horizontal' },
   { value: 'prima', label: 'Prima', categoria: 'horizontal' },
   { value: 'cuniado', label: 'Cuñado', categoria: 'horizontal' },
@@ -33,5 +35,5 @@ export const NIVEL_GENERACION: Record<string, number> = {
   padre: 1, madre: 1, tio: 1, tia: 1,
   esposo: 0, esposa: 0, hermano: 0, hermana: 0, primo: 0, prima: 0, cuniado: 0, cuniada: 0,
   hijo: -1, hija: -1, yerno: -1, nuera: -1,
-  nieto: -2, nieta: -2,
+  nieto: -2, nieta: -2, sobrino: -1, sobrina: -1,
 }

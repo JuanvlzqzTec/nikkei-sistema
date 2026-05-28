@@ -12,10 +12,8 @@ export const GENERACIONES: { value: Generacion; label: string; descripcion: stri
 ]
 
 export const GENEROS: { value: Genero; label: string }[] = [
-  { value: 'masculino',         label: 'Masculino' },
-  { value: 'femenino',          label: 'Femenino' },
-  { value: 'otro',              label: 'Otro' },
-  { value: 'prefiero_no_decir', label: 'Prefiero no decir' },
+  { value: 'masculino', label: 'Masculino' },
+  { value: 'femenino',  label: 'Femenino' },
 ]
 
 export const NIVELES_JAPONES: { value: NivelJapones; label: string; descripcion: string }[] = [

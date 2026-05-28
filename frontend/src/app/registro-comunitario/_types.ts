@@ -1,5 +1,5 @@
 export type Generacion = 'issei' | 'nisei' | 'sansei' | 'yonsei' | 'gosei' | 'roksei'
-export type Genero = 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir'
+export type Genero = 'masculino' | 'femenino'
 export type NivelJapones = 'ninguno' | 'basico' | 'intermedio' | 'avanzado' | 'nativo'
 
 export interface WizardData {

@@ -130,11 +130,9 @@ func (h *GenealogiaHandler) obtenerRelacionesDePersona(idPersona uint) ([]Relaci
 
 		if g.IDPersona == idPersona {
 			idOtro = g.IDPariente
-			tipoMostrar = g.TipoRelacion
 			yoSoyQuien = "persona"
 		} else {
 			idOtro = g.IDPersona
-			tipoMostrar = (&models.Genealogia{TipoRelacion: g.TipoRelacion}).GetRelacionInversa()
 			yoSoyQuien = "pariente"
 		}
 
@@ -142,9 +140,19 @@ func (h *GenealogiaHandler) obtenerRelacionesDePersona(idPersona uint) ([]Relaci
 		if err := database.DB.First(&otraPersona, idOtro).Error; err != nil {
 			continue
 		}
+
+		if g.IDPersona == idPersona {
+			tipoMostrar = g.TipoRelacion
+		} else {
+			generoOtro := ""
+			if otraPersona.Genero != nil {
+				generoOtro = *otraPersona.Genero
+			}
+			tipoMostrar = (&models.Genealogia{TipoRelacion: g.TipoRelacion}).GetRelacionInversaConGenero(generoOtro)
+		}
+
 		var familiaOtra models.Familia
 		database.DB.First(&familiaOtra, otraPersona.IDFamilia)
-
 		resultado = append(resultado, RelacionResumen{
 			IDGenealogia:          g.IDGenealogia,
 			TipoRelacion:          tipoMostrar,
@@ -322,15 +330,17 @@ func (h *GenealogiaHandler) CrearRelacion(c *gin.Context) {
 		return
 	}
 
-	// Verificar duplicado (en cualquier dirección con el mismo tipo)
+	// Verificar que no exista YA ninguna relación entre estas dos personas (en cualquier dirección)
 	var existente models.Genealogia
 	dup := database.DB.
-		Where("(id_persona = ? AND id_pariente = ? AND tipo_relacion = ?) OR (id_persona = ? AND id_pariente = ? AND tipo_relacion = ?)",
-			persona.IDPersona, req.IDPariente, req.TipoRelacion,
-			req.IDPariente, persona.IDPersona, req.TipoRelacion).
+		Where("(id_persona = ? AND id_pariente = ?) OR (id_persona = ? AND id_pariente = ?)",
+			persona.IDPersona, req.IDPariente,
+			req.IDPariente, persona.IDPersona).
 		First(&existente)
 	if dup.Error == nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "Esta relación ya existe"})
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Ya existe una relación registrada con esta persona. Elimínala primero si quieres cambiar el tipo.",
+		})
 		return
 	}
 
@@ -492,7 +502,11 @@ func (h *GenealogiaHandler) GetPendientesConfirmacion(c *gin.Context) {
 		var familia models.Familia
 		database.DB.First(&familia, solicitante.IDFamilia)
 
-		inverso := (&models.Genealogia{TipoRelacion: g.TipoRelacion}).GetRelacionInversa()
+		generoSolicitante := ""
+		if solicitante.Genero != nil {
+			generoSolicitante = *solicitante.Genero
+		}
+		inverso := (&models.Genealogia{TipoRelacion: g.TipoRelacion}).GetRelacionInversaConGenero(generoSolicitante)
 
 		resultado = append(resultado, PendienteResumen{
 			IDGenealogia: g.IDGenealogia,

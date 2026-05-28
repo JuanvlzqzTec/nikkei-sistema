@@ -214,10 +214,9 @@ export default function PendientesPage() {
 
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                       <p className="font-sans text-base text-amber-900 leading-relaxed">
-                        <strong>{nombreCorto}</strong> dice que es tu{' '}
-                        <strong>{etiquetaQueDicen.toLowerCase()}</strong>. Si lo
-                        confirmas, tú serás su{' '}
-                        <strong>{etiquetaQueSeria.toLowerCase()}</strong> en el árbol.
+                        <strong>{nombreCorto}</strong> dice que tú eres su{' '}
+                        <strong>{etiquetaQueDicen.toLowerCase()}</strong>. Si confirmas, en tu árbol aparecerá como tu{' '}
+                        <strong>{etiquetaQueSeria.toLowerCase()}</strong>.
                       </p>
                       {p.notas && (
                         <p className="font-sans text-sm text-amber-800 italic mt-2 pt-2 border-t border-amber-200">

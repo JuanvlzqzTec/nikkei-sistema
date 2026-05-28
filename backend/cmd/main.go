@@ -56,6 +56,7 @@ func main() {
 	contribucionesHandler := handlers.NewContribucionesHandler()
 	perfilHandler := handlers.NewPerfilHandler()
 	genealogiaHandler := handlers.NewGenealogiaHandler()
+	adminArbolesHandler := handlers.NewAdminArbolesHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -238,6 +239,9 @@ func main() {
 
 				admin.GET("contribuciones", contribucionesHandler.GetPendientes)
 				admin.PATCH("contribuciones/:id/estado", contribucionesHandler.MarcarEstado)
+
+				admin.GET("arboles/familias", adminArbolesHandler.GetFamiliasConArboles)
+				admin.GET("arboles/familias/:id", adminArbolesHandler.GetArbolFamilia)
 			}
 		}
 	}

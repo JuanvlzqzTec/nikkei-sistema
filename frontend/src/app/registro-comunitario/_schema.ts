@@ -110,8 +110,8 @@ export const paso3Schema = z.object({
       },
       { message: 'Por favor revisa la fecha' }
     ),
-  genero: z.enum(['masculino', 'femenino', 'otro', 'prefiero_no_decir'], {
-    message: 'Por favor elige una opción',
+  genero: z.enum(['masculino', 'femenino'], {
+  message: 'Por favor elige una opción',
   }),
   lugar_nacimiento: z
     .string()

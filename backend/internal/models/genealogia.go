@@ -8,7 +8,7 @@ type Genealogia struct {
 	IDGenealogia          uint       `gorm:"primaryKey;column:id_genealogia;autoIncrement" json:"id_genealogia"`
 	IDPersona             uint       `gorm:"not null" json:"id_persona"`
 	IDPariente            uint       `gorm:"not null" json:"id_pariente"`
-	TipoRelacion          string     `gorm:"not null;size:50;check:tipo_relacion IN ('padre','madre','hijo','hija','esposo','esposa','hermano','hermana','abuelo','abuela','nieto','nieta','tio','tia','primo','prima','cuniado','cuniada','yerno','nuera','suegro','suegra')" json:"tipo_relacion"`
+	TipoRelacion          string     `gorm:"not null;size:50;check:tipo_relacion IN ('padre','madre','hijo','hija','esposo','esposa','hermano','hermana','abuelo','abuela','nieto','nieta','tio','tia','sobrino','sobrina','primo','prima','cuniado','cuniada','yerno','nuera','suegro','suegra')" json:"tipo_relacion"`
 	ConfirmadoAmbasPartes bool       `gorm:"default:false" json:"confirmado_ambas_partes"`
 	FechaConfirmacion     *time.Time `json:"fecha_confirmacion"`
 	Notas                 *string    `gorm:"type:text" json:"notas"`
@@ -65,29 +65,91 @@ func (g *Genealogia) GetRelacionInversa() string {
 		"padre":   "hijo",
 		"madre":   "hijo",
 		"hijo":    "padre",
-		"hija":    "padre",
+		"hija":    "madre",
 		"esposo":  "esposa",
 		"esposa":  "esposo",
 		"hermano": "hermano",
-		"hermana": "hermano",
+		"hermana": "hermana",
 		"abuelo":  "nieto",
 		"abuela":  "nieto",
 		"nieto":   "abuelo",
-		"nieta":   "abuelo",
-		"tio":     "primo",
-		"tia":     "primo",
+		"nieta":   "abuela",
+		"tio":     "sobrino",
+		"tia":     "sobrino",
 		"primo":   "primo",
-		"prima":   "primo",
+		"prima":   "prima",
 		"cuniado": "cuniado",
-		"cuniada": "cuniado",
+		"cuniada": "cuniada",
 		"yerno":   "suegro",
-		"nuera":   "suegro",
+		"nuera":   "suegra",
 		"suegro":  "yerno",
-		"suegra":  "yerno",
+		"suegra":  "nuera",
 	}
 
 	if inversa, exists := relacionesInversas[g.TipoRelacion]; exists {
 		return inversa
+	}
+	return g.TipoRelacion
+}
+
+func (g *Genealogia) GetRelacionInversaConGenero(generoPariente string) string {
+	esFemenino := generoPariente == "femenino"
+
+	switch g.TipoRelacion {
+	case "padre", "madre":
+		if esFemenino {
+			return "hija"
+		}
+		return "hijo"
+	case "hijo", "hija":
+		if esFemenino {
+			return "madre"
+		}
+		return "padre"
+	case "abuelo", "abuela":
+		if esFemenino {
+			return "nieta"
+		}
+		return "nieto"
+	case "nieto", "nieta":
+		if esFemenino {
+			return "abuela"
+		}
+		return "abuelo"
+	case "esposo":
+		return "esposa"
+	case "esposa":
+		return "esposo"
+	case "hermano", "hermana":
+		if esFemenino {
+			return "hermana"
+		}
+		return "hermano"
+	case "tio", "tia":
+		if esFemenino {
+			return "sobrina"
+		}
+		return "sobrino"
+	case "primo", "prima":
+		if esFemenino {
+			return "prima"
+		}
+		return "primo"
+	case "yerno", "nuera":
+		if esFemenino {
+			return "suegra"
+		}
+		return "suegro"
+	case "suegro", "suegra":
+		if esFemenino {
+			return "nuera"
+		}
+		return "yerno"
+	case "cuniado", "cuniada":
+		if esFemenino {
+			return "cuniada"
+		}
+		return "cuniado"
 	}
 	return g.TipoRelacion
 }
