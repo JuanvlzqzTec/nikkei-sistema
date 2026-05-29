@@ -444,7 +444,7 @@ export default function HomePage() {
               </div>
               <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mx-auto md:mx-0">Preservando el legado de nuestros antepasados y construyendo el futuro de nuestra comunidad.</p>
               <div className="flex justify-center md:justify-start gap-3">
-                {[{ href: '#', icon: <Facebook size={16} />, label: 'Facebook' }, { href: '#', icon: <Instagram size={16} />, label: 'Instagram' }, { href: '#', icon: <Youtube size={16} />, label: 'YouTube' }].map((social) => (
+                {[{ href: 'https://www.facebook.com/nikkeiculiacan/', icon: <Facebook size={16} />, label: 'Facebook' }, { href: 'https://www.instagram.com/nikkeiculiacan/', icon: <Instagram size={16} />, label: 'Instagram' }].map((social) => (
                   <Link key={social.label} href={social.href} aria-label={social.label} className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:border-amber-400/60 hover:text-amber-300 hover:-translate-y-1 transition-all duration-300">{social.icon}</Link>
                 ))}
               </div>

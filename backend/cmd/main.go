@@ -57,6 +57,7 @@ func main() {
 	perfilHandler := handlers.NewPerfilHandler()
 	genealogiaHandler := handlers.NewGenealogiaHandler()
 	adminArbolesHandler := handlers.NewAdminArbolesHandler()
+	contactoHandler := handlers.NewContactoHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -101,6 +102,8 @@ func main() {
 
 			c.JSON(200, gin.H{"message": "Estadísticas", "counts": stats})
 		})
+
+		api.POST("/contacto", contactoHandler.Enviar)
 
 		auth := api.Group("/auth")
 		{

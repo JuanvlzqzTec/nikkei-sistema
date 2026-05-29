@@ -98,9 +98,9 @@ export default function SiteHeader({ variant = 'page' }: Props) {
                 )
               )}
               {/* Contacto — pendiente en ambos variants */}
-              <button className="header-nav-button" disabled>
+              <Link href="/contacto" className="header-nav-button">
                 Contacto
-              </button>
+              </Link>
             </div>
           </div>
 
