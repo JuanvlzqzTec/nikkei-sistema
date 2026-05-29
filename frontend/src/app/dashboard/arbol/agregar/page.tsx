@@ -12,6 +12,7 @@ import { perfilApi } from '@/lib/perfilApi'
 import { TIPOS_RELACION } from '../_constants'
 import SelectorPersona from './_SelectorPersona'
 import FormPersonaHistorica from './_FormPersonaHistorica'
+import DashboardFooter from '@/app/dashboard/_DashboardFooter'
 
 export default function AgregarParientePage() {
   const router = useRouter()
@@ -266,6 +267,9 @@ export default function AgregarParientePage() {
             </div>
           )}
         </div>
+
+        <DashboardFooter />
+
       </main>
     </div>
   )

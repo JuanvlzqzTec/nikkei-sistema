@@ -22,7 +22,12 @@ function PersonaNodeBase({ data }: { data: PersonaNodeData }) {
           : 'border-amber-200'
       }`}
     >
-      <Handle type="target" position={Position.Top} className="bg-amber-400! w-2! h-2!" />
+      <Handle type="target" position={Position.Top} id="top" className="bg-amber-400! w-2! h-2!" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="bg-amber-400! w-2! h-2!" />
+      <Handle type="source" position={Position.Left} id="left" className="bg-amber-400! w-2! h-2!" />
+      <Handle type="target" position={Position.Left} id="left-target" className="bg-amber-400! w-2! h-2!" />
+      <Handle type="source" position={Position.Right} id="right" className="bg-amber-400! w-2! h-2!" />
+      <Handle type="target" position={Position.Right} id="right-target" className="bg-amber-400! w-2! h-2!" />
 
       <div className="flex flex-col items-center gap-2">
         <div className="relative w-14 h-14 rounded-full overflow-hidden bg-amber-100 border-2 border-white shadow-sm">
@@ -49,8 +54,6 @@ function PersonaNodeBase({ data }: { data: PersonaNodeData }) {
           )}
         </div>
       </div>
-
-      <Handle type="source" position={Position.Bottom} className="bg-amber-400! w-2! h-2!" />
     </div>
   )
 }

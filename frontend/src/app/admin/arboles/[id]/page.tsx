@@ -12,14 +12,10 @@ import ReactFlow, {
   type NodeTypes,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import dagre from 'dagre'
 import { Loader2, ArrowLeft, Users, GitBranch, Eye, EyeOff } from 'lucide-react'
 import { adminArbolesApi, type ArbolFamiliaResponse } from '@/lib/adminArbolesApi'
-import PersonaNode, { type PersonaNodeData } from '@/app/dashboard/arbol/_PersonaNode'
-import { TIPO_RELACION_LABELS, NIVEL_GENERACION } from '@/app/dashboard/arbol/_constants'
-
-const NODE_WIDTH = 208
-const NODE_HEIGHT = 140
+import PersonaNode from '@/app/dashboard/arbol/_PersonaNode'
+import { construirLayout } from '@/app/dashboard/arbol/_layoutEngine'
 
 export default function AdminArbolFamiliaPage() {
   const params = useParams<{ id: string }>()
@@ -50,73 +46,31 @@ export default function AdminArbolFamiliaPage() {
   const { nodes, edges } = useMemo(() => {
     if (!arbol) return { nodes: [] as Node[], edges: [] as Edge[] }
 
-    const nodos: Node[] = arbol.personas.map((p) => ({
-      id: `p-${p.id_persona}`,
-      type: 'persona',
-      position: { x: 0, y: 0 },
-      data: {
-        persona: {
-          id_persona: p.id_persona,
-          nombres: p.nombre_completo.split(' ')[0],
-          apellido_paterno: '',
-          apellido_materno: undefined,
-          nombre_completo: p.nombre_completo,
-          generacion: p.generacion,
-          foto_perfil: p.foto_perfil,
-          id_familia: p.id_familia,
-          apellido_familia: p.apellido_familia,
-          es_miembro_activo: p.es_miembro_activo,
-        },
-        esYo: false,
-      } as PersonaNodeData,
+    const personas = new Map()
+    for (const p of arbol.personas) {
+      personas.set(p.id_persona, {
+        id_persona: p.id_persona,
+        nombres: p.nombre_completo.split(' ')[0],
+        apellido_paterno: '',
+        apellido_materno: undefined,
+        nombre_completo: p.nombre_completo,
+        generacion: p.generacion,
+        foto_perfil: p.foto_perfil,
+        id_familia: p.id_familia,
+        apellido_familia: p.apellido_familia,
+        es_miembro_activo: p.es_miembro_activo,
+      })
+    }
+
+    const relaciones = arbol.relaciones.map((r) => ({
+      id_genealogia: r.id_genealogia,
+      id_persona: r.id_persona,
+      id_pariente: r.id_pariente,
+      tipo_relacion: r.tipo_relacion,
+      confirmado_ambas_partes: r.confirmado_ambas_partes,
     }))
 
-    const aristas: Edge[] = arbol.relaciones.map((r) => {
-      const nivel = NIVEL_GENERACION[r.tipo_relacion] ?? 0
-      let source: string
-      let target: string
-      if (nivel > 0) {
-        source = `p-${r.id_pariente}`
-        target = `p-${r.id_persona}`
-      } else {
-        source = `p-${r.id_persona}`
-        target = `p-${r.id_pariente}`
-      }
-      return {
-        id: `e-${r.id_genealogia}`,
-        source,
-        target,
-        label: TIPO_RELACION_LABELS[r.tipo_relacion] ?? r.tipo_relacion,
-        labelStyle: { fontSize: 11, fontWeight: 600, fill: '#8B2635' },
-        labelBgStyle: { fill: '#FEF7F0', fillOpacity: 0.95 },
-        labelBgPadding: [4, 6],
-        labelBgBorderRadius: 4,
-        style: {
-          stroke: r.confirmado_ambas_partes ? '#8B2635' : '#D97706',
-          strokeWidth: 2,
-          strokeDasharray: r.confirmado_ambas_partes ? undefined : '6 4',
-        },
-        animated: !r.confirmado_ambas_partes,
-      }
-    })
-
-    // Layout con dagre
-    const g = new dagre.graphlib.Graph()
-    g.setDefaultEdgeLabel(() => ({}))
-    g.setGraph({ rankdir: 'TB', nodesep: 60, ranksep: 90 })
-    nodos.forEach((n) => g.setNode(n.id, { width: NODE_WIDTH, height: NODE_HEIGHT }))
-    aristas.forEach((e) => g.setEdge(e.source, e.target))
-    dagre.layout(g)
-
-    const posicionados = nodos.map((n) => {
-      const pos = g.node(n.id)
-      return {
-        ...n,
-        position: { x: pos.x - NODE_WIDTH / 2, y: pos.y - NODE_HEIGHT / 2 },
-      }
-    })
-
-    return { nodes: posicionados, edges: aristas }
+    return construirLayout({ personas, relaciones })
   }, [arbol])
 
   if (loading) {
