@@ -193,6 +193,7 @@ func main() {
 			protected.PATCH("relaciones/:id/confirmar", genealogiaHandler.ConfirmarRelacion)
 			protected.DELETE("relaciones/:id", genealogiaHandler.EliminarRelacion)
 			protected.GET("relaciones/pendientes-confirmacion", genealogiaHandler.GetPendientesConfirmacion)
+			protected.GET("mi-familia-arbol", genealogiaHandler.GetArbolDeMiFamilia)
 
 			//Rutas admin
 			admin := protected.Group("/admin")

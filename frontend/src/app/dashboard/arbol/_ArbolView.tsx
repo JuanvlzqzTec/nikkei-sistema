@@ -12,10 +12,12 @@ import 'reactflow/dist/style.css'
 import { Loader2, Trash2, X } from 'lucide-react'
 import PersonaNode from './_PersonaNode'
 import { useArbolLayout } from './_useArbolLayout'
-import { genealogiaApi, type MiArbolResponse } from '@/lib/genealogiaApi'
+import { genealogiaApi } from '@/lib/genealogiaApi'
+
+import type { ArbolFamiliarResponse } from '@/lib/genealogiaApi'
 
 interface Props {
-  arbol: MiArbolResponse
+  arbol: ArbolFamiliarResponse
   onUpdated: () => void
 }
 

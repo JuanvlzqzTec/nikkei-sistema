@@ -78,6 +78,36 @@ export interface CrearPersonaHistoricaInput {
   notas?: string
 }
 
+export interface ArbolFamiliarPersona {
+  id_persona: number
+  nombre_completo: string
+  generacion: string
+  foto_perfil: string | null
+  id_familia: number
+  apellido_familia: string
+  es_miembro_activo: boolean
+  es_yo: boolean
+}
+
+export interface ArbolFamiliarRelacion {
+  id_genealogia: number
+  id_persona: number
+  id_pariente: number
+  tipo_relacion: string
+  confirmado_ambas_partes: boolean
+}
+
+export interface ArbolFamiliarResponse {
+  familia: {
+    id_familia: number
+    apellido_jp: string
+    apellido_kanji: string | null
+  }
+  personas: ArbolFamiliarPersona[]
+  relaciones: ArbolFamiliarRelacion[]
+  yo_id: number
+}
+
 export const genealogiaApi = {
   getMiArbol: () => apiFetch<MiArbolResponse>('/mi-arbol'),
 
@@ -113,4 +143,5 @@ export const genealogiaApi = {
     apiFetch<{ data: PendienteResumen[]; count: number }>(
       '/relaciones/pendientes-confirmacion'
     ),
+  getArbolDeMiFamilia: () => apiFetch<ArbolFamiliarResponse>('/mi-familia-arbol'),
 }

@@ -4,34 +4,27 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Loader2, GitBranch, Users, Plus, Sparkles, List } from 'lucide-react'
+import { ArrowLeft, Loader2, GitBranch, Users, Plus, Sparkles } from 'lucide-react'
 
 import { useAuthStore } from '@/store/authStore'
-import { genealogiaApi, type MiArbolResponse } from '@/lib/genealogiaApi'
+import { genealogiaApi, type ArbolFamiliarResponse } from '@/lib/genealogiaApi'
 import ArbolView from './_ArbolView'
-import ArbolLista from './_ArbolLista'
 import DashboardFooter from '@/app/dashboard/_DashboardFooter'
 
 export default function ArbolPage() {
   const router = useRouter()
   const { isAuthenticated, user, checkAuth } = useAuthStore()
-  const [arbol, setArbol] = useState<MiArbolResponse | null>(null)
+  const [arbol, setArbol] = useState<ArbolFamiliarResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [pendientesCount, setPendientesCount] = useState(0)
-  
-  // Default a lista en mobil
-  const [vista, setVista] = useState<'arbol' | 'lista'>(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 640) return 'lista'
-    return 'arbol'
-  })
 
   const cargar = useCallback(async () => {
     try {
       setLoading(true)
       setError('')
       const [a, p] = await Promise.all([
-        genealogiaApi.getMiArbol(),
+        genealogiaApi.getArbolDeMiFamilia(),
         genealogiaApi.getPendientesConfirmacion().catch(() => ({ count: 0, data: [] })),
       ])
       setArbol(a)
@@ -190,69 +183,31 @@ export default function ArbolPage() {
               </Link>
             </div>
           ) : (
-            <>
-              {/* Toggle vista + contador */}
-              <div className="flex items-center gap-3 flex-wrap">
-                <div className="flex items-center gap-2 text-sm font-sans text-gray-500">
-                  <Users size={14} />
-                  <span>
-                    {arbol.count}{' '}
-                    {arbol.count === 1 ? 'pariente registrado' : 'parientes registrados'}
-                  </span>
-                </div>
-
-                <div className="flex gap-1 bg-gray-100 p-1 rounded-xl ml-auto">
-                  <button
-                    onClick={() => setVista('arbol')}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      vista === 'arbol'
-                        ? 'bg-white shadow-sm text-red-800'
-                        : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    <GitBranch size={14} />
-                    Árbol
-                  </button>
-                  <button
-                    onClick={() => setVista('lista')}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      vista === 'lista'
-                        ? 'bg-white shadow-sm text-red-800'
-                        : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    <List size={14} />
-                    Lista
-                  </button>
-                </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-sm font-sans text-gray-500 flex-wrap">
+                <Users size={14} />
+                <span>
+                  {arbol.relaciones.length}{' '}
+                  {arbol.relaciones.length === 1 ? 'relación registrada' : 'relaciones registradas'}
+                </span>
+                <span className="flex items-center gap-1.5 ml-3">
+                  <span className="w-3 h-0.5 bg-red-700" />
+                  Confirmada
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-3 h-0.5 border-t-2 border-dashed border-amber-600" />
+                  Pendiente
+                </span>
+                <span className="text-xs text-gray-400 ml-auto">
+                  Toca un vínculo para eliminarlo
+                </span>
               </div>
-
-              {vista === 'arbol' && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-sm font-sans text-gray-500 flex-wrap">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-0.5 bg-red-700" />
-                      Confirmada
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-0.5 border-t-2 border-dashed border-amber-600" />
-                      Pendiente
-                    </span>
-                    <span className="text-xs text-gray-400 ml-auto">
-                      Toca un vínculo para eliminarlo
-                    </span>
-                  </div>
-                  <ArbolView arbol={arbol} onUpdated={cargar} />
-                </div>
-              )}
-
-              {vista === 'lista' && <ArbolLista arbol={arbol} onUpdated={cargar} />}
-            </>
+              <ArbolView arbol={arbol} onUpdated={cargar} />
+            </div>
           )}
         </div>
 
         <DashboardFooter />
-
       </main>
     </div>
   )

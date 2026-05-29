@@ -566,4 +566,121 @@ func (h *GenealogiaHandler) validarCiclos(idYo, idPariente uint, tipo string) er
 	return nil
 }
 
+func (h *GenealogiaHandler) GetArbolDeMiFamilia(c *gin.Context) {
+	persona, err := h.obtenerMiPersona(c)
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		return
+	}
+
+	var familia models.Familia
+	if err := database.DB.First(&familia, persona.IDFamilia).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Familia no encontrada"})
+		return
+	}
+
+	// Personas de la familia
+	var personas []models.Persona
+	if err := database.DB.Where("id_familia = ?", persona.IDFamilia).
+		Order("generacion ASC, apellido_paterno ASC, nombres ASC").
+		Find(&personas).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener personas"})
+		return
+	}
+
+	ids := make([]uint, 0, len(personas))
+	for _, p := range personas {
+		ids = append(ids, p.IDPersona)
+	}
+
+	var relaciones []models.Genealogia
+	if len(ids) > 0 {
+		database.DB.Where("id_persona IN ? OR id_pariente IN ?", ids, ids).Find(&relaciones)
+	}
+
+	// Personas externas referenciadas
+	personasMap := make(map[uint]*models.Persona)
+	for i := range personas {
+		personasMap[personas[i].IDPersona] = &personas[i]
+	}
+	idsExternos := []uint{}
+	for _, r := range relaciones {
+		if _, ok := personasMap[r.IDPersona]; !ok {
+			idsExternos = append(idsExternos, r.IDPersona)
+		}
+		if _, ok := personasMap[r.IDPariente]; !ok {
+			idsExternos = append(idsExternos, r.IDPariente)
+		}
+	}
+	if len(idsExternos) > 0 {
+		var externos []models.Persona
+		database.DB.Where("id_persona IN ?", idsExternos).Find(&externos)
+		for i := range externos {
+			personasMap[externos[i].IDPersona] = &externos[i]
+		}
+	}
+
+	familiasMap := make(map[uint]string)
+	familiasMap[familia.IDFamilia] = familia.ApellidoJP
+	for _, p := range personasMap {
+		if _, ok := familiasMap[p.IDFamilia]; !ok {
+			var f models.Familia
+			if err := database.DB.Select("id_familia, apellido_jp").First(&f, p.IDFamilia).Error; err == nil {
+				familiasMap[f.IDFamilia] = f.ApellidoJP
+			}
+		}
+	}
+
+	type personaResp struct {
+		IDPersona       uint    `json:"id_persona"`
+		NombreCompleto  string  `json:"nombre_completo"`
+		Generacion      string  `json:"generacion"`
+		FotoPerfil      *string `json:"foto_perfil"`
+		IDFamilia       uint    `json:"id_familia"`
+		ApellidoFamilia string  `json:"apellido_familia"`
+		EsMiembroActivo bool    `json:"es_miembro_activo"`
+		EsYo            bool    `json:"es_yo"`
+	}
+
+	type relacionResp struct {
+		IDGenealogia          uint   `json:"id_genealogia"`
+		IDPersona             uint   `json:"id_persona"`
+		IDPariente            uint   `json:"id_pariente"`
+		TipoRelacion          string `json:"tipo_relacion"`
+		ConfirmadoAmbasPartes bool   `json:"confirmado_ambas_partes"`
+	}
+
+	personasResp := make([]personaResp, 0, len(personasMap))
+	for _, p := range personasMap {
+		personasResp = append(personasResp, personaResp{
+			IDPersona:       p.IDPersona,
+			NombreCompleto:  p.GetNombreCompleto(),
+			Generacion:      p.Generacion,
+			FotoPerfil:      p.FotoPerfil,
+			IDFamilia:       p.IDFamilia,
+			ApellidoFamilia: familiasMap[p.IDFamilia],
+			EsMiembroActivo: p.EsMiembroActivo,
+			EsYo:            p.IDPersona == persona.IDPersona,
+		})
+	}
+
+	relacionesResp := make([]relacionResp, 0, len(relaciones))
+	for _, r := range relaciones {
+		relacionesResp = append(relacionesResp, relacionResp{
+			IDGenealogia:          r.IDGenealogia,
+			IDPersona:             r.IDPersona,
+			IDPariente:            r.IDPariente,
+			TipoRelacion:          r.TipoRelacion,
+			ConfirmadoAmbasPartes: r.ConfirmadoAmbasPartes,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"familia":    familia,
+		"personas":   personasResp,
+		"relaciones": relacionesResp,
+		"yo_id":      persona.IDPersona,
+	})
+}
+
 var _ = gorm.ErrRecordNotFound
