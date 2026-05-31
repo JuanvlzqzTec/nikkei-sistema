@@ -103,7 +103,7 @@ export default function PendientesPage() {
                 Confirmaciones pendientes
               </p>
               <p className="font-sans text-xs text-red-600/70">
-                Asociación Nikkei de Sinaloa
+                Asociación Nikkei de Culiacán
               </p>
             </div>
           </Link>

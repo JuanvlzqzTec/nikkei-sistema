@@ -82,7 +82,7 @@ export default function ArbolPage() {
                 Mi árbol genealógico
               </p>
               <p className="font-sans text-xs text-red-600/70">
-                Asociación Nikkei de Sinaloa
+                Asociación Nikkei de Culiacán
               </p>
             </div>
           </Link>
