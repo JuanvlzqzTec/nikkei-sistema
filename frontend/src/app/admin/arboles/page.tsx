@@ -39,7 +39,7 @@ export default function AdminArbolesPage() {
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
-        <h1 className="text-xl font-serif text-gray-900">Árboles Familiares</h1>
+        <h1 className="text-xl font-serif text-gray-900">Familias</h1>
         <p className="text-sm text-gray-500 font-sans mt-0.5">
           Explora visualmente los árboles genealógicos de cada familia registrada.
         </p>

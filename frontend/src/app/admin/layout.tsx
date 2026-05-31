@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Image as ImageIcon, CalendarDays,
   Building2, BookImage, LogOut, ChevronRight, Menu, X,
-  Globe, ClipboardList, MessageSquare, GitBranch
+  Globe, ClipboardList, MessageSquare, Users
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 
@@ -30,8 +30,8 @@ const navItems = [
   },
   {
   href: '/admin/arboles',
-  label: 'Árboles Familiares',
-  icon: GitBranch,
+  label: 'Familias',
+  icon: Users,
   },
   {
     href: '/admin/homepage',
