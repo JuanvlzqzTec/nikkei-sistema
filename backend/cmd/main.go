@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database"
+	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database/seeders"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/handlers"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/middleware"
 )
@@ -151,6 +152,13 @@ func main() {
 
 		// Empresas empleadoras (público — para autocomplete)
 		api.GET("/empresas-empleadoras", empresasEmpleadorasHandler.GetAll)
+
+		if os.Getenv("APP_ENV") != "production" {
+			api.POST("/dev/seed-demo", func(c *gin.Context) {
+				seeders.RunDemoSeeder(database.DB)
+				c.JSON(200, gin.H{"message": "Demo seeder ejecutado"})
+			})
+		}
 
 		//Rutas usuario autenticado
 		protected := api.Group("/")

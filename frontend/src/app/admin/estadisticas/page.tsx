@@ -35,6 +35,14 @@ const COLORS = [
   '#0e7490', '#be185d', '#713f12',
 ]
 
+function formatMes(mes: string): string {
+  // mes viene como "2024-07"
+  const [anio, mesNum] = mes.split('-')
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+  const idx = parseInt(mesNum, 10) - 1
+  return `${meses[idx] ?? mesNum} ${anio.slice(2)}`
+}
+
 // Componentes
 function KPICard({ icon: Icon, label, value, sub, accent = false }: {
   icon: React.ElementType; label: string; value: number | string; sub?: string; accent?: boolean
@@ -89,39 +97,86 @@ function BarraHorizontal({ label, value, total, color }: {
 
 // Gráfica de línea simple (SVG)
 function LineChart({ data, color = '#991b1b' }: { data: { mes: string; total: number }[]; color?: string }) {
-  if (!data.length) return <p className="text-xs text-gray-400 font-sans py-4 text-center">Sin datos</p>
+  if (!data.length) return <p className="text-xs text-gray-400 font-sans py-4 text-center">Sin datos suficientes</p>
+  if (data.length === 1) {
+    // Un solo punto — mostrar como stat simple
+    return (
+      <div className="flex items-center gap-4 py-4">
+        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color }} />
+        <p className="text-sm font-sans text-gray-600">
+          <span className="font-semibold text-gray-900 text-lg">{Number(data[0].total)}</span>
+          {' '}en {formatMes(data[0].mes)}
+        </p>
+        <p className="text-xs text-gray-400 font-sans">— Solo hay datos de un mes</p>
+      </div>
+    )
+  }
 
-  const maxVal = Math.max(...data.map(d => d.total), 1)
-  const W = 560; const H = 120; const PAD = 20
-  const step = (W - PAD * 2) / Math.max(data.length - 1, 1)
+  const vals = data.map(d => Number(d.total) || 0)
+  const maxVal = Math.max(...vals, 1)
+  const minVal = Math.min(...vals)
 
-  const points = data.map((d, i) => ({
-    x: PAD + i * step,
-    y: H - PAD - ((d.total / maxVal) * (H - PAD * 2)),
-    ...d,
+  const W = 560; const H = 160
+  const PAD_L = 36; const PAD_R = 16; const PAD_T = 16; const PAD_B = 36
+
+  const innerW = W - PAD_L - PAD_R
+  const innerH = H - PAD_T - PAD_B
+  const step = innerW / Math.max(data.length - 1, 1)
+
+  const points = vals.map((v, i) => ({
+    x: PAD_L + i * step,
+    y: PAD_T + innerH - ((v - minVal) / Math.max(maxVal - minVal, 1)) * innerH,
+    v,
+    mes: data[i].mes,
   }))
 
   const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ')
-  const areaD = `${pathD} L ${points[points.length - 1].x} ${H - PAD} L ${PAD} ${H - PAD} Z`
+  const areaD = `${pathD} L ${points[points.length - 1].x} ${H - PAD_B} L ${PAD_L} ${H - PAD_B} Z`
+
+  // Líneas guía Y
+  const yTicks = 4
+  const yGuias = Array.from({ length: yTicks + 1 }, (_, i) => {
+    const val = Math.round(minVal + ((maxVal - minVal) / yTicks) * i)
+    const y = PAD_T + innerH - ((val - minVal) / Math.max(maxVal - minVal, 1)) * innerH
+    return { val, y }
+  })
+
+  // Cuántos ticks X mostrar (máx 7)
+  const xTickStep = Math.ceil(data.length / 7)
+  const xTicks = points.filter((_, i) => i % xTickStep === 0 || i === points.length - 1)
 
   return (
     <div className="w-full overflow-x-auto">
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ minWidth: 280 }}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ minWidth: 300 }}>
+        {/* Líneas guía horizontales */}
+        {yGuias.map((g, i) => (
+          <g key={i}>
+            <line x1={PAD_L} y1={g.y} x2={W - PAD_R} y2={g.y}
+              stroke="#f3f4f6" strokeWidth="1" />
+            <text x={PAD_L - 4} y={g.y + 3} textAnchor="end" fontSize="9" fill="#9ca3af">
+              {g.val}
+            </text>
+          </g>
+        ))}
+
         {/* Área */}
         <path d={areaD} fill={color} fillOpacity="0.08" />
         {/* Línea */}
-        <path d={pathD} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        {/* Puntos + tooltip via title */}
+        <path d={pathD} fill="none" stroke={color} strokeWidth="2"
+          strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* Puntos */}
         {points.map((p, i) => (
           <g key={i}>
             <circle cx={p.x} cy={p.y} r="4" fill={color} />
-            <title>{p.mes}: {p.total}</title>
+            <title>{formatMes(p.mes)}: {p.v}</title>
           </g>
         ))}
+
         {/* Etiquetas eje X */}
-        {points.filter((_, i) => data.length <= 6 || i % Math.ceil(data.length / 6) === 0).map((p, i) => (
-          <text key={i} x={p.x} y={H - 2} textAnchor="middle" fontSize="9" fill="#9ca3af">
-            {p.mes.slice(5)}
+        {xTicks.map((p, i) => (
+          <text key={i} x={p.x} y={H - 4} textAnchor="middle" fontSize="9" fill="#9ca3af">
+            {formatMes(p.mes)}
           </text>
         ))}
       </svg>
