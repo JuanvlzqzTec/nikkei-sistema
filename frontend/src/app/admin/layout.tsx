@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Image as ImageIcon, CalendarDays,
   Building2, BookImage, LogOut, ChevronRight, Menu, X,
-  Globe, ClipboardList, MessageSquare, Users
+  Globe, ClipboardList, MessageSquare, Users, BarChart2
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 
@@ -32,6 +32,11 @@ const navItems = [
   href: '/admin/arboles',
   label: 'Familias',
   icon: Users,
+  },
+  {
+  href: '/admin/estadisticas',
+  label: 'Estadísticas',
+  icon: BarChart2,
   },
   {
     href: '/admin/homepage',

@@ -58,6 +58,7 @@ func main() {
 	genealogiaHandler := handlers.NewGenealogiaHandler()
 	adminArbolesHandler := handlers.NewAdminArbolesHandler()
 	contactoHandler := handlers.NewContactoHandler()
+	adminEstadisticasHandler := handlers.NewAdminEstadisticasHandler()
 
 	api := r.Group("/api/v1")
 	{
@@ -246,6 +247,9 @@ func main() {
 
 				admin.GET("arboles/familias", adminArbolesHandler.GetFamiliasConArboles)
 				admin.GET("arboles/familias/:id", adminArbolesHandler.GetArbolFamilia)
+
+				admin.GET("estadisticas", adminEstadisticasHandler.GetEstadisticas)
+
 			}
 		}
 	}
