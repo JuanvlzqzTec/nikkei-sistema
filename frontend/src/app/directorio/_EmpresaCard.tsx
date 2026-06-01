@@ -36,10 +36,10 @@ export default function EmpresaCard({ empresa, onClick }: Props) {
         )}
 
         {/* Badge sector/giro */}
-        {(empresa.sector || empresa.giro_comercial) && (
+        {empresa.giro_comercial && (
           <div className="absolute top-3 left-3">
-            <span className={`text-xs font-sans font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${getSectorColor(empresa.sector || empresa.giro_comercial)}`}>
-              {empresa.sector ?? empresa.giro_comercial}
+            <span className={`text-xs font-sans font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${getSectorColor(empresa.giro_comercial)}`}>
+              {empresa.giro_comercial}
             </span>
           </div>
         )}
@@ -57,12 +57,6 @@ export default function EmpresaCard({ empresa, onClick }: Props) {
         <h3 className="font-serif text-gray-900 text-lg leading-snug group-hover:text-red-800 transition-colors line-clamp-2">
           {empresa.nombre_empresa}
         </h3>
-
-        {empresa.giro_comercial && empresa.sector && (
-          <p className="text-sm font-sans text-amber-700 font-medium">
-            {empresa.giro_comercial}
-          </p>
-        )}
 
         {empresa.descripcion && (
           <p className="text-sm font-sans text-gray-500 leading-relaxed line-clamp-2 flex-1">

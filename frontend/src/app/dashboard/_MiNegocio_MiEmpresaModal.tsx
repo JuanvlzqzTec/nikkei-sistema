@@ -374,7 +374,6 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
                 type="text"
                 value={form.ciudad}
                 onChange={(e) => setCampo('ciudad', e.target.value)}
-                placeholder="Culiacán"
                 className="w-full text-base font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
               />
             </div>

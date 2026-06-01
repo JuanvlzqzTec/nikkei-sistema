@@ -41,5 +41,9 @@ export function getGirosUnicos(empresas: Empresa[]): string[] {
   const giros = empresas
     .map((e) => e.giro_comercial)
     .filter((g): g is string => !!g)
-  return Array.from(new Set(giros)).sort()
+  const unicos = Array.from(new Set(giros)).sort()
+  // "Otro" siempre al final
+  const sinOtro = unicos.filter((g) => g !== 'Otro')
+  const tieneOtro = unicos.includes('Otro')
+  return tieneOtro ? [...sinOtro, 'Otro'] : sinOtro
 }

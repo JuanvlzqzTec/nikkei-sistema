@@ -98,7 +98,7 @@ export default function MisParientesPage() {
             <Image src="/assets/Logo-Nikkei.png" alt="Asociación Nikkei" width={44} height={44} className="rounded-full" priority />
             <div className="hidden sm:block">
               <p className="font-serif text-red-800 text-base leading-tight">Mis parientes</p>
-              <p className="font-sans text-xs text-red-600/70">Asociación Nikkei de Sinaloa</p>
+              <p className="font-sans text-xs text-red-600/70">Asociación Nikkei de Culiacán</p>
             </div>
           </Link>
           <Link href="/dashboard" className="flex items-center gap-2 text-base font-sans text-red-700 hover:text-red-900 font-semibold cursor-pointer">

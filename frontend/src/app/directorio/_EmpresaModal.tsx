@@ -50,9 +50,9 @@ export default function EmpresaModal({ empresa, onClose }: Props) {
           )}
 
           {/* Badge sector */}
-          {(empresa.sector || empresa.giro_comercial) && (
-            <span className={`absolute top-4 left-4 text-xs font-sans font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${getSectorColor(empresa.sector || empresa.giro_comercial)}`}>
-              {empresa.sector ?? empresa.giro_comercial}
+          {empresa.giro_comercial && (
+            <span className={`absolute top-4 left-4 text-xs font-sans font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${getSectorColor(empresa.giro_comercial)}`}>
+              {empresa.giro_comercial}
             </span>
           )}
 
@@ -80,13 +80,6 @@ export default function EmpresaModal({ empresa, onClose }: Props) {
             <h2 className="font-serif text-2xl text-gray-900 leading-tight">
               {empresa.nombre_empresa}
             </h2>
-          )}
-
-          {/* Giro comercial si difiere del sector */}
-          {empresa.giro_comercial && empresa.sector && empresa.giro_comercial !== empresa.sector && (
-            <p className="text-base font-sans text-amber-700 font-medium -mt-2">
-              {empresa.giro_comercial}
-            </p>
           )}
 
           {/* Datos de contacto en línea */}

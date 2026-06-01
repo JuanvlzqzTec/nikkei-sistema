@@ -17,7 +17,7 @@ const STATUS_APROBACION_COLORS: Record<string, string> = {
 }
 
 const emptyForm = {
-  nombre_empresa: '', giro_comercial: '', sector: '', descripcion: '',
+  nombre_empresa: '', giro_comercial: '', descripcion: '',
   telefono: '', email: '', sitio_web: '', direccion: '', ciudad: '',
   estado: 'Sinaloa', logo_empresa: '',
 }
@@ -71,7 +71,6 @@ export default function EmpresasAdminPage() {
     setForm({
       nombre_empresa: em.nombre_empresa,
       giro_comercial: em.giro_comercial || '',
-      sector: em.sector || '',
       descripcion: em.descripcion || '',
       telefono: em.telefono || '',
       email: em.email || '',
@@ -375,17 +374,6 @@ export default function EmpresasAdminPage() {
                       <option key={g} value={g}>{g}</option>
                     ))}
                   </select>
-                </div>
-
-                {/* Sector */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Sector</label>
-                  <input
-                    type="text"
-                    value={form.sector}
-                    onChange={(e) => f('sector', e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
-                  />
                 </div>
 
                 {/* Teléfono */}

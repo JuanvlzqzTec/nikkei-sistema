@@ -138,56 +138,56 @@ export default function DirectorioPage() {
           <div className="container-nikkei pt-8 pb-20">
 
             {/* Buscador + filtro por giro */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
-              {/* Buscador */}
-              <div className="relative flex-1 pt-1">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                <input
-                  type="text"
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
-                  placeholder="Buscar empresa..."
-                  className="w-full pl-10 pr-4 py-2.5 text-base font-sans border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 bg-white"
-                />
-                {busqueda && (
-                  <button
-                    onClick={() => setBusqueda('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-
-              {/* Filtro por giro */}
-              {giros.length > 0 && (
-                <div className="flex gap-1.5 flex-wrap sm:flex-nowrap pt-1">
-                  <button
-                    onClick={() => setFiltroGiro('')}
-                    className={`px-4 py-2.5 rounded-xl text-base font-sans font-semibold transition-all duration-200 whitespace-nowrap ${
-                      filtroGiro === ''
-                        ? 'bg-red-800 text-white shadow-sm'
-                        : 'border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    Todos
-                  </button>
-                  {giros.map((giro) => (
+              <div className="flex flex-col gap-3 mb-8">
+                {/* Buscador */}
+                <div className="relative w-full">
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    placeholder="Buscar empresa..."
+                    className="w-full pl-10 pr-4 py-2.5 text-base font-sans border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 bg-white"
+                  />
+                  {busqueda && (
                     <button
-                      key={giro}
-                      onClick={() => setFiltroGiro(giro === filtroGiro ? '' : giro)}
-                      className={`px-4 py-2.5 rounded-xl text-base font-sans font-semibold transition-all duration-200 whitespace-nowrap ${
-                        filtroGiro === giro
+                      onClick={() => setBusqueda('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Filtros por giro */}
+                {giros.length > 0 && (
+                  <div className="flex gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => setFiltroGiro('')}
+                      className={`px-4 py-2 rounded-xl text-sm font-sans font-semibold transition-all duration-200 whitespace-nowrap ${
+                        filtroGiro === ''
                           ? 'bg-red-800 text-white shadow-sm'
                           : 'border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      {giro}
+                      Todos
                     </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                    {giros.map((giro) => (
+                      <button
+                        key={giro}
+                        onClick={() => setFiltroGiro(giro === filtroGiro ? '' : giro)}
+                        className={`px-4 py-2 rounded-xl text-sm font-sans font-semibold transition-all duration-200 whitespace-nowrap ${
+                          filtroGiro === giro
+                            ? 'bg-red-800 text-white shadow-sm'
+                            : 'border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {giro}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
             {/* Resultados */}
             {error ? (

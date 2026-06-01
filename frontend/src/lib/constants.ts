@@ -9,6 +9,7 @@ export const GIROS_COMERCIALES = [
   'Manufactura',
   'Servicios Profesionales',
   'Transporte y Logística',
+  'Agricultura',
   'Arte y Cultura',
   'Otro',
 ]
