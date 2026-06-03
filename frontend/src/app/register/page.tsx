@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Send } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,6 +21,7 @@ export default function RegisterPage() {
   const { register: registerUser, isLoading, error, clearError } = useAuthStore()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [registrado, setRegistrado] = useState(false)
 
   const {
     register,
@@ -34,10 +35,35 @@ export default function RegisterPage() {
     clearError()
     try {
       await registerUser(data.email, data.password)
-      router.push('/dashboard')
+      setRegistrado(true)
     } catch (error) {
-      // El error ya se maneja en el store
     }
+  }
+
+  if (registrado) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4"
+        style={{ background: 'linear-gradient(135deg, #FEF7F0 0%, #FDE8D8 40%, #FCEEE8 100%)' }}>
+        <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md w-full text-center space-y-6">
+          <Image src="/assets/Logo-Nikkei.png" alt="Logo" width={56} height={56} className="rounded-full mx-auto" />
+          <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto">
+            <Send size={28} className="text-amber-600" />
+          </div>
+          <h1 className="font-serif text-2xl text-red-800">Revisa tu correo</h1>
+          <p className="font-sans text-gray-500 text-sm leading-relaxed">
+            Te enviamos un enlace de verificación. Revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.
+          </p>
+          <button onClick={() => router.push('/dashboard')}
+            className="w-full py-3 bg-red-700 hover:bg-red-800 text-white font-sans font-semibold rounded-xl transition-colors">
+            Continuar al dashboard
+          </button>
+          <p className="text-xs font-sans text-gray-400">
+            ¿No llegó?  Revisa tu carpeta de spam.
+          </p>
+          <p className="font-serif text-3xl text-red-900/10 select-none">縁</p>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -112,6 +112,9 @@ func main() {
 			auth.POST("/register", authHandler.Register)
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/validate", middleware.OptionalAuth(), authHandler.ValidateToken)
+			auth.GET("/verify-email", authHandler.VerificarEmail)
+			auth.POST("/forgot-password", authHandler.SolicitarResetPassword)
+			auth.POST("/reset-password", authHandler.ConfirmarResetPassword)
 		}
 
 		//Slider (público)

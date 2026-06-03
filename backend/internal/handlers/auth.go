@@ -87,15 +87,26 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
+	if err := services.ValidarDominioEmail(req.Email); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	// Registrar usuario
 	user, err := h.authService.Register(req.Email, req.Password, req.Role)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{
-			"error":   "Error al registrar usuario",
-			"message": err.Error(),
-		})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Enviar email de verificación (no bloqueante)
+	go func() {
+		token, err := h.authService.GenerarTokenVerificacion(user.IDUser)
+		if err == nil {
+			emailSvc := services.NewEmailService()
+			_ = emailSvc.EnviarVerificacion(user.Email, token)
+		}
+	}()
 
 	// Generar token
 	token, err := h.authService.GenerateToken(user)
@@ -404,4 +415,54 @@ func buildUserResponse(user *models.User) UserResponse {
 	}
 
 	return resp
+}
+
+func (h *AuthHandler) VerificarEmail(c *gin.Context) {
+	token := c.Query("token")
+	if token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token requerido"})
+		return
+	}
+	if err := h.authService.VerificarEmail(token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Correo verificado exitosamente"})
+}
+
+func (h *AuthHandler) SolicitarResetPassword(c *gin.Context) {
+	var req struct {
+		Email string `json:"email" binding:"required,email"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Correo inválido"})
+		return
+	}
+	user, token, err := h.authService.SolicitarResetPassword(req.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno"})
+		return
+	}
+	// Siempre responder igual para no revelar si el email existe
+	if user != nil && token != "" {
+		emailSvc := services.NewEmailService()
+		_ = emailSvc.EnviarResetPassword(user.Email, token)
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Si el correo existe, recibirás un enlace en los próximos minutos"})
+}
+
+func (h *AuthHandler) ConfirmarResetPassword(c *gin.Context) {
+	var req struct {
+		Token    string `json:"token" binding:"required"`
+		Password string `json:"password" binding:"required,min=8"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos"})
+		return
+	}
+	if err := h.authService.ConfirmarResetPassword(req.Token, req.Password); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Contraseña actualizada exitosamente"})
 }

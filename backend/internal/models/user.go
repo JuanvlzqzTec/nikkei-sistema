@@ -18,6 +18,14 @@ type User struct {
 	CreatedAt       time.Time  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt       time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 
+	// Verificación de email
+	VerificationToken  *string    `gorm:"size:255;null" json:"-"`
+	VerificationExpiry *time.Time `gorm:"null" json:"-"`
+
+	// Reset de contraseña
+	ResetToken  *string    `gorm:"size:255;null" json:"-"`
+	ResetExpiry *time.Time `gorm:"null" json:"-"`
+
 	// Descomentar cuando se quiera cargar la relación con Persona
 	//Persona *Persona `gorm:"foreignKey:IDPersona;constraint:OnDelete:SET NULL" json:"persona,omitempty"`
 }

@@ -1,9 +1,11 @@
 package services
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -274,4 +276,103 @@ func (s *AuthService) UpdateUserRole(userID uint, newRole string) error {
 		return errors.New("usuario no encontrado")
 	}
 	return nil
+}
+
+// Dominios de email permitidos
+
+var dominiosPermitidos = []string{
+	"gmail.com", "outlook.com", "hotmail.com", "hotmail.es",
+	"live.com", "live.com.mx", "yahoo.com", "yahoo.com.mx",
+	"icloud.com", "me.com", "protonmail.com", "pm.me",
+	"msn.com", "googlemail.com",
+}
+
+func ValidarDominioEmail(email string) error {
+	parts := strings.Split(email, "@")
+	if len(parts) != 2 {
+		return errors.New("correo electrónico inválido")
+	}
+	dominio := strings.ToLower(parts[1])
+	for _, d := range dominiosPermitidos {
+		if dominio == d {
+			return nil
+		}
+	}
+	return fmt.Errorf("el dominio @%s no está permitido. Usa Gmail, Outlook, Hotmail, Yahoo u otros proveedores reconocidos", dominio)
+}
+
+// Verificacion de email
+
+func (s *AuthService) GenerarTokenVerificacion(userID uint) (string, error) {
+	token := generateSecureToken()
+	expiry := time.Now().Add(24 * time.Hour)
+	if err := s.db.Model(&models.User{}).Where("id_user = ?", userID).Updates(map[string]interface{}{
+		"verification_token":  token,
+		"verification_expiry": expiry,
+	}).Error; err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+func (s *AuthService) VerificarEmail(token string) error {
+	var user models.User
+	if err := s.db.Where("verification_token = ?", token).First(&user).Error; err != nil {
+		return errors.New("token inválido o expirado")
+	}
+	if user.VerificationExpiry == nil || time.Now().After(*user.VerificationExpiry) {
+		return errors.New("el enlace de verificación ha expirado")
+	}
+	return s.db.Model(&user).Updates(map[string]interface{}{
+		"email_verified":      true,
+		"verification_token":  nil,
+		"verification_expiry": nil,
+	}).Error
+}
+
+// Reset de contraseña
+
+func (s *AuthService) SolicitarResetPassword(email string) (*models.User, string, error) {
+	var user models.User
+	if err := s.db.Where("email = ? AND is_active = true", email).First(&user).Error; err != nil {
+		// No revelar si el email existe o no
+		return nil, "", nil
+	}
+	token := generateSecureToken()
+	expiry := time.Now().Add(1 * time.Hour)
+	if err := s.db.Model(&user).Updates(map[string]interface{}{
+		"reset_token":  token,
+		"reset_expiry": expiry,
+	}).Error; err != nil {
+		return nil, "", err
+	}
+	return &user, token, nil
+}
+
+func (s *AuthService) ConfirmarResetPassword(token, nuevaPassword string) error {
+	var user models.User
+	if err := s.db.Where("reset_token = ?", token).First(&user).Error; err != nil {
+		return errors.New("token inválido o expirado")
+	}
+	if user.ResetExpiry == nil || time.Now().After(*user.ResetExpiry) {
+		return errors.New("el enlace ha expirado, solicita uno nuevo")
+	}
+	if err := s.ValidatePasswordStrength(nuevaPassword); err != nil {
+		return err
+	}
+	hash, err := s.HashPassword(nuevaPassword)
+	if err != nil {
+		return err
+	}
+	return s.db.Model(&user).Updates(map[string]interface{}{
+		"password_hash": hash,
+		"reset_token":   nil,
+		"reset_expiry":  nil,
+	}).Error
+}
+
+func generateSecureToken() string {
+	b := make([]byte, 32)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
 }
