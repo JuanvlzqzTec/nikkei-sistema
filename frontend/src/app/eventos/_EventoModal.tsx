@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { X, Calendar, MapPin, Users, Phone, ExternalLink, Ticket, Clock } from 'lucide-react'
+import { X, Calendar, MapPin, Users, Phone, ExternalLink, Ticket, Clock, Check } from 'lucide-react'
 import ModalRegistroEvento from './_ModalRegistroEvento'
 import {
   type Evento,
@@ -18,6 +18,11 @@ interface Props {
 export default function EventoModal({ evento, onClose }: Props) {
   const futuro = esFuturo(evento)
   const [showRegistro, setShowRegistro] = useState(false)
+  const [yaRegistradoLocal, setYaRegistradoLocal] = useState(() => {
+    if (typeof window === 'undefined') return false
+    const registrados = JSON.parse(localStorage.getItem('eventos_registrados') || '[]')
+    return registrados.includes(evento.id_evento)
+  })
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -29,12 +34,19 @@ export default function EventoModal({ evento, onClose }: Props) {
     }
   }, [onClose])
 
+  const handleRegistroExitoso = () => {
+    const registrados = JSON.parse(localStorage.getItem('eventos_registrados') || '[]')
+    if (!registrados.includes(evento.id_evento)) {
+      localStorage.setItem('eventos_registrados', JSON.stringify([...registrados, evento.id_evento]))
+    }
+    setYaRegistradoLocal(true)
+    setShowRegistro(false)
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Panel */}
       <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-xl my-10 overflow-hidden">
 
         {/* Imagen */}
@@ -75,7 +87,6 @@ export default function EventoModal({ evento, onClose }: Props) {
             <h2 className="font-serif text-xl text-gray-900 leading-tight">{evento.titulo}</h2>
           )}
 
-          {/* Metadatos en línea */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2.5 text-base font-sans text-gray-600">
               <Calendar size={14} className="text-amber-600 shrink-0" />
@@ -118,23 +129,16 @@ export default function EventoModal({ evento, onClose }: Props) {
           </div>
 
           {evento.descripcion && <div className="h-px bg-gray-100" />}
-
           {evento.descripcion && (
-            <p className="text-sm font-sans text-gray-600 leading-relaxed">
-              {evento.descripcion}
-            </p>
+            <p className="text-sm font-sans text-gray-600 leading-relaxed">{evento.descripcion}</p>
           )}
 
           {evento.requisitos && (
             <>
               <div className="h-px bg-gray-100" />
               <div>
-                <p className="text-sm font-sans font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
-                  Requisitos
-                </p>
-                <p className="text-sm font-sans text-gray-600 leading-relaxed">
-                  {evento.requisitos}
-                </p>
+                <p className="text-sm font-sans font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Requisitos</p>
+                <p className="text-sm font-sans text-gray-600 leading-relaxed">{evento.requisitos}</p>
               </div>
             </>
           )}
@@ -166,26 +170,34 @@ export default function EventoModal({ evento, onClose }: Props) {
 
           {futuro && evento.requiere_registro && (
             <>
-              <button
-                onClick={() => setShowRegistro(true)}
-                className="w-full btn-nikkei py-3 text-base flex items-center justify-center gap-2 mt-1"
-              >
-                <Ticket size={17} />
-                Registrarme para este evento
-              </button>
+              {yaRegistradoLocal ? (
+                <div className="w-full py-3 text-base flex items-center justify-center gap-2 mt-1 bg-green-50 border-2 border-green-200 rounded-xl text-green-700 font-sans font-semibold">
+                  <Check size={17} />
+                  Ya estás registrado en este evento
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowRegistro(true)}
+                  className="w-full btn-nikkei py-3 text-base flex items-center justify-center gap-2 mt-1"
+                >
+                  <Ticket size={17} />
+                  Registrarme para este evento
+                </button>
+              )}
+
               {showRegistro && (
                 <ModalRegistroEvento
                   evento={evento}
                   onClose={() => setShowRegistro(false)}
+                  onYaRegistrado={() => setYaRegistradoLocal(true)}
+                  onExito={handleRegistroExitoso}
                 />
               )}
             </>
           )}
 
           {!futuro && (
-            <p className="text-center text-xs font-sans text-gray-400">
-              Este evento ya finalizó
-            </p>
+            <p className="text-center text-xs font-sans text-gray-400">Este evento ya finalizó</p>
           )}
         </div>
       </div>

@@ -19,6 +19,9 @@ export async function registrarseEvento(idEvento: number, data: RegistroEventoIn
     body: JSON.stringify(data),
   })
   const json = await res.json()
-  if (!res.ok) throw new Error(json.error || json.message || 'Error al registrarse')
+  if (!res.ok) {
+  const msg = json.error || json.message || 'Error al registrarse'
+  throw new Error(msg)
+  }
   return json
 }

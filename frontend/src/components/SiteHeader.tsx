@@ -24,7 +24,7 @@ export default function SiteHeader({ variant = 'page' }: Props) {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated, user } = useAuthStore()
 
   return (
     <header className="header-container shadow-sm border-b border-red-800/30">
@@ -52,7 +52,7 @@ export default function SiteHeader({ variant = 'page' }: Props) {
             {/* Auth */}
             <div className="header-buttons-top" style={{ padding: '0.1px 0.5px' }}>
               {isAuthenticated ? (
-                <Link href="/dashboard">
+                <Link href={user?.role === 'admin' ? '/admin' : '/dashboard'}>
                   <Button variant="ghost" className="header-auth-button group">
                     <LayoutDashboard size={18} className="text-nikkei-burgundy" />
                     <span>Volver al Dashboard</span>

@@ -9,9 +9,11 @@ import type { Evento } from './_types'
 interface Props {
   evento: Evento
   onClose: () => void
+  onYaRegistrado?: () => void
+  onExito?: () => void
 }
 
-export default function ModalRegistroEvento({ evento, onClose }: Props) {
+export default function ModalRegistroEvento({ evento, onClose, onYaRegistrado, onExito }: Props) {
   const { isAuthenticated, user } = useAuthStore()
   const [nombre, setNombre] = useState('')
   const [edad, setEdad] = useState('')
@@ -39,9 +41,11 @@ export default function ModalRegistroEvento({ evento, onClose }: Props) {
         acompaniantes,
       })
       setExito(true)
+      onExito?.()
     } catch (e: unknown) {
       if (e instanceof Error && e.message === 'ya_registrado') {
         setYaRegistrado(true)
+        onYaRegistrado?.()
       } else {
         setError(e instanceof Error ? e.message : 'Error al registrarse')
       }
@@ -55,7 +59,6 @@ export default function ModalRegistroEvento({ evento, onClose }: Props) {
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md">
 
-        {/* Header */}
         <div className="flex items-start justify-between px-6 py-5 border-b border-gray-100">
           <div>
             <h2 className="font-serif text-xl text-red-800">Registrarme al evento</h2>
@@ -66,7 +69,6 @@ export default function ModalRegistroEvento({ evento, onClose }: Props) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="px-6 py-5 space-y-4">
           {exito ? (
             <div className="text-center py-6 space-y-4">
