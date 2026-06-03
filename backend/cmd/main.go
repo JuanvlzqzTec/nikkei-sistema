@@ -4,17 +4,44 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"golang.org/x/time/rate"
 
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/database/seeders"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/handlers"
 	"github.com/JuanvlzqzTec/nikkei-sistema/backend/internal/middleware"
 )
+
+// Rate limiter simple por IP
+var limiters = make(map[string]*rate.Limiter)
+
+func getRateLimiter(ip string) *rate.Limiter {
+	if l, exists := limiters[ip]; exists {
+		return l
+	}
+	l := rate.NewLimiter(rate.Every(time.Second), 30) // 30 req/seg por IP
+	limiters[ip] = l
+	return l
+}
+
+func rateLimitMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ip := c.ClientIP()
+		if !getRateLimiter(ip).Allow() {
+			c.JSON(429, gin.H{"error": "Demasiadas solicitudes, intenta más tarde"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
 
 func main() {
 	if err := godotenv.Load("../.env"); err != nil {
@@ -40,12 +67,29 @@ func main() {
 
 	r := gin.Default()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:3001"}
-	config.AllowCredentials = true
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
-	r.Use(cors.New(config))
+	// CORS
+	allowedOrigins := []string{"http://localhost:3000", "http://localhost:3001"}
+	if origins := os.Getenv("ALLOWED_ORIGINS"); origins != "" {
+		extra := strings.Split(origins, ",")
+		for _, o := range extra {
+			o = strings.TrimSpace(o)
+			if o != "" {
+				allowedOrigins = append(allowedOrigins, o)
+			}
+		}
+	}
 
+	corsConfig := cors.Config{
+		AllowOrigins:     allowedOrigins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}
+	r.Use(cors.New(corsConfig))
+	r.Use(rateLimitMiddleware())
+
+	// Handlers
 	authHandler := handlers.NewAuthHandler()
 	galeriaHandler := handlers.NewGaleriaHandler()
 	sliderHandler := handlers.NewSliderHandler()
@@ -73,12 +117,6 @@ func main() {
 
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(200, gin.H{"message": "pong"})
-		})
-
-		api.GET("/database/info", func(c *gin.Context) {
-			var tables []string
-			database.DB.Raw("SELECT tablename FROM pg_tables WHERE schemaname = 'public'").Scan(&tables)
-			c.JSON(200, gin.H{"database": "nikkei_dev", "tables": tables})
 		})
 
 		api.GET("/stats", func(c *gin.Context) {
@@ -117,10 +155,8 @@ func main() {
 			auth.POST("/reset-password", authHandler.ConfirmarResetPassword)
 		}
 
-		//Slider (público)
 		api.GET("/slider", sliderHandler.GetAll)
 
-		//Galería (público)
 		galeria := api.Group("/galeria")
 		{
 			galeria.GET("/", galeriaHandler.GetAll)
@@ -129,7 +165,6 @@ func main() {
 			galeria.GET("/:id", galeriaHandler.GetByID)
 		}
 
-		//Eventos (público)
 		eventos := api.Group("/eventos")
 		{
 			eventos.GET("/proximos", eventosHandler.GetProximos)
@@ -138,7 +173,6 @@ func main() {
 			eventos.POST("/:id/registrarse", eventosHandler.Registrarse)
 		}
 
-		//Empresas (público)
 		empresas := api.Group("/empresas")
 		{
 			empresas.GET("/homepage", empresasHandler.GetHomepage)
@@ -146,16 +180,15 @@ func main() {
 			empresas.GET("/:id", empresasHandler.GetByID)
 		}
 
-		// Familias (público — para el catálogo del wizard)
 		familias := api.Group("/familias")
 		{
 			familias.GET("/publicas", familiasHandler.GetPublicas)
 			familias.GET("/:id/miembros-publicos", familiasHandler.GetMiembrosPublicos)
 		}
 
-		// Empresas empleadoras (público — para autocomplete)
 		api.GET("/empresas-empleadoras", empresasEmpleadorasHandler.GetAll)
 
+		// Solo disponible fuera de producción
 		if os.Getenv("APP_ENV") != "production" {
 			api.POST("/dev/seed-demo", func(c *gin.Context) {
 				seeders.RunDemoSeeder(database.DB)
@@ -163,7 +196,6 @@ func main() {
 			})
 		}
 
-		//Rutas usuario autenticado
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())
 		{
@@ -172,32 +204,24 @@ func main() {
 			protected.POST("change-password", authHandler.ChangePassword)
 			protected.POST("refresh", authHandler.RefreshToken)
 
-			// Usuario registrado puede solicitar registro de empresa
 			protected.POST("empresas/solicitar", empresasHandler.SolicitarRegistro)
-
-			// Mi empresa propia (miembro autenticado con registro completado)
 			protected.GET("mi-empresa", empresasHandler.GetMiEmpresa)
 			protected.PUT("mi-empresa", empresasHandler.UpdateMiEmpresa)
 
-			// Mi empleo (empresa donde trabajo)
 			protected.GET("mi-empleo", empresasEmpleadorasHandler.GetMiEmpleo)
 			protected.PATCH("mi-empleo", empresasEmpleadorasHandler.UpdateMiEmpleo)
 			protected.POST("empresas-empleadoras", empresasEmpleadorasHandler.Create)
 
-			// Registro comunitario (usuario autenticado)
 			protected.POST("registro-comunitario", registroHandler.CrearRegistro)
 			protected.GET("registro-comunitario/mi-estado", registroHandler.MiEstado)
 
-			// Contribuciones (donaciones, historias) — miembro autenticado
 			protected.POST("contribuciones", contribucionesHandler.Crear)
 
-			// Mi perfil (miembro autenticado con registro completado)
 			protected.GET("mi-perfil", perfilHandler.GetMiPerfil)
 			protected.PATCH("mi-perfil/datos-libres", perfilHandler.UpdateDatosLibres)
 			protected.POST("mi-perfil/solicitar-cambio", perfilHandler.SolicitarCambio)
 			protected.PATCH("mi-perfil/foto", perfilHandler.UpdateFoto)
 
-			// Genealogía / Árbol familiar
 			protected.GET("mi-arbol", genealogiaHandler.GetMiArbol)
 			protected.GET("personas/buscar", genealogiaHandler.BuscarPersonas)
 			protected.POST("personas/historica", genealogiaHandler.CrearPersonaHistorica)
@@ -207,7 +231,6 @@ func main() {
 			protected.GET("relaciones/pendientes-confirmacion", genealogiaHandler.GetPendientesConfirmacion)
 			protected.GET("mi-familia-arbol", genealogiaHandler.GetArbolDeMiFamilia)
 
-			//Rutas admin
 			admin := protected.Group("/admin")
 			admin.Use(middleware.RequireAdmin())
 			{
@@ -255,12 +278,9 @@ func main() {
 
 				admin.GET("contribuciones", contribucionesHandler.GetPendientes)
 				admin.PATCH("contribuciones/:id/estado", contribucionesHandler.MarcarEstado)
-
 				admin.GET("arboles/familias", adminArbolesHandler.GetFamiliasConArboles)
 				admin.GET("arboles/familias/:id", adminArbolesHandler.GetArbolFamilia)
-
 				admin.GET("estadisticas", adminEstadisticasHandler.GetEstadisticas)
-
 			}
 		}
 	}
@@ -271,7 +291,6 @@ func main() {
 	}
 
 	log.Printf("Servidor iniciando en puerto %s", port)
-	log.Printf("API: http://localhost:%s/api/v1", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Error al iniciar servidor:", err)
 	}

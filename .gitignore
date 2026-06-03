@@ -6,6 +6,7 @@
 .env.production
 .env.staging
 .env.development
+.env.*.local 
 
 # Archivos de configuración específicos
 config.local.json
@@ -119,7 +120,6 @@ lerna-debug.log*
 # EDITORES E IDEs
 
 # VSCode
-.vscode/settings.json
 .vscode/launch.json
 .vscode/extensions.json
 .vscode/tasks.json
