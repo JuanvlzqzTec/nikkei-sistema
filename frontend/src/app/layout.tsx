@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   keywords: ["Nikkei", "Culiacán", "Sinaloa", "japonés", "comunidad", "asociación", "cultura japonesa"],
   authors: [{ name: "Juan Antonio Velázquez Alarcón" }],
   icons: {
-    icon: '/assets/Logo-Nikkei.png',
+    icon: '/favicon.ico',
     apple: '/assets/Logo-Nikkei.png',
   },
   openGraph: {
