@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -145,16 +147,30 @@ func CreateInitialData() {
 	}
 	DB.Create(&personas)
 
-	// Usuario admin inicial — el slider y la galería los carga el admin desde el panel
+	// Email y contraseña del admin desde variables de entorno
+	adminEmail := getEnv("ADMIN_EMAIL", "admin@nikkei-sinaloa.org")
+	adminPassword := getEnv("ADMIN_PASSWORD", "")
+
+	if adminPassword == "" {
+		log.Fatal("ADMIN_PASSWORD no está configurado en las variables de entorno")
+	}
+
+	// Hashear contraseña
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(adminPassword), 10)
+	if err != nil {
+		log.Fatal("Error al hashear contraseña del admin:", err)
+	}
+
 	adminUser := models.User{
-		Email:         "admin@nikkei-sinaloa.org",
-		PasswordHash:  "$2a$10$ejemplo_hash_cambiar_en_produccion",
+		Email:         adminEmail,
+		PasswordHash:  string(hashedBytes),
 		Role:          "admin",
 		IsActive:      true,
 		EmailVerified: true,
 	}
 	DB.Create(&adminUser)
 
+	log.Println("¡Usuario admin creado exitosamente!")
 	log.Println("¡Datos iniciales creados exitosamente!")
 }
 
