@@ -199,7 +199,7 @@ export default function RegisterPage() {
                 {/* Community Notice */}
                 <div className="p-3 bg-linear-to-r from-orange-50 to-amber-50 border border-orange-200/50 rounded-lg">
                   <p className="text-xs text-red-700 font-sans">
-                    <strong>Bienvenido a la familia Nikkei:</strong> Al registrarte, formarás parte de nuestra comunidad dedicada a preservar y celebrar la herencia japonesa en Culiacán.
+                    <strong>Bienvenido a la familia Nikkei:</strong> Al registrarte, formarás parte de nuestra comunidad dedicada a preservar y celebrar la herencia japonesa en Culiacán. Este registro es exclusivo para miembros de la comunidad Nikkei de Culiacán, es decir, personas de ascendencia japonesa y sus familias.
                   </p>
                 </div>
 
