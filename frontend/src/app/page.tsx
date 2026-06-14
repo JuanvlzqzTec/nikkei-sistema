@@ -236,10 +236,10 @@ export default function HomePage() {
                 </blockquote>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mt-8">
-                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🌸</div><h4 className="font-serif text-red-800 text-lg font-semibold">Preservar</h4><p className="text-base text-gray-600 font-sans">Cultura</p></div>
-                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🤝</div><h4 className="font-serif text-red-800 text-lg font-semibold">Integrar</h4><p className="text-base text-gray-600 font-sans">Comunidad</p></div>
-                <div className="text-center p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-2xl mb-2">🏮</div><h4 className="font-serif text-red-800 text-lg font-semibold">Fortalecer</h4><p className="text-base text-gray-600 font-sans">Identidad</p></div>
+              <div className="grid grid-cols-3 gap-2 mt-8">
+                <div className="text-center p-2 sm:p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-xl sm:text-2xl mb-1 sm:mb-2">🌸</div><h4 className="font-serif text-red-800 text-sm sm:text-lg font-semibold">Preservar</h4><p className="text-xs sm:text-base text-gray-600 font-sans">Cultura</p></div>
+                <div className="text-center p-2 sm:p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-xl sm:text-2xl mb-1 sm:mb-2">🤝</div><h4 className="font-serif text-red-800 text-sm sm:text-lg font-semibold">Integrar</h4><p className="text-xs sm:text-base text-gray-600 font-sans">Comunidad</p></div>
+                <div className="text-center p-2 sm:p-4 bg-white/60 rounded-lg border-2 border-orange-300 shadow-sm"><div className="text-xl sm:text-2xl mb-1 sm:mb-2">🏮</div><h4 className="font-serif text-red-800 text-sm sm:text-lg font-semibold">Fortalecer</h4><p className="text-xs sm:text-base text-gray-600 font-sans">Identidad</p></div>
               </div>
               <div className="pt-4"><Link href="/sobre-nosotros"><Button className="btn-nikkei">Conoce a Nuestra Comunidad</Button></Link></div>
             </div>
