@@ -147,14 +147,14 @@ export default function SliderAdminPage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-serif text-gray-900">Slider Hero</h1>
           <p className="text-sm text-gray-500 font-sans mt-0.5">
             Gestiona las imágenes del carrusel principal del homepage.
           </p>
         </div>
-        <Button onClick={openCreate} className="btn-nikkei text-sm py-2 px-4">
+        <Button onClick={openCreate} className="btn-nikkei text-sm py-2 px-4 w-full sm:w-auto shrink-0">
           <Plus size={16} /> Agregar imagen
         </Button>
       </div>
@@ -188,34 +188,44 @@ export default function SliderAdminPage() {
           {items.map((item) => (
             <div
               key={item.id_slider}
-              className={`flex items-center gap-4 bg-white rounded-xl border p-4 transition-all ${
+              className={`flex items-center gap-3 bg-white rounded-xl border p-3 transition-all ${
                 item.es_activo ? 'border-gray-200' : 'border-gray-100 opacity-60'
               }`}
             >
               <GripVertical size={16} className="text-gray-300 cursor-grab shrink-0" />
-              <div className="relative w-24 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+              <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
                 <Image src={item.url_imagen} alt={item.titulo || 'Slide'} fill className="object-cover" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-sans font-semibold text-sm text-gray-800 truncate">
-                  {item.titulo || <span className="text-gray-400 italic">Sin título</span>}
-                </p>
-                <p className="text-xs text-gray-400 font-sans mt-0.5 truncate">{item.url_imagen}</p>
-                <p className="text-xs text-gray-400 font-sans mt-0.5">Orden: {item.orden}</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`text-xs font-sans px-2 py-0.5 rounded-full shrink-0 ${
+                    item.es_activo ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    {item.es_activo ? 'Activo' : 'Oculto'}
+                  </span>
+                  <span className="text-xs text-gray-400 font-sans">Orden: {item.orden}</span>
+                </div>
+                {item.titulo && (
+                  <p className="font-sans text-xs text-gray-600 truncate mt-0.5">{item.titulo}</p>
+                )}
               </div>
-              <span className={`text-xs font-sans px-2 py-1 rounded-full shrink-0 ${
-                item.es_activo ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-              }`}>
-                {item.es_activo ? 'Activo' : 'Oculto'}
-              </span>
               <div className="flex items-center gap-1 shrink-0">
-                <button onClick={() => handleToggleActivo(item)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors" title={item.es_activo ? 'Ocultar' : 'Mostrar'}>
+                <button
+                  onClick={() => handleToggleActivo(item)}
+                  className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                >
                   {item.es_activo ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
-                <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition-colors">
+                <button
+                  onClick={() => openEdit(item)}
+                  className="p-1.5 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition-colors"
+                >
                   <Pencil size={15} />
                 </button>
-                <button onClick={() => handleDelete(item.id_slider)} className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors">
+                <button
+                  onClick={() => handleDelete(item.id_slider)}
+                  className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors"
+                >
                   <Trash2 size={15} />
                 </button>
               </div>

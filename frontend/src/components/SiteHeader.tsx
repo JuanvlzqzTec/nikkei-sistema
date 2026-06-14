@@ -144,7 +144,7 @@ export default function SiteHeader({ variant = 'page' }: Props) {
                 <Link
                   href={user?.role === 'admin' ? '/admin' : '/dashboard'}
                   onClick={() => setMenuOpen(false)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 btn-nikkei text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-800 text-white rounded-lg text-sm font-sans font-semibold transition-all hover:bg-red-900"
                 >
                   <LayoutDashboard size={15} />
                   Mi Dashboard
@@ -154,17 +154,17 @@ export default function SiteHeader({ variant = 'page' }: Props) {
                   <Link
                     href="/register"
                     onClick={() => setMenuOpen(false)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 btn-nikkei text-xs"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-800 text-white rounded-lg text-sm font-sans font-semibold transition-all hover:bg-red-900"
                   >
-                    <UserPlus size={14} />
+                    <UserPlus size={15} />
                     Registrarse
                   </Link>
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 border-2 border-red-800 text-red-800 hover:bg-red-800 hover:text-white rounded-lg text-sm font-sans font-semibold transition-all duration-300"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 border-2 border-red-800 text-red-800 hover:bg-red-800 hover:text-white rounded-lg text-sm font-sans font-semibold transition-all duration-300"
                   >
-                    <LogIn size={14} />
+                    <LogIn size={15} />
                     Iniciar Sesión
                   </Link>
                 </>
