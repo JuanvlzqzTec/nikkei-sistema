@@ -410,22 +410,21 @@ export default function EstadisticasPage() {
 
       {/* Seccion eventos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <SectionTitle icon={CalendarDays} title="Eventos por tipo" />
-          <BarChart data={ev.por_tipo} color="#991b1b" labelMap={TIPO_EVENTO_LABEL} />
+          <BarChart data={ev.por_tipo ?? []} color="#991b1b" labelMap={TIPO_EVENTO_LABEL} />
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <SectionTitle icon={BarChart2} title="Eventos por status" />
-          <BarChart data={ev.por_status} color="#1d4ed8" labelMap={STATUS_EVENTO_LABEL} />
+          <BarChart data={ev.por_status ?? []} color="#1d4ed8" labelMap={STATUS_EVENTO_LABEL} />
         </div>
       </div>
 
       {/* Participaciones mensuales */}
       <div className="bg-white border border-gray-200 rounded-xl p-6">
         <SectionTitle icon={TrendingUp} title="Participaciones en eventos" sub="Últimos 12 meses (registros individuales)" />
-        <LineChart data={ev.participaciones_mensuales} color="#7e22ce" />
+        <LineChart data={ev.participaciones_mensuales ?? []} color="#7e22ce" />
       </div>
 
       {/* Top 5 eventos */}
@@ -443,7 +442,7 @@ export default function EstadisticasPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {ev.top_eventos.map((e, i) => (
+              {(ev.top_eventos ?? []).map((e, i) => (
                 <tr key={e.id_evento} className="hover:bg-gray-50/50">
                   <td className="py-3 pr-4">
                     <div className="flex items-center gap-2">
@@ -463,7 +462,7 @@ export default function EstadisticasPage() {
                   </td>
                 </tr>
               ))}
-              {!ev.top_eventos.length && (
+              {!(ev.top_eventos ?? []).length && (
                 <tr><td colSpan={5} className="py-8 text-center text-gray-400 text-xs">Sin datos de eventos</td></tr>
               )}
             </tbody>

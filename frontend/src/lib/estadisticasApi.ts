@@ -51,10 +51,10 @@ export interface EstadisticasResponse {
   eventos: {
     total: number
     total_empresas: number
-    por_tipo: Conteo[]
-    por_status: Conteo[]
-    top_eventos: TopEvento[]
-    participaciones_mensuales: MesConteo[]
+    por_tipo: Conteo[] | null
+    por_status: Conteo[] | null
+    top_eventos: TopEvento[] | null
+    participaciones_mensuales: MesConteo[] | null
   }
   usuarios: {
     mensuales: MesConteo[]
