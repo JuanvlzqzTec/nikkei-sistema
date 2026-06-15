@@ -1,54 +1,92 @@
 package services
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
-	"net/smtp"
+	"io"
+	"log"
+	"net/http"
 	"os"
 )
 
 type EmailService struct {
-	host     string
-	port     string
-	user     string
-	password string
-	to       string
-	fromName string
+	apiKey    string
+	fromName  string
+	fromEmail string
 }
 
 func NewEmailService() *EmailService {
 	return &EmailService{
-		host:     getEnvEmail("SMTP_HOST", "smtp.gmail.com"),
-		port:     getEnvEmail("SMTP_PORT", "587"),
-		user:     os.Getenv("SMTP_USER"),
-		password: os.Getenv("SMTP_PASSWORD"),
-		to:       os.Getenv("SMTP_TO"),
-		fromName: "Asociación Nikkei de Culiacán",
+		apiKey:    os.Getenv("RESEND_API_KEY"),
+		fromName:  "Asociación Nikkei de Culiacán",
+		fromEmail: "noreply@nikkeiculiacan.com",
 	}
 }
 
+type resendPayload struct {
+	From    string   `json:"from"`
+	To      []string `json:"to"`
+	Subject string   `json:"subject"`
+	Html    string   `json:"html"`
+}
+
 func (s *EmailService) enviar(para, asunto, cuerpoHTML string) error {
-	if s.user == "" || s.password == "" {
-		return fmt.Errorf("SMTP no configurado")
+	if s.apiKey == "" {
+		log.Println("ERROR EMAIL: RESEND_API_KEY no configurada")
+		return fmt.Errorf("RESEND_API_KEY no configurada")
 	}
-	auth := smtp.PlainAuth("", s.user, s.password, s.host)
-	msg := []byte(fmt.Sprintf(
-		"From: %s <%s>\r\nTo: %s\r\nSubject: %s\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n%s",
-		s.fromName, s.user, para, asunto, cuerpoHTML,
-	))
-	return smtp.SendMail(fmt.Sprintf("%s:%s", s.host, s.port), auth, s.user, []string{para}, msg)
+
+	payload := resendPayload{
+		From:    fmt.Sprintf("%s <%s>", s.fromName, s.fromEmail),
+		To:      []string{para},
+		Subject: asunto,
+		Html:    cuerpoHTML,
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", "https://api.resend.com/emails", bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Bearer "+s.apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		log.Printf("ERROR EMAIL Resend status %d: %s", resp.StatusCode, string(bodyBytes))
+		return fmt.Errorf("Resend error: status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	log.Printf("EMAIL enviado OK a %s", para)
+	return nil
 }
 
 func (s *EmailService) EnviarContacto(nombre, correo, mensaje string) error {
 	asunto := fmt.Sprintf("Nuevo mensaje de contacto — %s", nombre)
-	cuerpo := fmt.Sprintf(
-		"<p><strong>Nombre:</strong> %s</p><p><strong>Correo:</strong> %s</p><p><strong>Mensaje:</strong><br>%s</p>",
-		nombre, correo, mensaje,
-	)
-	return s.enviar(s.to, asunto, cuerpo)
+	cuerpo := fmt.Sprintf(`
+		<div style="font-family:sans-serif;max-width:520px;margin:auto;padding:32px">
+			<h2 style="color:#991b1b">Asociación Nikkei de Culiacán</h2>
+			<p><strong>Nombre:</strong> %s</p>
+			<p><strong>Correo:</strong> %s</p>
+			<p><strong>Mensaje:</strong><br>%s</p>
+		</div>
+	`, nombre, correo, mensaje)
+	return s.enviar(os.Getenv("SMTP_TO"), asunto, cuerpo)
 }
 
 func (s *EmailService) EnviarVerificacion(para, token string) error {
-	appURL := getEnvEmail("APP_URL", "http://localhost:3001")
+	appURL := getEnvEmail("APP_URL", "http://localhost:3000")
 	link := fmt.Sprintf("%s/verify-email?token=%s", appURL, token)
 	asunto := "Verifica tu correo — Asociación Nikkei de Culiacán"
 	cuerpo := fmt.Sprintf(`
@@ -65,7 +103,7 @@ func (s *EmailService) EnviarVerificacion(para, token string) error {
 }
 
 func (s *EmailService) EnviarResetPassword(para, token string) error {
-	appURL := getEnvEmail("APP_URL", "http://localhost:3001")
+	appURL := getEnvEmail("APP_URL", "http://localhost:3000")
 	link := fmt.Sprintf("%s/reset-password?token=%s", appURL, token)
 	asunto := "Recupera tu contraseña — Asociación Nikkei de Culiacán"
 	cuerpo := fmt.Sprintf(`

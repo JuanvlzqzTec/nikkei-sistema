@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -446,7 +447,9 @@ func (h *AuthHandler) SolicitarResetPassword(c *gin.Context) {
 	// Siempre responder igual para no revelar si el email existe
 	if user != nil && token != "" {
 		emailSvc := services.NewEmailService()
-		_ = emailSvc.EnviarResetPassword(user.Email, token)
+		if err := emailSvc.EnviarResetPassword(user.Email, token); err != nil {
+			log.Printf("ERROR al enviar reset password: %v", err)
+		}
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Si el correo existe, recibirás un enlace en los próximos minutos"})
 }
