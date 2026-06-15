@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import {
   Users, UserCheck, Home, CalendarDays, TrendingUp, Globe, Languages, BookOpen,
-  BarChart2, PieChart, Activity
+  BarChart2, PieChart, Activity, Building2, Briefcase
 } from 'lucide-react'
 import { estadisticasApi, type EstadisticasResponse } from '@/lib/estadisticasApi'
 
@@ -469,6 +469,108 @@ export default function EstadisticasPage() {
           </table>
         </div>
       </div>
+
+      {/* Sección empresarial */}
+      {data.empresarial && (
+        <>
+          {/* KPIs empresariales */}
+          <div className="grid grid-cols-3 gap-4">
+            <KPICard
+              icon={Building2}
+              label="Con empresa propia"
+              value={data.empresarial.total_empresas_propias}
+              sub="Empresas aprobadas"
+            />
+            <KPICard
+              icon={Briefcase}
+              label="Con empleo registrado"
+              value={data.empresarial.total_con_empleo}
+              sub="Trabajan en otra empresa"
+            />
+            <KPICard
+              icon={Users}
+              label="Sin info laboral"
+              value={data.empresarial.total_sin_info}
+              sub="Miembros activos sin datos"
+            />
+          </div>
+
+          {/* Situación laboral + giro */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white border border-gray-200 rounded-xl p-6">
+              <SectionTitle icon={PieChart} title="Situación laboral de miembros" />
+              <div className="space-y-3">
+                {(data.empresarial.situacion_laboral ?? []).map((d, i) => (
+                  <BarraHorizontal
+                    key={`sl-${i}`}
+                    label={
+                      d.situacion === 'empresa_propia' ? 'Empresa propia' :
+                      d.situacion === 'empleado' ? 'Empleado' : 'Sin información'
+                    }
+                    value={Number(d.total)}
+                    total={Number(c.miembros_activos) || 1}
+                    color={COLORS[i % COLORS.length]}
+                  />
+                ))}
+                {!(data.empresarial.situacion_laboral ?? []).length && (
+                  <p className="text-xs text-gray-400">Sin datos</p>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-6">
+              <SectionTitle icon={BarChart2} title="Empresas propias por giro" />
+              <BarChart
+                data={(data.empresarial.por_giro ?? []).map(d => ({
+                  clave: d.clave,
+                  total: Number(d.total)
+                }))}
+                color="#15803d"
+              />
+            </div>
+          </div>
+
+          {/* Top empleadoras */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <SectionTitle
+              icon={Building2}
+              title="Top empresas empleadoras de miembros"
+              sub="Empresas donde trabajan más miembros de la comunidad"
+            />
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm font-sans">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left py-2 pr-4 text-xs text-gray-400 font-semibold uppercase tracking-wide">#</th>
+                    <th className="text-left py-2 pr-4 text-xs text-gray-400 font-semibold uppercase tracking-wide">Empresa</th>
+                    <th className="text-left py-2 pr-4 text-xs text-gray-400 font-semibold uppercase tracking-wide hidden sm:table-cell">Ciudad</th>
+                    <th className="text-right py-2 text-xs text-gray-400 font-semibold uppercase tracking-wide">Miembros</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {(data.empresarial.top_empleadoras ?? []).map((e, i) => (
+                    <tr key={i} className="hover:bg-gray-50/50">
+                      <td className="py-3 pr-4 text-xs text-gray-400 font-serif">{i + 1}</td>
+                      <td className="py-3 pr-4 font-medium text-gray-800">{e.nombre_empresa}</td>
+                      <td className="py-3 pr-4 text-gray-500 text-xs hidden sm:table-cell">{e.ciudad || '—'}</td>
+                      <td className="py-3 text-right">
+                        <span className="font-serif text-lg text-red-800">{e.total}</span>
+                      </td>
+                    </tr>
+                  ))}
+                  {!(data.empresarial.top_empleadoras ?? []).length && (
+                    <tr>
+                      <td colSpan={4} className="py-8 text-center text-gray-400 text-xs">
+                        Sin datos de empresas empleadoras
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Pie */}
       <div className="text-center pt-4 pb-8">

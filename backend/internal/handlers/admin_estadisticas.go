@@ -170,6 +170,70 @@ func (h *AdminEstadisticasHandler) GetEstadisticas(c *gin.Context) {
 		ORDER BY mes ASC
 	`).Scan(&usuariosMensuales)
 
+	// KPIs empresariales
+	var totalEmpresasPropias, totalConEmpleo, totalSinInfo int64
+	database.DB.Table("empresas").
+		Where("id_propietario IS NOT NULL AND status_aprobacion = 'aprobada'").
+		Count(&totalEmpresasPropias)
+	database.DB.Table("personas").
+		Where("id_empresa_empleadora IS NOT NULL AND es_miembro_activo = true").
+		Count(&totalConEmpleo)
+	database.DB.Table("personas").
+		Where("id_empresa_empleadora IS NULL AND es_miembro_activo = true").
+		Where("id_persona NOT IN (SELECT id_propietario FROM empresas WHERE id_propietario IS NOT NULL)").
+		Count(&totalSinInfo)
+
+	// Empresas propias por giro
+	var empresasPorGiro []conteo
+	database.DB.Table("empresas").
+		Select("COALESCE(giro_comercial, 'Sin giro') as clave, count(*) as total").
+		Where("id_propietario IS NOT NULL AND status_aprobacion = 'aprobada'").
+		Group("giro_comercial").
+		Order("total DESC").
+		Scan(&empresasPorGiro)
+
+	// Top 5 empresas empleadoras con más miembros
+	type empresaEmpleadoraTop struct {
+		NombreEmpresa string `json:"nombre_empresa" gorm:"column:nombre_empresa"`
+		Ciudad        string `json:"ciudad"         gorm:"column:ciudad"`
+		Total         int64  `json:"total"          gorm:"column:total"`
+	}
+	var topEmpleadoras []empresaEmpleadoraTop
+	database.DB.Raw(`
+		SELECT ee.nombre_empresa, COALESCE(ee.ciudad, '') as ciudad, COUNT(p.id_persona) as total
+		FROM empresas_empleadoras ee
+		INNER JOIN personas p ON p.id_empresa_empleadora = ee.id_empresa_empleadora
+		WHERE p.es_miembro_activo = true
+		GROUP BY ee.id_empresa_empleadora, ee.nombre_empresa, ee.ciudad
+		ORDER BY total DESC
+		LIMIT 5
+	`).Scan(&topEmpleadoras)
+
+	// Miembros por situación laboral
+	type SituacionLaboral struct {
+		Situacion string `json:"situacion"`
+		Total     int64  `json:"total"`
+	}
+	var situacionesLaborales []SituacionLaboral
+	database.DB.Raw(`
+		SELECT situacion, COUNT(*) as total FROM (
+			SELECT 
+				CASE
+					WHEN EXISTS (
+						SELECT 1 FROM empresas e 
+						WHERE e.id_propietario = p.id_persona 
+						AND e.status_aprobacion = 'aprobada'
+					) THEN 'empresa_propia'
+					WHEN p.id_empresa_empleadora IS NOT NULL THEN 'empleado'
+					ELSE 'sin_info'
+				END as situacion
+			FROM personas p
+			WHERE p.es_miembro_activo = true
+		) sub
+		GROUP BY situacion
+		ORDER BY total DESC
+	`).Scan(&situacionesLaborales)
+
 	c.JSON(http.StatusOK, gin.H{
 		"generado_en": time.Now().Format(time.RFC3339),
 		"comunidad": gin.H{
@@ -198,6 +262,14 @@ func (h *AdminEstadisticasHandler) GetEstadisticas(c *gin.Context) {
 		},
 		"usuarios": gin.H{
 			"mensuales": usuariosMensuales,
+		},
+		"empresarial": gin.H{
+			"total_empresas_propias": totalEmpresasPropias,
+			"total_con_empleo":       totalConEmpleo,
+			"total_sin_info":         totalSinInfo,
+			"por_giro":               empresasPorGiro,
+			"top_empleadoras":        topEmpleadoras,
+			"situacion_laboral":      situacionesLaborales,
 		},
 	})
 }

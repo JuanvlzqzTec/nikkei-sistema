@@ -30,6 +30,17 @@ export interface TopEvento {
   total_personas: number
 }
 
+export interface EmpresaEmpleadoraTop {
+  nombre_empresa: string
+  ciudad: string
+  total: number
+}
+
+export interface SituacionLaboral {
+  situacion: string
+  total: number
+}
+
 export interface EstadisticasResponse {
   generado_en: string
   comunidad: {
@@ -58,6 +69,14 @@ export interface EstadisticasResponse {
   }
   usuarios: {
     mensuales: MesConteo[]
+  }
+  empresarial: {
+    total_empresas_propias: number
+    total_con_empleo: number
+    total_sin_info: number
+    por_giro: Conteo[] | null
+    top_empleadoras: EmpresaEmpleadoraTop[] | null
+    situacion_laboral: SituacionLaboral[] | null
   }
 }
 
