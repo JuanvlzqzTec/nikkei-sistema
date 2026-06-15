@@ -231,3 +231,63 @@ export const registrosPendientesApi = {
       }
     ),
 }
+
+// Miembros
+
+export interface MiembroListItem {
+  id_persona: number
+  id_user?: number
+  email?: string
+  nombres: string
+  apellido_paterno: string
+  apellido_materno?: string
+  generacion: string
+  ciudad?: string
+  foto_perfil?: string
+  es_miembro_activo: boolean
+  familia_apellido: string
+}
+
+export interface MiembroDetalle {
+  id_persona: number
+  id_user?: number
+  email?: string
+  registro_estado?: string
+  nombres: string
+  apellido_paterno: string
+  apellido_materno?: string
+  nombre_japones?: string
+  nombre_kanji?: string
+  genero?: string
+  fecha_nacimiento?: string
+  lugar_nacimiento?: string
+  generacion: string
+  estado_civil?: string
+  telefono_principal?: string
+  telefono_alternativo?: string
+  email_personal?: string
+  direccion_completa?: string
+  ciudad?: string
+  estado: string
+  codigo_postal?: string
+  foto_perfil?: string
+  es_miembro_activo: boolean
+  nivel_japones?: string
+  participa_eventos: boolean
+  acepta_directorio_publico: boolean
+  acepta_comunicaciones: boolean
+  fecha_ingreso_asociacion?: string
+  puesto?: string
+  familia: { id_familia: number; apellido_jp: string; apellido_kanji?: string }
+  empleo?: { id_empresa_empleadora: number; nombre_empresa: string; ciudad?: string; estado?: string }
+  empresa_propia?: { id_empresa: number; nombre_empresa: string; giro_comercial?: string; status_aprobacion?: string }
+}
+
+export const miembrosApi = {
+  getAll: (params?: { q?: string; generacion?: string; activos?: string }) => {
+    const qs = params ? new URLSearchParams(params as Record<string, string>).toString() : ''
+    return apiFetch<{ data: MiembroListItem[]; count: number }>(`/admin/miembros${qs ? '?' + qs : ''}`)
+  },
+  getDetalle: (id: number) =>
+    apiFetch<{ data: MiembroDetalle }>(`/admin/miembros/${id}`),
+}
