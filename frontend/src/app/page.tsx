@@ -132,7 +132,7 @@ export default function HomePage() {
                 <div className="w-16 h-0.5 bg-linear-to-r from-nikkei-burgundy to-transparent rounded-full" />
                 <p className="text-xl lg:text-2xl text-nikkei-burgundy/80 font-serif italic">Creando vínculos que perduran con el tiempo</p>
               </div>
-              <p className="text-base text-gray-600 font-sans leading-relaxed max-w-md">Únete a nuestra comunidad y forma parte de la historia que conecta las tradiciones japonesas con el corazón de Sinaloa.</p>
+              <p className="text-lg text-gray-600 font-sans leading-relaxed max-w-md">Únete a nuestra comunidad y forma parte de la historia que conecta las tradiciones japonesas con el corazón de Sinaloa.</p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link href="/register">
                   <Button className="btn-nikkei group">Únete a la Comunidad<ArrowRight size={18} className="ml-1 transition-transform duration-300 group-hover:translate-x-1" /></Button>
@@ -218,16 +218,16 @@ export default function HomePage() {
             </div>
             <div className="space-y-8">
               <div className="space-y-4">
-                <h2 className="text-2xl lg:text-4xl font-serif text-red-800 leading-tight">私たちについて</h2>
-                <h3 className="text-xl lg:text-3xl font-serif text-red-700">Sobre Nosotros</h3>
+                <h2 className="text-3xl lg:text-4xl font-serif text-red-800 leading-tight">私たちについて</h2>
+                <h3 className="text-2xl lg:text-3xl font-serif text-red-700">Sobre Nosotros</h3>
               </div>
               <div className="w-20 h-1 bg-linear-to-r from-red-600 to-orange-400 rounded-full mx-auto md:mx-0" />
-              <p className="text-base text-gray-700 font-sans leading-relaxed">Nos enfocamos en <strong className="text-red-800">preservar, difundir y vivir la cultura japonesa</strong> en nuestra comunidad. Promovemos actividades culturales, educativas y de integración que fortalecen la <strong className="text-red-800">identidad Nikkei</strong> y crean puentes de amistad entre <strong className="text-red-800">Japón, México y nuestra sociedad</strong>.</p>
+              <p className="text-lg text-gray-700 font-sans leading-relaxed">Nos enfocamos en <strong className="text-red-800">preservar, difundir y vivir la cultura japonesa</strong> en nuestra comunidad. Promovemos actividades culturales, educativas y de integración que fortalecen la <strong className="text-red-800">identidad Nikkei</strong> y crean puentes de amistad entre <strong className="text-red-800">Japón, México y nuestra sociedad</strong>.</p>
 
               {/* Citas */}
               <div className="space-y-4 pt-2">
                 <blockquote className="pl-5 border-l-4 border-amber-400">
-                  <p className="text-sm text-gray-600 font-sans leading-relaxed italic">
+                  <p className="text-base text-gray-600 font-sans leading-relaxed italic">
                     &ldquo;Ahora tienen dos raíces: una de sangre, de Japón, y su vida, experiencia y amistad, de México.&rdquo;
                   </p>
                   <footer className="mt-2 text-sm font-sans text-red-700 font-semibold not-italic">
