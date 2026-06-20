@@ -405,6 +405,8 @@ export default function EstadisticasPage() {
           <CompletitudCard label="Con foto de perfil" value={c.con_foto} total={totalPersonas} />
           <CompletitudCard label="Con fecha de nacimiento" value={c.con_fecha_nacimiento} total={totalPersonas} />
           <CompletitudCard label="En directorio público" value={c.aceptan_directorio} total={totalPersonas} />
+          <CompletitudCard label="Con nombre japonés registrado" value={c.con_nombre_japones_registrado} total={totalPersonas} />
+          <CompletitudCard label="Han recibido beca" value={c.con_beca} total={totalPersonas} />
         </div>
       </div>
 

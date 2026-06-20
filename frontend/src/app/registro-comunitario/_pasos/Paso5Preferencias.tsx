@@ -138,6 +138,32 @@ export default function Paso5Preferencias({
             </div>
           </label>
         </div>
+
+        {/* Beca */}
+        <div>
+          <label
+            className={`flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+              data.ha_recibido_beca
+                ? 'border-red-700 bg-red-50'
+                : 'border-gray-200 bg-white hover:border-red-300 hover:bg-amber-50/50'
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={data.ha_recibido_beca}
+              onChange={(e) => onChange('ha_recibido_beca', e.target.checked)}
+              className="w-6 h-6 mt-0.5 rounded accent-red-700 cursor-pointer shrink-0"
+            />
+            <div>
+              <p className="font-sans text-base font-semibold text-gray-800 mb-1">
+                ¿Has recibido alguna beca?
+              </p>
+              <p className="font-sans text-base text-gray-500 leading-relaxed">
+                Por ejemplo, becas de origen japonés o relacionadas con tu herencia Nikkei.
+              </p>
+            </div>
+          </label>
+        </div>
       </div>
     </div>
   )

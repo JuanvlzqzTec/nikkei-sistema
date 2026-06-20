@@ -35,6 +35,21 @@ const emptyForm: MiEmpresaInput = {
   acepta_promocion_directorio: true,
 }
 
+const emptyRedes = { facebook: '', instagram: ''}
+
+function parseRedes(json?: string) {
+  if (!json) return emptyRedes
+  try {
+    const p = JSON.parse(json)
+    return {
+      facebook: p.facebook || '',
+      instagram: p.instagram || '',
+    }
+  } catch {
+    return emptyRedes
+  }
+}
+
 export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Props) {
   const [form, setForm] = useState<MiEmpresaInput>(
     empresaActual
@@ -53,6 +68,10 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
       : emptyForm
   )
 
+  const [redes, setRedes] = useState(
+    empresaActual ? parseRedes(empresaActual.redes_sociales) : emptyRedes
+  )
+
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -62,7 +81,6 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
 
   const esEdicion = empresaActual !== null
 
-  // Cerrar con Escape + bloquear scroll del body
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !saving) onClose()
@@ -77,6 +95,9 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
 
   const setCampo = <K extends keyof MiEmpresaInput>(key: K, val: MiEmpresaInput[K]) =>
     setForm((prev) => ({ ...prev, [key]: val }))
+
+  const setRed = (key: keyof typeof emptyRedes, val: string) =>
+    setRedes((prev) => ({ ...prev, [key]: val }))
 
   const uploadToCloudinary = async (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -133,10 +154,16 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
     setError('')
 
     try {
+      const redesPayload = JSON.stringify({
+        ...(redes.facebook ? { facebook: redes.facebook } : {}),
+        ...(redes.instagram ? { instagram: redes.instagram } : {}),
+      })
+      const formConRedes = { ...form, redes_sociales: redesPayload }
+
       if (esEdicion) {
-        await miEmpresaApi.actualizar(form)
+        await miEmpresaApi.actualizar(formConRedes)
       } else {
-        await miEmpresaApi.crear(form)
+        await miEmpresaApi.crear(formConRedes)
       }
       onSaved()
     } catch (e: unknown) {
@@ -226,9 +253,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
           <div>
             <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
               Descripción
-              <span className="font-normal text-sm text-gray-400 ml-2">
-                (opcional)
-              </span>
+              <span className="font-normal text-sm text-gray-400 ml-2">(opcional)</span>
             </label>
             <textarea
               value={form.descripcion}
@@ -243,9 +268,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
           <div>
             <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
               Logo de tu empresa
-              <span className="font-normal text-sm text-gray-400 ml-2">
-                (opcional)
-              </span>
+              <span className="font-normal text-sm text-gray-400 ml-2">(opcional)</span>
             </label>
             {form.logo_empresa ? (
               <div className="relative w-full h-44 rounded-xl overflow-hidden border-2 border-gray-200 group bg-gray-50">
@@ -279,10 +302,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
               </div>
             ) : (
               <div
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  setDragOver(true)
-                }}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleFileDrop}
                 onClick={() => fileInputRef.current?.click()}
@@ -302,13 +322,9 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
                     <ImageIcon size={26} className="text-gray-300" />
                     <p className="text-sm font-sans text-gray-500 text-center px-4">
                       Arrastra el logo o{' '}
-                      <span className="text-red-700 font-semibold">
-                        haz clic para seleccionar
-                      </span>
+                      <span className="text-red-700 font-semibold">haz clic para seleccionar</span>
                     </p>
-                    <p className="text-xs font-sans text-gray-400">
-                      JPG, PNG, WEBP · Máx 10MB
-                    </p>
+                    <p className="text-xs font-sans text-gray-400">JPG, PNG, WEBP · Máx 10MB</p>
                   </>
                 )}
               </div>
@@ -328,9 +344,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
           {/* Datos de contacto */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
-                Teléfono
-              </label>
+              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">Teléfono</label>
               <input
                 type="tel"
                 value={form.telefono}
@@ -341,9 +355,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
             </div>
 
             <div>
-              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
-                Email
-              </label>
+              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">Email</label>
               <input
                 type="email"
                 value={form.email}
@@ -354,9 +366,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
-                Sitio web
-              </label>
+              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">Sitio web</label>
               <input
                 type="text"
                 value={form.sitio_web}
@@ -367,9 +377,29 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
             </div>
 
             <div>
-              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
-                Ciudad
-              </label>
+              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">Facebook</label>
+              <input
+                type="text"
+                value={redes.facebook}
+                onChange={(e) => setRed('facebook', e.target.value)}
+                placeholder="https://facebook.com/..."
+                className="w-full text-base font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">Instagram</label>
+              <input
+                type="text"
+                value={redes.instagram}
+                onChange={(e) => setRed('instagram', e.target.value)}
+                placeholder="https://instagram.com/..."
+                className="w-full text-base font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">Ciudad</label>
               <input
                 type="text"
                 value={form.ciudad}
@@ -379,9 +409,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
             </div>
 
             <div>
-              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
-                Estado
-              </label>
+              <label className="block font-sans text-base font-semibold text-gray-800 mb-2">Estado</label>
               <input
                 type="text"
                 value={form.estado}
@@ -404,9 +432,7 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
               <input
                 type="checkbox"
                 checked={form.acepta_promocion_directorio}
-                onChange={(e) =>
-                  setCampo('acepta_promocion_directorio', e.target.checked)
-                }
+                onChange={(e) => setCampo('acepta_promocion_directorio', e.target.checked)}
                 className="w-6 h-6 mt-0.5 rounded accent-red-700 cursor-pointer shrink-0"
               />
               <div>
@@ -414,11 +440,9 @@ export default function MiEmpresaModal({ empresaActual, onClose, onSaved }: Prop
                   Quiero aparecer en el directorio público
                 </p>
                 <p className="font-sans text-base text-gray-500 leading-relaxed">
-                  Tu empresa aparecerá en{' '}
-                  <strong>Impulso Nikkei</strong>, la sección pública del
+                  Tu empresa aparecerá en <strong>Impulso Nikkei</strong>, la sección pública del
                   sitio donde la comunidad puede descubrirla. Si lo desactivas,
-                  tu empresa quedará registrada pero no será visible
-                  públicamente.
+                  tu empresa quedará registrada pero no será visible públicamente.
                 </p>
               </div>
             </label>

@@ -8,6 +8,7 @@ export interface WizardData {
   apellido_materno: string
   nombre_japones: string
   nombre_kanji: string
+  nombre_japones_registrado: boolean
 
   generacion: Generacion | ''
   id_familia: number | null
@@ -23,6 +24,7 @@ export interface WizardData {
   pais: string
 
   nivel_japones: NivelJapones | ''
+  ha_recibido_beca: boolean
   acepta_directorio_publico: boolean
   acepta_comunicaciones: boolean
 }
@@ -87,6 +89,7 @@ export interface RegistroComunitarioPayload {
   apellido_materno?: string
   nombre_japones?: string
   nombre_kanji?: string
+  nombre_japones_registrado?: boolean
 
   generacion: Generacion
   id_familia?: number
@@ -106,6 +109,7 @@ export interface RegistroComunitarioPayload {
   estado: string
 
   nivel_japones?: NivelJapones
+  ha_recibido_beca?: boolean
   acepta_directorio_publico: boolean
   acepta_comunicaciones: boolean
 }
@@ -126,6 +130,7 @@ export const WIZARD_INITIAL_DATA: WizardData = {
   apellido_materno: '',
   nombre_japones: '',
   nombre_kanji: '',
+  nombre_japones_registrado: false,
 
   generacion: '',
   id_familia: null,
@@ -141,6 +146,7 @@ export const WIZARD_INITIAL_DATA: WizardData = {
   pais: '',
 
   nivel_japones: '',
+  ha_recibido_beca: false,
   acepta_directorio_publico: false,
   acepta_comunicaciones: true,
 }

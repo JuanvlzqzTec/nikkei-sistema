@@ -119,6 +119,7 @@ export default function RegistroComunitarioPage() {
           apellido_materno: data.apellido_materno,
           nombre_japones: data.nombre_japones,
           nombre_kanji: data.nombre_kanji,
+          nombre_japones_registrado: data.nombre_japones_registrado,
         }
         break
       case 2:
@@ -146,6 +147,7 @@ export default function RegistroComunitarioPage() {
       case 5:
         payload = {
           nivel_japones: data.nivel_japones,
+          ha_recibido_beca: data.ha_recibido_beca,
           acepta_directorio_publico: data.acepta_directorio_publico,
           acepta_comunicaciones: data.acepta_comunicaciones,
         }
@@ -271,6 +273,9 @@ export default function RegistroComunitarioPage() {
       }
     }
 
+    payload.nombre_japones_registrado = data.nombre_japones_registrado
+    payload.ha_recibido_beca = data.ha_recibido_beca
+
     return payload
   }
 
@@ -318,7 +323,7 @@ export default function RegistroComunitarioPage() {
 
   const getStepOfField = (field: keyof WizardData): number => {
     if (
-      ['nombres', 'apellido_paterno', 'apellido_materno', 'nombre_japones', 'nombre_kanji'].includes(
+      ['nombres', 'apellido_paterno', 'apellido_materno', 'nombre_japones', 'nombre_kanji', 'nombre_japones_registrado'].includes(
         field
       )
     )

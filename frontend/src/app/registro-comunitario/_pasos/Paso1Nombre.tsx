@@ -90,10 +90,7 @@ export default function Paso1Nombre({ data, errors, onChange, firstErrorRef }: P
             htmlFor="apellido_materno"
             className="block font-sans text-lg font-semibold text-gray-800 mb-2"
           >
-            Apellido materno
-            <span className="font-normal text-base text-gray-400 ml-2">
-              (opcional)
-            </span>
+            Apellido materno <span className="text-red-600">*</span>
           </label>
           <input
             id="apellido_materno"
@@ -101,10 +98,17 @@ export default function Paso1Nombre({ data, errors, onChange, firstErrorRef }: P
             value={data.apellido_materno}
             onChange={(e) => onChange('apellido_materno', e.target.value)}
             placeholder="Por ejemplo: García"
-            className="w-full text-lg font-sans px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
+            className={`w-full text-lg font-sans px-4 py-3 border-2 rounded-xl bg-white focus:outline-none transition-colors ${
+              errors.apellido_materno
+                ? 'border-red-500 focus:border-red-600 bg-red-50/30'
+                : 'border-gray-200 focus:border-red-400'
+            }`}
           />
+          <p className="mt-1.5 text-sm font-sans text-gray-400">
+            Si no tienes apellido materno, escribe <strong>X</strong>
+          </p>
           {errors.apellido_materno && (
-            <p className="mt-2 text-base font-sans text-red-600">
+            <p className="mt-1 text-base font-sans text-red-600">
               {errors.apellido_materno}
             </p>
           )}
@@ -170,6 +174,34 @@ export default function Paso1Nombre({ data, errors, onChange, firstErrorRef }: P
             </p>
           )}
         </div>
+        
+        {/* Nombre japonés registrado — solo aparece si escribió nombre japonés */}
+        {data.nombre_japones && data.nombre_japones.trim() !== '' && (
+          <div>
+            <label
+              className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                data.nombre_japones_registrado
+                  ? 'border-red-700 bg-red-50'
+                  : 'border-gray-200 bg-white hover:border-red-300 hover:bg-amber-50/50'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={data.nombre_japones_registrado}
+                onChange={(e) => onChange('nombre_japones_registrado', e.target.checked)}
+                className="w-6 h-6 mt-0.5 rounded accent-red-700 cursor-pointer shrink-0"
+              />
+              <div>
+                <p className="font-sans text-base font-semibold text-gray-800 mb-1">
+                  ¿Tu nombre japonés está registrado oficialmente?
+                </p>
+                <p className="font-sans text-sm text-gray-500 leading-relaxed">
+                  Por ejemplo, si aparece en documentos oficiales japoneses o en el registro de la asociación.
+                </p>
+              </div>
+            </label>
+          </div>
+        )}
       </div>
     </div>
   )

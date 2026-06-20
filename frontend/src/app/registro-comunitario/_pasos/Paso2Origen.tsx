@@ -55,6 +55,9 @@ export default function Paso2Origen({
           <label className="block font-sans text-lg font-semibold text-gray-800 mb-3">
             ¿Qué generación Nikkei eres? <span className="text-red-600">*</span>
           </label>
+          <p className="font-sans text-sm text-gray-500 mb-3 leading-relaxed bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+            La primera generación (Issei) está formada por quienes emigraron directamente de Japón a México. Cada generación siguiente corresponde a sus descendientes nacidos en México.
+          </p>
 
           <div className="space-y-2">
             {GENERACIONES.map((opcion) => {

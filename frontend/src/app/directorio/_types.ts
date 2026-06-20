@@ -7,6 +7,7 @@ export interface Empresa {
   telefono?: string
   email?: string
   sitio_web?: string
+  redes_sociales?: string
   direccion?: string
   ciudad?: string
   estado: string

@@ -88,6 +88,7 @@ func (h *EmpresasHandler) Create(c *gin.Context) {
 		Telefono        *string `json:"telefono"`
 		Email           *string `json:"email"`
 		SitioWeb        *string `json:"sitio_web"`
+		RedesSociales   *string `json:"redes_sociales"`
 		Direccion       *string `json:"direccion"`
 		Ciudad          *string `json:"ciudad"`
 		Estado          string  `json:"estado"`
@@ -119,6 +120,7 @@ func (h *EmpresasHandler) Create(c *gin.Context) {
 		Telefono:                  req.Telefono,
 		Email:                     req.Email,
 		SitioWeb:                  req.SitioWeb,
+		RedesSociales:             req.RedesSociales,
 		Direccion:                 req.Direccion,
 		Ciudad:                    req.Ciudad,
 		Estado:                    estado,
@@ -177,6 +179,7 @@ func (h *EmpresasHandler) SolicitarRegistro(c *gin.Context) {
 		Telefono                  *string `json:"telefono"`
 		Email                     *string `json:"email"`
 		SitioWeb                  *string `json:"sitio_web"`
+		RedesSociales             *string `json:"redes_sociales"`
 		Direccion                 *string `json:"direccion"`
 		Ciudad                    *string `json:"ciudad"`
 		Estado                    string  `json:"estado"`
@@ -209,6 +212,7 @@ func (h *EmpresasHandler) SolicitarRegistro(c *gin.Context) {
 		Telefono:                  req.Telefono,
 		Email:                     req.Email,
 		SitioWeb:                  req.SitioWeb,
+		RedesSociales:             req.RedesSociales,
 		Direccion:                 req.Direccion,
 		Ciudad:                    req.Ciudad,
 		Estado:                    estado,
@@ -247,6 +251,7 @@ func (h *EmpresasHandler) Update(c *gin.Context) {
 		Telefono        *string `json:"telefono"`
 		Email           *string `json:"email"`
 		SitioWeb        *string `json:"sitio_web"`
+		RedesSociales   *string `json:"redes_sociales"`
 		Direccion       *string `json:"direccion"`
 		Ciudad          *string `json:"ciudad"`
 		Estado          string  `json:"estado"`
@@ -286,6 +291,9 @@ func (h *EmpresasHandler) Update(c *gin.Context) {
 	}
 	if req.SitioWeb != nil {
 		empresa.SitioWeb = req.SitioWeb
+	}
+	if req.RedesSociales != nil {
+		empresa.RedesSociales = req.RedesSociales
 	}
 	if req.Direccion != nil {
 		empresa.Direccion = req.Direccion
@@ -495,6 +503,7 @@ func (h *EmpresasHandler) UpdateMiEmpresa(c *gin.Context) {
 		Telefono                  *string `json:"telefono"`
 		Email                     *string `json:"email"`
 		SitioWeb                  *string `json:"sitio_web"`
+		RedesSociales             *string `json:"redes_sociales"`
 		Direccion                 *string `json:"direccion"`
 		Ciudad                    *string `json:"ciudad"`
 		Estado                    string  `json:"estado"`
@@ -527,6 +536,9 @@ func (h *EmpresasHandler) UpdateMiEmpresa(c *gin.Context) {
 	}
 	if req.SitioWeb != nil {
 		empresa.SitioWeb = req.SitioWeb
+	}
+	if req.RedesSociales != nil {
+		empresa.RedesSociales = req.RedesSociales
 	}
 	if req.Direccion != nil {
 		empresa.Direccion = req.Direccion

@@ -38,6 +38,7 @@ export interface MiEmpresa {
   telefono?: string
   email?: string
   sitio_web?: string
+  redes_sociales?: string
   direccion?: string
   ciudad?: string
   estado: string
@@ -56,6 +57,7 @@ export interface MiEmpresaInput {
   telefono?: string
   email?: string
   sitio_web?: string
+  redes_sociales?: string
   ciudad?: string
   estado?: string
   logo_empresa?: string

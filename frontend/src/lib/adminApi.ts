@@ -70,6 +70,7 @@ export interface Empresa {
   telefono?: string
   email?: string
   sitio_web?: string
+  redes_sociales?: string
   direccion?: string
   ciudad?: string
   estado: string
@@ -258,6 +259,7 @@ export interface MiembroDetalle {
   apellido_materno?: string
   nombre_japones?: string
   nombre_kanji?: string
+  nombre_japones_registrado?: boolean
   genero?: string
   fecha_nacimiento?: string
   lugar_nacimiento?: string
@@ -274,6 +276,7 @@ export interface MiembroDetalle {
   es_miembro_activo: boolean
   nivel_japones?: string
   participa_eventos: boolean
+  ha_recibido_beca?: boolean
   acepta_directorio_publico: boolean
   acepta_comunicaciones: boolean
   fecha_ingreso_asociacion?: string

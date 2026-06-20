@@ -31,11 +31,12 @@ type NuevaFamiliaRequest struct {
 
 type RegistroComunitarioRequest struct {
 	// Paso 1
-	Nombres         string  `json:"nombres" binding:"required,max=150"`
-	ApellidoPaterno string  `json:"apellido_paterno" binding:"required,max=100"`
-	ApellidoMaterno *string `json:"apellido_materno"`
-	NombreJapones   *string `json:"nombre_japones"`
-	NombreKanji     *string `json:"nombre_kanji"`
+	Nombres                 string  `json:"nombres" binding:"required,max=150"`
+	ApellidoPaterno         string  `json:"apellido_paterno" binding:"required,max=100"`
+	ApellidoMaterno         *string `json:"apellido_materno"`
+	NombreJapones           *string `json:"nombre_japones"`
+	NombreKanji             *string `json:"nombre_kanji"`
+	NombreJaponesRegistrado bool    `json:"nombre_japones_registrado"`
 
 	// Paso 2
 	Generacion   string               `json:"generacion" binding:"required,oneof=issei nisei sansei yonsei gosei roksei"`
@@ -56,6 +57,7 @@ type RegistroComunitarioRequest struct {
 	NivelJapones            *string `json:"nivel_japones"`
 	AceptaDirectorioPublico bool    `json:"acepta_directorio_publico"`
 	AceptaComunicaciones    bool    `json:"acepta_comunicaciones"`
+	HaRecibidoBeca          bool    `json:"ha_recibido_beca"`
 }
 
 func (h *RegistroComunitarioHandler) CrearRegistro(c *gin.Context) {
@@ -147,6 +149,8 @@ func (h *RegistroComunitarioHandler) CrearRegistro(c *gin.Context) {
 			NivelJapones:            req.NivelJapones,
 			AceptaDirectorioPublico: req.AceptaDirectorioPublico,
 			AceptaComunicaciones:    req.AceptaComunicaciones,
+			NombreJaponesRegistrado: req.NombreJaponesRegistrado,
+			HaRecibidoBeca:          req.HaRecibidoBeca,
 			EsMiembroActivo:         false, // queda inactivo hasta aprobación
 		}
 		if err := tx.Create(&persona).Error; err != nil {

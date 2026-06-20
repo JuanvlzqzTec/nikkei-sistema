@@ -12,6 +12,7 @@ type Persona struct {
 	ApellidoMaterno         *string    `gorm:"size:100" json:"apellido_materno"`
 	NombreJapones           *string    `gorm:"size:150" json:"nombre_japones"`
 	NombreKanji             *string    `gorm:"size:150" json:"nombre_kanji"`
+	NombreJaponesRegistrado bool       `gorm:"default:false" json:"nombre_japones_registrado"`
 	Genero                  *string    `gorm:"size:50;check:genero IN ('masculino','femenino','otro','prefiero_no_decir')" json:"genero"`
 	FechaNacimiento         *time.Time `gorm:"type:date" json:"fecha_nacimiento"`
 	LugarNacimiento         *string    `gorm:"size:200" json:"lugar_nacimiento"`
@@ -31,6 +32,7 @@ type Persona struct {
 	ParticipaEventos        bool       `gorm:"default:true" json:"participa_eventos"`
 	AceptaDirectorioPublico bool       `gorm:"default:false" json:"acepta_directorio_publico"`
 	AceptaComunicaciones    bool       `gorm:"default:true" json:"acepta_comunicaciones"`
+	HaRecibidoBeca          bool       `gorm:"default:false" json:"ha_recibido_beca"`
 	NotasAdministrativas    *string    `gorm:"type:text" json:"notas_administrativas"`
 	IDEmpresaEmpleadora     *uint      `json:"id_empresa_empleadora"`
 	Puesto                  *string    `gorm:"size:150" json:"puesto"`

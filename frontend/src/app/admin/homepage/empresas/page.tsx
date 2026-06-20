@@ -22,6 +22,21 @@ const emptyForm = {
   estado: 'Sinaloa', logo_empresa: '',
 }
 
+const emptyRedes = { facebook: '', instagram: ''}
+
+function parseRedes(json?: string) {
+  if (!json) return emptyRedes
+  try {
+    const p = JSON.parse(json)
+    return {
+      facebook: p.facebook || '',
+      instagram: p.instagram || '',
+    }
+  } catch {
+    return emptyRedes
+  }
+}
+
 export default function EmpresasAdminPage() {
   const [empresas, setEmpresas] = useState<Empresa[]>([])
   const [loading, setLoading] = useState(true)
@@ -31,9 +46,9 @@ export default function EmpresasAdminPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingEmpresa, setEditingEmpresa] = useState<Empresa | null>(null)
   const [form, setForm] = useState(emptyForm)
+  const [redes, setRedes] = useState(emptyRedes)
   const [tab, setTab] = useState<'todas' | 'pendientes' | 'homepage'>('todas')
 
-  // Cloudinary upload state
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [dragOver, setDragOver] = useState(false)
@@ -59,9 +74,13 @@ export default function EmpresasAdminPage() {
   const f = (key: keyof typeof emptyForm, val: string) =>
     setForm((prev) => ({ ...prev, [key]: val }))
 
+  const setRed = (key: keyof typeof emptyRedes, val: string) =>
+    setRedes((prev) => ({ ...prev, [key]: val }))
+
   const openCreate = () => {
     setEditingEmpresa(null)
     setForm(emptyForm)
+    setRedes(emptyRedes)
     setUploadError('')
     setShowModal(true)
   }
@@ -80,11 +99,11 @@ export default function EmpresasAdminPage() {
       estado: em.estado || 'Sinaloa',
       logo_empresa: em.logo_empresa || '',
     })
+    setRedes(parseRedes(em.redes_sociales))
     setUploadError('')
     setShowModal(true)
   }
 
-  // Cloudinary upload
   const uploadToCloudinary = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       setUploadError('Solo se permiten imágenes')
@@ -135,11 +154,18 @@ export default function EmpresasAdminPage() {
     try {
       setSaving(true)
       setError('')
+
+      const redesPayload = JSON.stringify({
+        ...(redes.facebook ? { facebook: redes.facebook } : {}),
+        ...(redes.instagram ? { instagram: redes.instagram } : {}),
+      })
+      const formConRedes = { ...form, redes_sociales: redesPayload }
+
       if (editingEmpresa) {
-        await empresasApi.update(editingEmpresa.id_empresa, form)
+        await empresasApi.update(editingEmpresa.id_empresa, formConRedes)
         setSuccess('Empresa actualizada')
       } else {
-        await empresasApi.create(form)
+        await empresasApi.create(formConRedes)
         setSuccess('Empresa creada')
       }
       setShowModal(false)
@@ -256,7 +282,6 @@ export default function EmpresasAdminPage() {
             <div key={em.id_empresa} className={`bg-white rounded-xl border p-4 flex gap-4 items-start transition-all ${
               em.en_homepage ? 'border-amber-300 ring-1 ring-amber-200' : 'border-gray-200'
             }`}>
-              {/* Logo */}
               <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
                 {em.logo_empresa ? (
                   <Image src={em.logo_empresa} alt={em.nombre_empresa} fill className="object-cover" />
@@ -348,7 +373,6 @@ export default function EmpresasAdminPage() {
             <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                {/* Nombre */}
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
                     Nombre de empresa <span className="text-red-500">*</span>
@@ -361,7 +385,6 @@ export default function EmpresasAdminPage() {
                   />
                 </div>
 
-                {/* Giro comercial */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Giro comercial</label>
                   <select
@@ -376,7 +399,6 @@ export default function EmpresasAdminPage() {
                   </select>
                 </div>
 
-                {/* Teléfono */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Teléfono</label>
                   <input
@@ -388,7 +410,6 @@ export default function EmpresasAdminPage() {
                   />
                 </div>
 
-                {/* Email */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Email</label>
                   <input
@@ -400,7 +421,6 @@ export default function EmpresasAdminPage() {
                   />
                 </div>
 
-                {/* Sitio web */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Sitio web</label>
                   <input
@@ -412,7 +432,26 @@ export default function EmpresasAdminPage() {
                   />
                 </div>
 
-                {/* Ciudad */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Facebook</label>
+                  <input
+                    type="text"
+                    value={redes.facebook}
+                    onChange={(e) => setRed('facebook', e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Instagram</label>
+                  <input
+                    type="text"
+                    value={redes.instagram}
+                    onChange={(e) => setRed('instagram', e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-sans focus:outline-none focus:border-red-400"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Ciudad</label>
                   <input
@@ -423,7 +462,6 @@ export default function EmpresasAdminPage() {
                   />
                 </div>
 
-                {/* Estado */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Estado</label>
                   <input
@@ -435,7 +473,6 @@ export default function EmpresasAdminPage() {
                   />
                 </div>
 
-                {/* Logo — Cloudinary upload */}
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">
                     Logo de la empresa
@@ -506,7 +543,6 @@ export default function EmpresasAdminPage() {
                   )}
                 </div>
 
-                {/* Descripción */}
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-gray-700 font-sans mb-1.5">Descripción</label>
                   <textarea

@@ -25,9 +25,8 @@ export const paso1Schema = z.object({
   apellido_materno: z
     .string()
     .trim()
-    .max(100, 'El apellido es demasiado largo')
-    .optional()
-    .or(z.literal('')),
+    .min(1, 'Por favor escribe tu apellido materno. Si no tienes, escribe X')
+    .max(100, 'El apellido es demasiado largo'),
   nombre_japones: z
     .string()
     .trim()
@@ -40,6 +39,7 @@ export const paso1Schema = z.object({
     .max(150)
     .optional()
     .or(z.literal('')),
+  nombre_japones_registrado: z.boolean(),
 })
 
 export const nuevaFamiliaSchema = z.object({
@@ -167,6 +167,7 @@ export const paso5Schema = z.object({
     ['ninguno', 'basico', 'intermedio', 'avanzado', 'nativo'],
     { message: 'Por favor elige una opción' }
   ),
+  ha_recibido_beca: z.boolean(),
   acepta_directorio_publico: z.boolean(),
   acepta_comunicaciones: z.boolean(),
 })

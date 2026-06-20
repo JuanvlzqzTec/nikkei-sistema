@@ -58,6 +58,8 @@ export interface EstadisticasResponse {
     con_foto: number
     con_fecha_nacimiento: number
     aceptan_directorio: number
+    con_nombre_japones_registrado: number
+    con_beca: number
   }
   eventos: {
     total: number

@@ -126,6 +126,14 @@ function ModalDetalle({ id, onClose }: { id: number; onClose: () => void }) {
                   <Campo label="Lugar de nacimiento" value={detalle.lugar_nacimiento} />
                   <Campo label="Estado civil" value={detalle.estado_civil} />
                   <Campo label="Nivel de japonés" value={detalle.nivel_japones} />
+                  {detalle.nombre_japones_registrado !== undefined && (
+                    <div>
+                      <p className="text-[10px] font-sans font-semibold text-gray-400 uppercase tracking-wider">Nombre japonés registrado</p>
+                      <p className="text-sm font-sans text-gray-800 mt-0.5">
+                        {detalle.nombre_japones_registrado ? 'Sí' : 'No'}
+                      </p>
+                    </div>
+                  )}
                   <Campo label="Fecha de ingreso" value={detalle.fecha_ingreso_asociacion} />
                 </div>
               </div>
@@ -167,6 +175,11 @@ function ModalDetalle({ id, onClose }: { id: number; onClose: () => void }) {
                     detalle.acepta_comunicaciones ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
                   }`}>
                     {detalle.acepta_comunicaciones ? '✓' : '✗'} Acepta comunicaciones
+                  </span>
+                  <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
+                    detalle.ha_recibido_beca ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
+                  }`}>
+                    {detalle.ha_recibido_beca ? '✓' : '✗'} Ha recibido beca
                   </span>
                 </div>
               </div>

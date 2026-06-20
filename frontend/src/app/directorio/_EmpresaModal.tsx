@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import Image from 'next/image'
-import { X, MapPin, Phone, Mail, Globe, ExternalLink } from 'lucide-react'
+import { X, MapPin, Phone, Mail, Globe, ExternalLink, Facebook, Instagram } from 'lucide-react'
 import { type Empresa, getSectorColor } from './_types'
 
 interface Props {
@@ -153,6 +153,45 @@ export default function EmpresaModal({ empresa, onClose }: Props) {
               </a>
             </>
           )}
+
+          {/* Redes sociales */}
+          {empresa.redes_sociales && (() => {
+            try {
+              const redes = JSON.parse(empresa.redes_sociales)
+              const links = [
+                { key: 'facebook', label: 'Facebook', Icon: Facebook },
+                { key: 'instagram', label: 'Instagram', Icon: Instagram },
+              ].filter(r => redes[r.key])
+
+              if (!links.length) return null
+
+              return (
+                <>
+                  <div className="h-px bg-gray-100" />
+                  <div className="flex flex-col gap-2">
+                    {links.map(({ key, label, Icon }) => (
+                      <a
+                        key={key}
+                        href={redes[key]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between gap-3 p-3 rounded-xl bg-amber-50 border border-amber-100 hover:bg-amber-100 transition-colors group"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <Icon size={15} className="text-amber-600 shrink-0" />
+                          <span className="text-base font-sans text-amber-800 font-medium truncate">
+                            {label}
+                          </span>
+                        </div>
+                        <ExternalLink size={14} className="text-amber-400 group-hover:text-amber-600 shrink-0 transition-colors" />
+                      </a>
+                    ))}
+                  </div>
+                </>
+              )
+            } catch { return null }
+          })()}
+
         </div>
       </div>
     </div>

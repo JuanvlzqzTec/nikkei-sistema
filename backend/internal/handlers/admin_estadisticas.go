@@ -234,23 +234,29 @@ func (h *AdminEstadisticasHandler) GetEstadisticas(c *gin.Context) {
 		ORDER BY total DESC
 	`).Scan(&situacionesLaborales)
 
+	var conNombreJaponesRegistrado, conBeca int64
+	database.DB.Table("personas").Where("nombre_japones_registrado = true").Count(&conNombreJaponesRegistrado)
+	database.DB.Table("personas").Where("ha_recibido_beca = true").Count(&conBeca)
+
 	c.JSON(http.StatusOK, gin.H{
 		"generado_en": time.Now().Format(time.RFC3339),
 		"comunidad": gin.H{
-			"total_personas":       totalPersonas,
-			"miembros_activos":     totalMiembrosActivos,
-			"total_familias":       totalFamilias,
-			"registros_pendientes": registrosPendientes,
-			"por_generacion":       porGeneracion,
-			"por_genero":           porGenero,
-			"por_nivel_japones":    porNivelJapones,
-			"rangos_edad":          rangosEdad,
-			"incorporaciones":      incorporacionesMensuales,
-			"por_ciudad":           porCiudad,
-			"con_telefono":         conTelefono,
-			"con_foto":             conFoto,
-			"con_fecha_nacimiento": conFechaNac,
-			"aceptan_directorio":   aceptanDirectorio,
+			"total_personas":                totalPersonas,
+			"miembros_activos":              totalMiembrosActivos,
+			"total_familias":                totalFamilias,
+			"registros_pendientes":          registrosPendientes,
+			"por_generacion":                porGeneracion,
+			"por_genero":                    porGenero,
+			"por_nivel_japones":             porNivelJapones,
+			"rangos_edad":                   rangosEdad,
+			"incorporaciones":               incorporacionesMensuales,
+			"por_ciudad":                    porCiudad,
+			"con_telefono":                  conTelefono,
+			"con_foto":                      conFoto,
+			"con_fecha_nacimiento":          conFechaNac,
+			"aceptan_directorio":            aceptanDirectorio,
+			"con_nombre_japones_registrado": conNombreJaponesRegistrado,
+			"con_beca":                      conBeca,
 		},
 		"eventos": gin.H{
 			"total":                     totalEventos,
