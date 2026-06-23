@@ -177,8 +177,26 @@ func (h *GenealogiaHandler) BuscarPersonas(c *gin.Context) {
 	q := strings.TrimSpace(c.Query("q"))
 	idFamiliaStr := c.Query("id_familia")
 
+	var relacionesExistentes []models.Genealogia
+	database.DB.
+		Where("id_persona = ? OR id_pariente = ?", persona.IDPersona, persona.IDPersona).
+		Find(&relacionesExistentes)
+
+	idsExcluir := make([]uint, 0, len(relacionesExistentes))
+	for _, r := range relacionesExistentes {
+		if r.IDPersona == persona.IDPersona {
+			idsExcluir = append(idsExcluir, r.IDPariente)
+		} else {
+			idsExcluir = append(idsExcluir, r.IDPersona)
+		}
+	}
+
 	query := database.DB.Model(&models.Persona{}).
 		Where("id_persona != ?", persona.IDPersona)
+
+	if len(idsExcluir) > 0 {
+		query = query.Where("id_persona NOT IN ?", idsExcluir)
+	}
 
 	if idFamiliaStr != "" {
 		if idFamilia, err := strconv.Atoi(idFamiliaStr); err == nil {

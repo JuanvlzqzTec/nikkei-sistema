@@ -171,10 +171,11 @@ export default function AdminArbolFamiliaPage() {
             <span className="ml-2 text-lg text-gray-400">({arbol.familia.apellido_kanji})</span>
           )}
         </h1>
-        {arbol.familia.prefectura_origen && (
+        {(arbol.familia.prefectura_origen || arbol.familia.anio_llegada_mexico || arbol.familia.lugar_llegada) && (
           <p className="text-sm text-gray-500 font-sans mt-0.5">
-            Origen: {arbol.familia.prefectura_origen}
+            {arbol.familia.prefectura_origen && `Origen: ${arbol.familia.prefectura_origen}`}
             {arbol.familia.anio_llegada_mexico && ` · Llegó a México en ${arbol.familia.anio_llegada_mexico}`}
+            {arbol.familia.lugar_llegada && ` · por ${arbol.familia.lugar_llegada}`}
           </p>
         )}
       </div>

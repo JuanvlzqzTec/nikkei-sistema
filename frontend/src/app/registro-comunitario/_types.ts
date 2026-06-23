@@ -34,6 +34,7 @@ export interface NuevaFamiliaData {
   apellido_kanji: string
   prefectura_origen: string
   anio_llegada_mexico: string
+  lugar_llegada: string
 }
 
 export interface WizardDraft {
@@ -98,6 +99,7 @@ export interface RegistroComunitarioPayload {
     apellido_kanji?: string
     prefectura_origen?: string
     anio_llegada_mexico?: number
+    lugar_llegada?: string
   }
 
   fecha_nacimiento: string

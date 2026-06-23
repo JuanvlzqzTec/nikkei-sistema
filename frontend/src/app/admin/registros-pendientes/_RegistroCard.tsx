@@ -54,7 +54,9 @@ const GENERO_LABELS: Record<string, string> = {
 function formatFecha(iso?: string): string {
   if (!iso) return '—'
   try {
-    return new Date(iso).toLocaleDateString('es-MX', {
+    const soloFecha = iso.split('T')[0]
+    const [year, month, day] = soloFecha.split('-').map(Number)
+    return new Date(year, month - 1, day).toLocaleDateString('es-MX', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',

@@ -26,6 +26,7 @@ export default function FormularioNuevaFamilia({
     apellido_kanji: initialData?.apellido_kanji ?? '',
     prefectura_origen: initialData?.prefectura_origen ?? '',
     anio_llegada_mexico: initialData?.anio_llegada_mexico ?? '',
+    lugar_llegada: initialData?.lugar_llegada ?? '',
   })
   const [errores, setErrores] = useState <
   Partial<Record<keyof NuevaFamiliaData, string>>
@@ -202,6 +203,32 @@ export default function FormularioNuevaFamilia({
             <p className="mt-2 text-base font-sans text-red-600 flex items-center gap-1.5">
               <AlertCircle size={15} />
               {errores.anio_llegada_mexico}
+            </p>
+          )}
+        </div>
+
+        {/* Lugar de llegada a México */}
+        <div>
+          <label
+            htmlFor="lugar_llegada"
+            className="block font-sans text-lg font-semibold text-gray-800 mb-2"
+          >
+            ¿Por dónde llegó tu familia a México?
+            <span className="font-normal text-base text-gray-400 ml-2">
+              (opcional)
+            </span>
+          </label>
+          <input
+            id="lugar_llegada"
+            type="text"
+            value={form.lugar_llegada}
+            onChange={(e) => setCampo('lugar_llegada', e.target.value)}
+            placeholder="Por ejemplo: Mazatlán, Manzanillo..."
+            className="w-full text-lg font-sans px-4 py-3 border-2 border-amber-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
+          />
+          {errores.lugar_llegada && (
+            <p className="mt-2 text-base font-sans text-red-600">
+              {errores.lugar_llegada}
             </p>
           )}
         </div>

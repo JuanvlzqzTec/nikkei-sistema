@@ -20,6 +20,7 @@ type FamiliaConConteo struct {
 	ApellidoKanji     *string `json:"apellido_kanji"`
 	PrefecturaOrigen  *string `json:"prefectura_origen"`
 	AnioLlegadaMexico *int    `json:"anio_llegada_mexico"`
+	LugarLlegada      *string `json:"lugar_llegada"`
 	TotalMiembros     int64   `json:"total_miembros"`
 	TotalRelaciones   int64   `json:"total_relaciones"`
 }
@@ -50,6 +51,7 @@ func (h *AdminArbolesHandler) GetFamiliasConArboles(c *gin.Context) {
 			ApellidoKanji:     f.ApellidoKanji,
 			PrefecturaOrigen:  f.PrefecturaOrigen,
 			AnioLlegadaMexico: f.AnioLlegadaMexico,
+			LugarLlegada:      f.LugarLlegada,
 			TotalMiembros:     miembros,
 			TotalRelaciones:   relaciones,
 		})

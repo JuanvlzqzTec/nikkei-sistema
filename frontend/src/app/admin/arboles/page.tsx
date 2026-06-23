@@ -97,10 +97,11 @@ export default function AdminArbolesPage() {
                     <span className="ml-2 text-sm text-gray-400">({f.apellido_kanji})</span>
                   )}
                 </p>
-                {f.prefectura_origen && (
+                {(f.prefectura_origen || f.lugar_llegada || f.anio_llegada_mexico) && (
                   <p className="text-xs text-gray-500 font-sans mt-0.5">
                     {f.prefectura_origen}
                     {f.anio_llegada_mexico && ` · llegó en ${f.anio_llegada_mexico}`}
+                    {f.lugar_llegada && ` · por ${f.lugar_llegada}`}
                   </p>
                 )}
               </div>

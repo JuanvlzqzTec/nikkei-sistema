@@ -106,6 +106,15 @@ func (h *AdminEstadisticasHandler) GetEstadisticas(c *gin.Context) {
 		Limit(8).
 		Scan(&porCiudad)
 
+	// Lugares de llegada de familias
+	var porLugarLlegada []conteo
+	database.DB.Table("familias").
+		Select("COALESCE(lugar_llegada, 'No especificado') as clave, count(*) as total").
+		Where("pendiente_aprobacion = false AND lugar_llegada IS NOT NULL AND lugar_llegada != ''").
+		Group("lugar_llegada").
+		Order("total DESC").
+		Scan(&porLugarLlegada)
+
 	// Estadisticas de eventos
 	var eventosPorTipo []conteo
 	database.DB.Table("eventos").
@@ -251,6 +260,7 @@ func (h *AdminEstadisticasHandler) GetEstadisticas(c *gin.Context) {
 			"rangos_edad":                   rangosEdad,
 			"incorporaciones":               incorporacionesMensuales,
 			"por_ciudad":                    porCiudad,
+			"por_lugar_llegada":             porLugarLlegada,
 			"con_telefono":                  conTelefono,
 			"con_foto":                      conFoto,
 			"con_fecha_nacimiento":          conFechaNac,

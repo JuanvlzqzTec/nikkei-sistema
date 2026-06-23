@@ -388,6 +388,25 @@ export default function EstadisticasPage() {
                 ))}
           </div>
         </div>
+
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <SectionTitle icon={Globe} title="Lugares de llegada a México" sub="Por dónde llegaron las familias" />
+          <div className="space-y-3">
+            {(c.por_lugar_llegada ?? []).map((d, i) => (
+              <BarraHorizontal
+                key={`llegada-${i}-${d.clave}`}
+                label={d.clave}
+                value={Number(d.total)}
+                total={c.total_familias || 1}
+                color={COLORS[i % COLORS.length]}
+              />
+            ))}
+            {!(c.por_lugar_llegada ?? []).length && (
+              <p className="text-xs text-gray-400">Sin datos registrados aún</p>
+            )}
+          </div>
+        </div>
+
       </div>
 
       {/* Incorporaciones mensuales */}

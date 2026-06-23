@@ -25,6 +25,7 @@ export interface FamiliaConArbol {
   apellido_kanji: string | null
   prefectura_origen: string | null
   anio_llegada_mexico: number | null
+  lugar_llegada: string | null
   total_miembros: number
   total_relaciones: number
 }
@@ -55,6 +56,7 @@ export interface ArbolFamiliaResponse {
     apellido_kanji: string | null
     prefectura_origen: string | null
     anio_llegada_mexico: number | null
+    lugar_llegada: string | null
   }
   personas: ArbolPersona[]
   relaciones: ArbolRelacion[]

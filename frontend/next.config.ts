@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://res.cloudinary.com",
               "font-src 'self'",
-              "connect-src 'self' https://*.railway.app https://api.cloudinary.com",
+              "connect-src 'self' https://*.railway.app https://api.cloudinary.com http://localhost:8080",
               "frame-ancestors 'none'",
             ].join('; '),
           },

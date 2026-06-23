@@ -12,15 +12,12 @@ interface Props {
   onSolicitarCrearNueva: () => void
 }
 
-type Ambito = 'mi_familia' | 'todas'
-
 export default function SelectorPersona({
   idFamiliaMia,
   seleccionada,
   onSelect,
   onSolicitarCrearNueva,
 }: Props) {
-  const [ambito, setAmbito] = useState<Ambito>('mi_familia')
   const [busqueda, setBusqueda] = useState('')
   const [resultados, setResultados] = useState<PersonaResumen[]>([])
   const [loading, setLoading] = useState(false)
@@ -35,9 +32,10 @@ export default function SelectorPersona({
       try {
         setLoading(true)
         setError('')
-        const params: { q?: string; idFamilia?: number } = {}
+        const params: { q?: string; idFamilia?: number } = {
+          idFamilia: idFamiliaMia,
+        }
         if (busqueda.trim()) params.q = busqueda.trim()
-        if (ambito === 'mi_familia') params.idFamilia = idFamiliaMia
         const res = await genealogiaApi.buscarPersonas(params)
         setResultados(res.data || [])
       } catch (e) {
@@ -51,7 +49,7 @@ export default function SelectorPersona({
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [busqueda, ambito, idFamiliaMia, seleccionada])
+  }, [busqueda, idFamiliaMia, seleccionada])
 
   if (seleccionada) {
     return (
@@ -96,31 +94,6 @@ export default function SelectorPersona({
 
   return (
     <div className="space-y-4">
-      {/* Toggle ámbito */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
-        <button
-          type="button"
-          onClick={() => setAmbito('mi_familia')}
-          className={`px-4 py-2 rounded-lg text-sm font-sans font-semibold transition-all cursor-pointer ${
-            ambito === 'mi_familia'
-              ? 'bg-white shadow-sm text-red-800'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Mi familia
-        </button>
-        <button
-          type="button"
-          onClick={() => setAmbito('todas')}
-          className={`px-4 py-2 rounded-lg text-sm font-sans font-semibold transition-all cursor-pointer ${
-            ambito === 'todas'
-              ? 'bg-white shadow-sm text-red-800'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Buscar en todas
-        </button>
-      </div>
 
       {/* Buscador */}
       <div className="relative">
@@ -132,11 +105,7 @@ export default function SelectorPersona({
           type="text"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          placeholder={
-            ambito === 'mi_familia'
-              ? 'Busca en tu familia...'
-              : 'Busca por nombre en toda la comunidad...'
-          }
+          placeholder="Busca en tu familia..."
           className="w-full text-base font-sans pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-red-400 focus:outline-none transition-colors"
         />
         {busqueda && (
@@ -164,9 +133,7 @@ export default function SelectorPersona({
           <p className="font-sans text-base text-gray-500 mb-1">
             {busqueda
               ? 'No encontramos personas con ese nombre.'
-              : ambito === 'mi_familia'
-                ? 'No hay otras personas registradas en tu familia.'
-                : 'Escribe un nombre para buscar.'}
+              : 'No hay otras personas registradas en tu familia.'}
           </p>
         </div>
       ) : (

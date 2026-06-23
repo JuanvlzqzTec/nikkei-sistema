@@ -54,6 +54,7 @@ export interface EstadisticasResponse {
     rangos_edad: RangoEdad[]
     incorporaciones: MesConteo[]
     por_ciudad: Conteo[]
+    por_lugar_llegada: Conteo[]
     con_telefono: number
     con_foto: number
     con_fecha_nacimiento: number

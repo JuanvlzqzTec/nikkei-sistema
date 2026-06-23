@@ -75,6 +75,12 @@ export const nuevaFamiliaSchema = z.object({
         message: `El año debe estar entre ${ANIO_LLEGADA_MIN} y ${ANIO_LLEGADA_MAX}`,
       }
     ),
+  lugar_llegada: z
+  .string()
+  .trim()
+  .max(150)
+  .optional()
+  .or(z.literal('')),
 })
 
 const paso2BaseSchema = z.object({
