@@ -56,7 +56,7 @@ export default function WizardLayout({
                 Registro Comunitario
               </p>
               <p className="font-sans text-xs text-red-600/70">
-                Asociación Nikkei de Sinaloa
+                Nikkei Culiacán AC
               </p>
             </div>
           </Link>

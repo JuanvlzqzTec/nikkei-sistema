@@ -101,10 +101,10 @@ export default function DashboardPage() {
             />
             <div>
               <p className="font-serif text-red-800 text-lg leading-tight">
-                Dashboard Nikkei
+                Dashboard
               </p>
               <p className="font-sans text-xs text-red-600/70">
-                Asociación de Culiacán
+                Nikkei Culiacán AC
               </p>
             </div>
           </Link>

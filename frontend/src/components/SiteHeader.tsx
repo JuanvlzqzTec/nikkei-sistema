@@ -55,7 +55,7 @@ export default function SiteHeader({ variant = 'page' }: Props) {
               />
               <div>
                 <p className="header-logo-text-main text-sm leading-tight">シナロア日系青年協会</p>
-                <p className="header-logo-text-sub text-[10px]">Asociación Nikkei, Culiacán</p>
+                <p className="header-logo-text-sub text-[10px]">Nikkei Culiacán AC</p>
               </div>
             </Link>
             <button
@@ -83,7 +83,7 @@ export default function SiteHeader({ variant = 'page' }: Props) {
               />
               <div>
                 <h1 className="header-logo-text-main">シナロア日系青年協会</h1>
-                <p className="header-logo-text-sub">Asociación Nikkei, Culiacán</p>
+                <p className="header-logo-text-sub">Nikkei Culiacán AC</p>
               </div>
             </Link>
 

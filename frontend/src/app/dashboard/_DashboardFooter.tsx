@@ -9,7 +9,7 @@ export default function DashboardFooter() {
           絆
         </p>
         <p className="font-sans text-sm text-red-800/70">
-          © 2026 Asociación Nikkei de Sinaloa
+          © Nikkei Culiacán AC
         </p>
         <p className="font-sans text-xs text-red-600/60">
           Preservando nuestra herencia cultural

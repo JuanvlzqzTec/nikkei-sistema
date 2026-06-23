@@ -119,7 +119,7 @@ export default function AgregarParientePage() {
                 Agregar pariente
               </p>
               <p className="font-sans text-xs text-red-600/70">
-                Asociación Nikkei de Culiacán
+                Nikkei Culiacán AC
               </p>
             </div>
           </Link>

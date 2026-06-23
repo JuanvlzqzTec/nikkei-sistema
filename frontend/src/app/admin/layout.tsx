@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           />
           <div>
             <p className="text-white font-serif text-sm leading-tight">Panel Admin</p>
-            <p className="text-amber-300/70 font-sans text-xs">Nikkei Culiacán</p>
+            <p className="text-amber-300/70 font-sans text-xs">Nikkei Culiacán AC</p>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}

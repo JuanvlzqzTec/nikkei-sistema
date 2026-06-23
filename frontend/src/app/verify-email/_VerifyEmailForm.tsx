@@ -50,7 +50,7 @@ export default function VerifyEmailPage() {
               </div>
             </div>
             <h1 className="text-4xl text-red-800 font-serif mb-2">Verificación de Correo</h1>
-            <p className="text-lg text-red-600/80 font-sans">Asociación Nikkei de Culiacán</p>
+            <p className="text-lg text-red-600/80 font-sans">Nikkei Culiacán AC</p>
             <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-linear-to-r from-red-600 to-orange-400" />
           </div>
 
@@ -101,7 +101,7 @@ export default function VerifyEmailPage() {
 
           <div className="text-center">
             <div className="mx-auto h-1 w-24 rounded-full bg-linear-to-r from-red-400 via-orange-400 to-amber-400 mb-4" />
-            <p className="text-sm text-red-800 font-sans mb-2">© 2026 Asociación Nikkei de Culiacán</p>
+            <p className="text-sm text-red-800 font-sans mb-2">© Nikkei Culiacán AC</p>
             <p className="text-xs text-red-800 font-sans">Preservando nuestra herencia cultural 🌸</p>
           </div>
         </div>

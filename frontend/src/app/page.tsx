@@ -438,7 +438,7 @@ export default function HomePage() {
               <div className="flex items-center justify-center md:justify-start gap-3">
                 <Image src="/assets/Logo-Nikkei.png" alt="Logo OJN" width={44} height={44} className='pt-2'/>
                 <div>
-                  <h4 className="font-serif text-base leading-tight pt-2 text-white">Asociación Nikkei</h4>
+                  <h4 className="font-serif text-base leading-tight pt-2 text-white">Nikkei Culiacán AC</h4>
                   <p className="text-xs text-amber-300/80 font-sans">Culiacán, Sinaloa</p>
                 </div>
               </div>
@@ -479,7 +479,7 @@ export default function HomePage() {
           </div>
           <div className="h-px bg-linear-to-r from-transparent via-white/15 to-transparent mb-6" />
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-white/35 text-xs font-sans">
-            <p>© 2026 Asociación Nikkei de Culiacán. Todos los derechos reservados.</p>
+            <p>© Nikkei Culiacán AC. Todos los derechos reservados.</p>
             <p className="font-serif text-white/20 text-sm tracking-widest hidden md:block">根 · 絆 · 未来</p>
             <div className="flex gap-5">
               <Link href="#" className="hover:text-amber-300 transition-colors duration-200">Aviso de Privacidad</Link>

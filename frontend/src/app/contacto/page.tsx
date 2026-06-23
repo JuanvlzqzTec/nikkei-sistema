@@ -234,7 +234,7 @@ export default function ContactoPage() {
                 </div>
                 <p className="font-serif text-4xl text-red-900/10 select-none mt-8">縁</p>
                 <p className="text-xs font-sans text-gray-400 uppercase tracking-wider">
-                  Asociación Nikkei · Culiacán, Sinaloa
+                  Nikkei Culiacán AC · Sinaloa
                 </p>
               </div>
 

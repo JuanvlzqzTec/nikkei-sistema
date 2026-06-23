@@ -124,7 +124,7 @@ export default function SobreNosotrosPage() {
               <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden shadow-xl mb-20">
                 <Image
                   src={FOTOS_EVENTO.hero}
-                  alt="Evento Kodomo no Hi 2026 — Asociación Nikkei de Sinaloa"
+                  alt="Evento Kodomo no Hi 2026 — Nikkei Culiacán AC"
                   fill
                   className="object-cover"
                 />
@@ -199,7 +199,7 @@ export default function SobreNosotrosPage() {
                       <div className="relative w-35 h-35 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-xl">
                         <Image
                           src={FOTO_PRESIDENTE}
-                          alt="Juan Manuel Kuroda — Presidente de la Asociación Nikkei"
+                          alt="Juan Manuel Kuroda — Presidente de Nikkei Culiacán AC"
                           fill
                           className="object-cover"
                         />
@@ -217,7 +217,7 @@ export default function SobreNosotrosPage() {
                     {/* Atribución */}
                     <div className="space-y-1">
                       <p className="font-sans font-bold text-amber-300 text-lg">Juan Manuel Kuroda</p>
-                      <p className="font-sans text-base text-white/60">Presidente · Asociación Nikkei de Culiacán</p>
+                      <p className="font-sans text-base text-white/60">Presidente · Nikkei Culiacán AC</p>
                     </div>
 
                     <div className="w-12 h-0.5 bg-amber-400/50 mx-auto rounded-full" />
@@ -281,7 +281,7 @@ export default function SobreNosotrosPage() {
               </div>
               <p className="font-serif text-4xl text-red-900/10 select-none mt-8">絆</p>
               <p className="text-xs font-sans text-gray-400 uppercase tracking-wider">
-                Asociación Nikkei · Culiacán, Sinaloa
+                Nikkei Culiacán AC · Sinaloa
               </p>
             </div>
 

@@ -597,7 +597,7 @@ export default function EstadisticasPage() {
       <div className="text-center pt-4 pb-8">
         <p className="font-serif text-4xl text-red-900/10 select-none">統計</p>
         <p className="text-xs font-sans text-gray-400 mt-1 uppercase tracking-wider">
-          Asociación Nikkei · Culiacán, Sinaloa
+          Nikkei Culiacán AC · Sinaloa
         </p>
       </div>
 

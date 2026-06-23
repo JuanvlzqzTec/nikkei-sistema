@@ -220,7 +220,7 @@ export default function EventosPage() {
             <div className="text-center mt-16 pt-12 border-t border-gray-100">
               <p className="font-serif text-4xl text-red-900/10 select-none">祭</p>
               <p className="text-xs font-sans text-gray-400 mt-2 uppercase tracking-wider">
-                Asociación Nikkei · Culiacán, Sinaloa
+                Nikkei Culiacán AC · Sinaloa
               </p>
             </div>
           )}
