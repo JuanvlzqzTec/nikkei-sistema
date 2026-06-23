@@ -41,6 +41,7 @@ type MiembroDetalle struct {
 	NombreKanji             *string         `json:"nombre_kanji"`
 	Genero                  *string         `json:"genero"`
 	FechaNacimiento         *string         `json:"fecha_nacimiento"`
+	FechaFallecimiento      *string         `json:"fecha_fallecimiento"`
 	LugarNacimiento         *string         `json:"lugar_nacimiento"`
 	Generacion              string          `json:"generacion"`
 	EstadoCivil             *string         `json:"estado_civil"`
@@ -225,6 +226,11 @@ func (h *AdminMiembrosHandler) GetMiembroDetalle(c *gin.Context) {
 	if persona.FechaNacimiento != nil {
 		s := persona.FechaNacimiento.Format("2006-01-02")
 		detalle.FechaNacimiento = &s
+	}
+
+	if persona.FechaFallecimiento != nil {
+		s := persona.FechaFallecimiento.Format("2006-01-02")
+		detalle.FechaFallecimiento = &s
 	}
 
 	// Fecha ingreso formateada

@@ -15,6 +15,7 @@ type Persona struct {
 	NombreJaponesRegistrado bool       `gorm:"default:false" json:"nombre_japones_registrado"`
 	Genero                  *string    `gorm:"size:50;check:genero IN ('masculino','femenino','otro','prefiero_no_decir')" json:"genero"`
 	FechaNacimiento         *time.Time `gorm:"type:date" json:"fecha_nacimiento"`
+	FechaFallecimiento      *time.Time `gorm:"type:date" json:"fecha_fallecimiento"`
 	LugarNacimiento         *string    `gorm:"size:200" json:"lugar_nacimiento"`
 	Generacion              string     `gorm:"not null;size:50;check:generacion IN ('issei','nisei','sansei','yonsei','gosei','roksei')" json:"generacion"`
 	EstadoCivil             *string    `gorm:"size:50;check:estado_civil IN ('soltero','casado','divorciado','viudo','union_libre')" json:"estado_civil"`

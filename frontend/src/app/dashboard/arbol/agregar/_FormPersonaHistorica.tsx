@@ -32,10 +32,12 @@ export default function FormPersonaHistorica({
     generacion: 'issei',
     genero: '',
     fecha_nacimiento: '',
+    fecha_fallecimiento: '',
     notas: '',
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [esFallecido, setEsFallecido] = useState(false)
 
   const setCampo = <K extends keyof CrearPersonaHistoricaInput>(
     k: K,
@@ -49,6 +51,10 @@ export default function FormPersonaHistorica({
     }
     if (!form.apellido_paterno.trim()) {
       setError('El apellido paterno es requerido')
+      return
+    }
+    if (!form.apellido_materno?.trim()) {
+      setError('El apellido materno es requerido. Si no tiene, escribe X')
       return
     }
 
@@ -66,6 +72,7 @@ export default function FormPersonaHistorica({
         generacion: form.generacion,
         genero: form.genero || undefined,
         fecha_nacimiento: form.fecha_nacimiento || undefined,
+        fecha_fallecimiento: esFallecido ? (form.fecha_fallecimiento || undefined) : undefined,
         notas: form.notas?.trim() || undefined,
       }
       const res = await genealogiaApi.crearPersonaHistorica(payload)
@@ -119,8 +126,10 @@ export default function FormPersonaHistorica({
         </div>
         <div className="sm:col-span-2">
           <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
-            Apellido materno
-            <span className="font-normal text-sm text-gray-400 ml-2">(opcional)</span>
+            Apellido materno <span className="text-red-600">*</span>
+            <span className="font-normal text-sm text-gray-400 ml-2">
+              (si no tiene, escribe X)
+            </span>
           </label>
           <input
             type="text"
@@ -204,6 +213,41 @@ export default function FormPersonaHistorica({
             className="w-full text-base font-sans px-4 py-3 border-2 border-amber-200 rounded-xl bg-white focus:border-red-400 focus:outline-none"
           />
         </div>
+
+        {/* Fallecimiento */}
+        <div className="sm:col-span-2">
+          <label className="flex items-center gap-3 cursor-pointer w-fit">
+            <input
+              type="checkbox"
+              checked={esFallecido}
+              onChange={(e) => {
+                setEsFallecido(e.target.checked)
+                if (!e.target.checked) setCampo('fecha_fallecimiento', '')
+              }}
+              className="w-4 h-4 rounded border-amber-300 text-red-700 cursor-pointer"
+            />
+            <span className="font-sans text-base font-semibold text-gray-800">
+              Esta persona ha fallecido
+            </span>
+          </label>
+        </div>
+
+        {esFallecido && (
+          <div>
+            <label className="block font-sans text-base font-semibold text-gray-800 mb-2">
+              Fecha de fallecimiento
+              <span className="font-normal text-sm text-gray-400 ml-2">(opcional)</span>
+            </label>
+            <input
+              type="date"
+              value={form.fecha_fallecimiento}
+              onChange={(e) => setCampo('fecha_fallecimiento', e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+              className="w-full text-base font-sans px-4 py-3 border-2 border-amber-200 rounded-xl bg-white focus:border-red-400 focus:outline-none"
+            />
+          </div>
+        )}
+
       </div>
 
       <div>

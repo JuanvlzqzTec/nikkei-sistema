@@ -262,6 +262,7 @@ export interface MiembroDetalle {
   nombre_japones_registrado?: boolean
   genero?: string
   fecha_nacimiento?: string
+  fecha_fallecimiento?: string
   lugar_nacimiento?: string
   generacion: string
   estado_civil?: string

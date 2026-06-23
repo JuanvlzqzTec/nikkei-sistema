@@ -75,6 +75,7 @@ export interface CrearPersonaHistoricaInput {
   generacion: string
   genero?: string
   fecha_nacimiento?: string
+  fecha_fallecimiento?: string
   notas?: string
 }
 

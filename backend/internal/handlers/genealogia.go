@@ -235,16 +235,17 @@ func (h *GenealogiaHandler) BuscarPersonas(c *gin.Context) {
 }
 
 type CrearPersonaHistoricaRequest struct {
-	IDFamilia       uint    `json:"id_familia" binding:"required"`
-	Nombres         string  `json:"nombres" binding:"required,max=150"`
-	ApellidoPaterno string  `json:"apellido_paterno" binding:"required,max=100"`
-	ApellidoMaterno *string `json:"apellido_materno"`
-	NombreJapones   *string `json:"nombre_japones"`
-	NombreKanji     *string `json:"nombre_kanji"`
-	Generacion      string  `json:"generacion" binding:"required,oneof=issei nisei sansei yonsei gosei roksei"`
-	Genero          *string `json:"genero"`
-	FechaNacimiento *string `json:"fecha_nacimiento"`
-	Notas           *string `json:"notas"`
+	IDFamilia          uint    `json:"id_familia" binding:"required"`
+	Nombres            string  `json:"nombres" binding:"required,max=150"`
+	ApellidoPaterno    string  `json:"apellido_paterno" binding:"required,max=100"`
+	ApellidoMaterno    *string `json:"apellido_materno"`
+	NombreJapones      *string `json:"nombre_japones"`
+	NombreKanji        *string `json:"nombre_kanji"`
+	Generacion         string  `json:"generacion" binding:"required,oneof=issei nisei sansei yonsei gosei roksei"`
+	Genero             *string `json:"genero"`
+	FechaNacimiento    *string `json:"fecha_nacimiento"`
+	FechaFallecimiento *string `json:"fecha_fallecimiento"`
+	Notas              *string `json:"notas"`
 }
 
 func (h *GenealogiaHandler) CrearPersonaHistorica(c *gin.Context) {
@@ -276,6 +277,16 @@ func (h *GenealogiaHandler) CrearPersonaHistorica(c *gin.Context) {
 		fechaNac = &f
 	}
 
+	var fechaFall *time.Time
+	if req.FechaFallecimiento != nil && *req.FechaFallecimiento != "" {
+		f, err := time.Parse("2006-01-02", *req.FechaFallecimiento)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Fecha de fallecimiento inválida (usa YYYY-MM-DD)"})
+			return
+		}
+		fechaFall = &f
+	}
+
 	nueva := models.Persona{
 		IDFamilia:            req.IDFamilia,
 		Nombres:              strings.TrimSpace(req.Nombres),
@@ -286,6 +297,7 @@ func (h *GenealogiaHandler) CrearPersonaHistorica(c *gin.Context) {
 		Generacion:           req.Generacion,
 		Genero:               req.Genero,
 		FechaNacimiento:      fechaNac,
+		FechaFallecimiento:   fechaFall,
 		EsMiembroActivo:      false,
 		NotasAdministrativas: req.Notas,
 	}

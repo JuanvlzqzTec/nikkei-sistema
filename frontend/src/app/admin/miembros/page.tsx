@@ -112,6 +112,11 @@ function ModalDetalle({ id, onClose }: { id: number; onClose: () => void }) {
                         Familia {detalle.familia.apellido_jp}
                       </span>
                     )}
+                    {!detalle.id_user && (
+                      <span className="text-xs font-sans px-2 py-0.5 rounded-full font-medium bg-gray-100 text-gray-500">
+                        Sin cuenta — registro histórico
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -123,6 +128,7 @@ function ModalDetalle({ id, onClose }: { id: number; onClose: () => void }) {
                   <Campo label="Nombre japonés" value={detalle.nombre_japones} />
                   <Campo label="Género" value={detalle.genero} />
                   <Campo label="Fecha de nacimiento" value={detalle.fecha_nacimiento} />
+                  <Campo label="Fecha de fallecimiento" value={detalle.fecha_fallecimiento} />
                   <Campo label="Lugar de nacimiento" value={detalle.lugar_nacimiento} />
                   <Campo label="Estado civil" value={detalle.estado_civil} />
                   <Campo label="Nivel de japonés" value={detalle.nivel_japones} />
@@ -158,31 +164,33 @@ function ModalDetalle({ id, onClose }: { id: number; onClose: () => void }) {
               <div className="h-px bg-gray-100" />
 
               {/* Preferencias */}
-              <div>
-                <p className="text-xs font-sans font-bold text-gray-400 uppercase tracking-widest mb-3">Preferencias</p>
-                <div className="flex flex-wrap gap-2">
-                  <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
-                    detalle.participa_eventos ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
-                  }`}>
-                    {detalle.participa_eventos ? '✓' : '✗'} Participa en eventos
-                  </span>
-                  <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
-                    detalle.acepta_directorio_publico ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
-                  }`}>
-                    {detalle.acepta_directorio_publico ? '✓' : '✗'} En directorio público
-                  </span>
-                  <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
-                    detalle.acepta_comunicaciones ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
-                  }`}>
-                    {detalle.acepta_comunicaciones ? '✓' : '✗'} Acepta comunicaciones
-                  </span>
-                  <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
-                    detalle.ha_recibido_beca ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
-                  }`}>
-                    {detalle.ha_recibido_beca ? '✓' : '✗'} Ha recibido beca
-                  </span>
-                </div>
+              {detalle.id_user && (
+                <div>
+                  <p className="text-xs font-sans font-bold text-gray-400 uppercase tracking-widest mb-3">Preferencias</p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
+                      detalle.participa_eventos ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
+                    }`}>
+                      {detalle.participa_eventos ? '✓' : '✗'} Participa en eventos
+                    </span>
+                    <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
+                      detalle.acepta_directorio_publico ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
+                    }`}>
+                      {detalle.acepta_directorio_publico ? '✓' : '✗'} En directorio público
+                    </span>
+                    <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
+                      detalle.acepta_comunicaciones ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
+                    }`}>
+                      {detalle.acepta_comunicaciones ? '✓' : '✗'} Acepta comunicaciones
+                    </span>
+                    <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
+                      detalle.ha_recibido_beca ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
+                    }`}>
+                      {detalle.ha_recibido_beca ? '✓' : '✗'} Ha recibido beca
+                    </span>
+                  </div>
               </div>
+              )}
 
               {/* Empleo */}
               {(detalle.empleo || detalle.empresa_propia) && (
