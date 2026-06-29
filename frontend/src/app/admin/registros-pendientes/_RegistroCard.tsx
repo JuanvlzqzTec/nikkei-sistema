@@ -128,6 +128,11 @@ export default function RegistroCard({
                   <Sparkles size={10} /> Familia nueva
                 </span>
               )}
+              {registro.familia_secundaria && (
+                <span className="text-xs font-sans px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 flex items-center gap-1">
+                  <Users size={10} /> Dos familias
+                </span>
+              )}
             </div>
             <p className="font-sans font-semibold text-gray-800 truncate">
               {nombreCompleto}
@@ -214,7 +219,7 @@ export default function RegistroCard({
             </div>
           </section>
 
-          {/* Familia (solo si es nueva, con sus datos) */}
+          {/* Familia principal (solo si es nueva) */}
           {familia_es_nueva && (
             <section className="bg-amber-50/60 border border-amber-200 rounded-lg p-4">
               <h4 className="text-xs font-sans font-semibold text-amber-800 uppercase tracking-wide mb-2.5 flex items-center gap-1.5">
@@ -226,16 +231,10 @@ export default function RegistroCard({
                   <Campo label="Apellido (kanji)" valor={familia.apellido_kanji} />
                 )}
                 {familia.prefectura_origen && (
-                  <Campo
-                    label="Prefectura de origen"
-                    valor={familia.prefectura_origen}
-                  />
+                  <Campo label="Prefectura de origen" valor={familia.prefectura_origen} />
                 )}
                 {familia.anio_llegada_mexico && (
-                  <Campo
-                    label="Año de llegada a México"
-                    valor={String(familia.anio_llegada_mexico)}
-                  />
+                  <Campo label="Año de llegada a México" valor={String(familia.anio_llegada_mexico)} />
                 )}
                 {familia.lugar_llegada && (
                   <Campo label="Lugar de llegada" valor={familia.lugar_llegada} />
@@ -245,6 +244,43 @@ export default function RegistroCard({
                 Al aprobar esta solicitud, también se aprobará automáticamente
                 esta familia en el directorio público.
               </p>
+            </section>
+          )}
+
+          {/* Familia secundaria */}
+          {registro.familia_secundaria && (
+            <section className={`border rounded-lg p-4 ${
+              registro.familia_secundaria_es_nueva
+                ? 'bg-amber-50/60 border-amber-200'
+                : 'bg-gray-50 border-gray-200'
+            }`}>
+              <h4 className="text-xs font-sans font-semibold text-gray-600 uppercase tracking-wide mb-2.5 flex items-center gap-1.5">
+                <Users size={12} />
+                Familia secundaria
+                {registro.familia_secundaria_es_nueva && (
+                  <span className="ml-1 text-amber-700">— nueva, pendiente de aprobación</span>
+                )}
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm font-sans">
+                <Campo label="Apellido (romaji)" valor={registro.familia_secundaria.apellido_jp} />
+                {registro.familia_secundaria.apellido_kanji && (
+                  <Campo label="Apellido (kanji)" valor={registro.familia_secundaria.apellido_kanji} />
+                )}
+                {registro.familia_secundaria.prefectura_origen && (
+                  <Campo label="Prefectura de origen" valor={registro.familia_secundaria.prefectura_origen} />
+                )}
+                {registro.familia_secundaria.anio_llegada_mexico && (
+                  <Campo label="Año de llegada a México" valor={String(registro.familia_secundaria.anio_llegada_mexico)} />
+                )}
+                {registro.familia_secundaria.lugar_llegada && (
+                  <Campo label="Lugar de llegada" valor={registro.familia_secundaria.lugar_llegada} />
+                )}
+              </div>
+              {registro.familia_secundaria_es_nueva && (
+                <p className="text-xs text-amber-700 font-sans mt-3 italic">
+                  Al aprobar esta solicitud, también se aprobará automáticamente esta familia secundaria.
+                </p>
+              )}
             </section>
           )}
 

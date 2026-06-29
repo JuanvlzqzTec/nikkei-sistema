@@ -3,6 +3,7 @@
 import type { WizardData, FamiliaPublica, NuevaFamiliaData } from '../_types'
 import { GENERACIONES } from '../_constants'
 import SelectorFamilia from '../_components/SelectorFamilia'
+import { Info } from 'lucide-react'
 
 interface Props {
   data: WizardData
@@ -33,6 +34,24 @@ export default function Paso2Origen({
     onChange('id_familia', null)
     onChange('nueva_familia', null)
   }
+
+  const handleSelectFamiliaSecundaria = (familia: FamiliaPublica) => {
+    onChange('id_familia_secundaria', familia.id_familia)
+    onChange('nueva_familia_secundaria', null)
+  }
+
+  const handleCreateNuevaSecundaria = (nueva: NuevaFamiliaData) => {
+    onChange('nueva_familia_secundaria', nueva)
+    onChange('id_familia_secundaria', null)
+  }
+
+  const handleClearSelectionSecundaria = () => {
+    onChange('id_familia_secundaria', null)
+    onChange('nueva_familia_secundaria', null)
+  }
+
+  const tieneFamiliaPrincipal =
+    data.id_familia !== null || data.nueva_familia !== null
 
   const refGeneracion = errors.generacion ? firstErrorRef : undefined
   const refFamilia =
@@ -74,11 +93,7 @@ export default function Paso2Origen({
                   }`}
                 >
                   <div className="flex items-baseline gap-3 flex-wrap">
-                    <span
-                      className={`font-sans text-lg font-bold ${
-                        seleccionado ? 'text-red-800' : 'text-gray-800'
-                      }`}
-                    >
+                    <span className={`font-sans text-lg font-bold ${seleccionado ? 'text-red-800' : 'text-gray-800'}`}>
                       {opcion.label}
                     </span>
                     <span className="font-sans text-base text-gray-500">
@@ -91,24 +106,23 @@ export default function Paso2Origen({
           </div>
 
           {errors.generacion && (
-            <p className="mt-2 text-base font-sans text-red-600">
-              {errors.generacion}
-            </p>
+            <p className="mt-2 text-base font-sans text-red-600">{errors.generacion}</p>
           )}
         </div>
 
-        {/* Selector de familia */}
-        <div
-          ref={refFamilia}
-          className="pt-6 border-t border-gray-100 scroll-mt-24"
-        >
+        {/* Selector de familia principal */}
+        <div ref={refFamilia} className="pt-6 border-t border-gray-100 scroll-mt-24">
           <label className="block font-sans text-lg font-semibold text-gray-800 mb-2">
-            ¿A qué familia perteneces? <span className="text-red-600">*</span>
+            ¿A qué familia japonesa perteneces? <span className="text-red-600">*</span>
           </label>
-          <p className="font-sans text-base text-gray-500 mb-4 leading-relaxed">
-            Busca tu apellido familiar en la lista. Al seleccionar, podrás ver
-            los miembros ya registrados para confirmar.
-          </p>
+
+          {/* Aviso doble apellido */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
+            <Info size={18} className="text-amber-700 shrink-0 mt-0.5" />
+            <p className="font-sans text-sm text-amber-800 leading-relaxed">
+              La herencia Nikkei viene por muchos caminos. Si tu apellido japonés es el materno, el paterno, o ambos, aquí puedes reflejarlo correctamente. En caso de tener dos apellidos japoneses, registra primero el <strong>apellido paterno</strong> y después el <strong>apellido materno</strong>.
+            </p>
+          </div>
 
           <SelectorFamilia
             idFamiliaSeleccionada={data.id_familia}
@@ -120,6 +134,28 @@ export default function Paso2Origen({
             error={errors.id_familia}
           />
         </div>
+
+        {/* Selector de familia secundaria — solo visible si ya eligió la principal */}
+        {tieneFamiliaPrincipal && (
+          <div className="pt-6 border-t border-gray-100 scroll-mt-24">
+            <label className="block font-sans text-lg font-semibold text-gray-800 mb-2">
+              ¿Perteneces también a otra familia japonesa?
+              <span className="font-normal text-base text-gray-400 ml-2">(opcional)</span>
+            </label>
+            <p className="font-sans text-sm text-gray-500 mb-4 leading-relaxed">
+              Si tienes herencia japonesa por ambos lados, puedes registrar aquí tu segunda familia.
+            </p>
+
+            <SelectorFamilia
+              idFamiliaSeleccionada={data.id_familia_secundaria}
+              nuevaFamilia={data.nueva_familia_secundaria}
+              onSelectFamilia={handleSelectFamiliaSecundaria}
+              onCreateNueva={handleCreateNuevaSecundaria}
+              onClearSelection={handleClearSelectionSecundaria}
+              error={undefined}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

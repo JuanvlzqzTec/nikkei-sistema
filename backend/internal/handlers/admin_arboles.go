@@ -38,7 +38,9 @@ func (h *AdminArbolesHandler) GetFamiliasConArboles(c *gin.Context) {
 	resultado := make([]FamiliaConConteo, 0, len(familias))
 	for _, f := range familias {
 		var miembros, relaciones int64
-		database.DB.Model(&models.Persona{}).Where("id_familia = ?", f.IDFamilia).Count(&miembros)
+		database.DB.Model(&models.Persona{}).
+			Where("id_familia = ? OR id_familia_secundaria = ?", f.IDFamilia, f.IDFamilia).
+			Count(&miembros)
 		database.DB.Model(&models.Genealogia{}).
 			Joins("JOIN personas p1 ON p1.id_persona = genealogia.id_persona").
 			Joins("JOIN personas p2 ON p2.id_persona = genealogia.id_pariente").
@@ -61,14 +63,15 @@ func (h *AdminArbolesHandler) GetFamiliasConArboles(c *gin.Context) {
 }
 
 type ArbolFamiliaPersona struct {
-	IDPersona       uint    `json:"id_persona"`
-	NombreCompleto  string  `json:"nombre_completo"`
-	Generacion      string  `json:"generacion"`
-	FotoPerfil      *string `json:"foto_perfil"`
-	IDFamilia       uint    `json:"id_familia"`
-	ApellidoFamilia string  `json:"apellido_familia"`
-	EsMiembroActivo bool    `json:"es_miembro_activo"`
-	EsPublico       bool    `json:"es_publico"`
+	IDPersona           uint    `json:"id_persona"`
+	NombreCompleto      string  `json:"nombre_completo"`
+	Generacion          string  `json:"generacion"`
+	FotoPerfil          *string `json:"foto_perfil"`
+	IDFamilia           uint    `json:"id_familia"`
+	IDFamiliaSecundaria *uint   `json:"id_familia_secundaria"`
+	ApellidoFamilia     string  `json:"apellido_familia"`
+	EsMiembroActivo     bool    `json:"es_miembro_activo"`
+	EsPublico           bool    `json:"es_publico"`
 }
 
 type ArbolFamiliaRelacion struct {
@@ -90,7 +93,7 @@ func (h *AdminArbolesHandler) GetArbolFamilia(c *gin.Context) {
 
 	// Personas de la familia
 	var personas []models.Persona
-	if err := database.DB.Where("id_familia = ?", id).
+	if err := database.DB.Where("id_familia = ? OR id_familia_secundaria = ?", id, id).
 		Order("generacion ASC, apellido_paterno ASC, nombres ASC").
 		Find(&personas).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener personas"})
@@ -149,14 +152,15 @@ func (h *AdminArbolesHandler) GetArbolFamilia(c *gin.Context) {
 	personasResp := make([]ArbolFamiliaPersona, 0, len(personasMap))
 	for _, p := range personasMap {
 		personasResp = append(personasResp, ArbolFamiliaPersona{
-			IDPersona:       p.IDPersona,
-			NombreCompleto:  p.GetNombreCompleto(),
-			Generacion:      p.Generacion,
-			FotoPerfil:      p.FotoPerfil,
-			IDFamilia:       p.IDFamilia,
-			ApellidoFamilia: familiasMap[p.IDFamilia],
-			EsMiembroActivo: p.EsMiembroActivo,
-			EsPublico:       p.AceptaDirectorioPublico,
+			IDPersona:           p.IDPersona,
+			NombreCompleto:      p.GetNombreCompleto(),
+			Generacion:          p.Generacion,
+			FotoPerfil:          p.FotoPerfil,
+			IDFamilia:           p.IDFamilia,
+			IDFamiliaSecundaria: p.IDFamiliaSecundaria,
+			ApellidoFamilia:     familiasMap[p.IDFamilia],
+			EsMiembroActivo:     p.EsMiembroActivo,
+			EsPublico:           p.AceptaDirectorioPublico,
 		})
 	}
 

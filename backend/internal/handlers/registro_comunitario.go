@@ -39,9 +39,11 @@ type RegistroComunitarioRequest struct {
 	NombreJaponesRegistrado bool    `json:"nombre_japones_registrado"`
 
 	// Paso 2
-	Generacion   string               `json:"generacion" binding:"required,oneof=issei nisei sansei yonsei gosei roksei"`
-	IDFamilia    *uint                `json:"id_familia"`    // null si crea nueva
-	NuevaFamilia *NuevaFamiliaRequest `json:"nueva_familia"` // datos si crea nueva
+	Generacion             string               `json:"generacion" binding:"required,oneof=issei nisei sansei yonsei gosei roksei"`
+	IDFamilia              *uint                `json:"id_familia"`    // null si crea nueva
+	NuevaFamilia           *NuevaFamiliaRequest `json:"nueva_familia"` // datos si crea nueva
+	IDFamiliaSecundaria    *uint                `json:"id_familia_secundaria"`
+	NuevaFamiliaSecundaria *NuevaFamiliaRequest `json:"nueva_familia_secundaria"`
 
 	// Paso 3
 	FechaNacimiento *string `json:"fecha_nacimiento" binding:"required"`
@@ -117,6 +119,33 @@ func (h *RegistroComunitarioHandler) CrearRegistro(c *gin.Context) {
 			idFamiliaFinal = fam.IDFamilia
 		}
 
+		var idFamiliaSecundariaFinal *uint
+		if req.NuevaFamiliaSecundaria != nil {
+			nuevaFamiliaSecundaria := models.Familia{
+				ApellidoJP:          req.NuevaFamiliaSecundaria.ApellidoJP,
+				ApellidoRomanji:     req.NuevaFamiliaSecundaria.ApellidoRomanji,
+				ApellidoKanji:       req.NuevaFamiliaSecundaria.ApellidoKanji,
+				PrefecturaOrigen:    req.NuevaFamiliaSecundaria.PrefecturaOrigen,
+				AnioLlegadaMexico:   req.NuevaFamiliaSecundaria.AnioLlegadaMexico,
+				LugarLlegada:        req.NuevaFamiliaSecundaria.LugarLlegada,
+				PendienteAprobacion: true,
+			}
+			if err := tx.Create(&nuevaFamiliaSecundaria).Error; err != nil {
+				return err
+			}
+			id := nuevaFamiliaSecundaria.IDFamilia
+			idFamiliaSecundariaFinal = &id
+		} else if req.IDFamiliaSecundaria != nil {
+			var famSec models.Familia
+			if err := tx.First(&famSec, *req.IDFamiliaSecundaria).Error; err != nil {
+				return errors.New("la familia secundaria seleccionada no existe")
+			}
+			if famSec.PendienteAprobacion {
+				return errors.New("no puedes registrarte en una familia secundaria que aún no ha sido aprobada")
+			}
+			idFamiliaSecundariaFinal = &famSec.IDFamilia
+		}
+
 		var fechaNac *time.Time
 		if req.FechaNacimiento != nil && *req.FechaNacimiento != "" {
 			f, err := time.Parse("2006-01-02", *req.FechaNacimiento)
@@ -134,6 +163,7 @@ func (h *RegistroComunitarioHandler) CrearRegistro(c *gin.Context) {
 
 		persona := models.Persona{
 			IDFamilia:               idFamiliaFinal,
+			IDFamiliaSecundaria:     idFamiliaSecundariaFinal,
 			Nombres:                 req.Nombres,
 			ApellidoPaterno:         req.ApellidoPaterno,
 			ApellidoMaterno:         req.ApellidoMaterno,
@@ -202,13 +232,15 @@ func (h *RegistroComunitarioHandler) MiEstado(c *gin.Context) {
 
 func (h *RegistroComunitarioHandler) GetPendientes(c *gin.Context) {
 	type PendienteResponse struct {
-		IDUser          uint           `json:"id_user"`
-		Email           string         `json:"email"`
-		CreatedAt       time.Time      `json:"created_at"`
-		MotivoPendiente *string        `json:"motivo_pendiente"`
-		Persona         models.Persona `json:"persona"`
-		Familia         models.Familia `json:"familia"`
-		FamiliaEsNueva  bool           `json:"familia_es_nueva"`
+		IDUser                   uint            `json:"id_user"`
+		Email                    string          `json:"email"`
+		CreatedAt                time.Time       `json:"created_at"`
+		MotivoPendiente          *string         `json:"motivo_pendiente"`
+		Persona                  models.Persona  `json:"persona"`
+		Familia                  models.Familia  `json:"familia"`
+		FamiliaEsNueva           bool            `json:"familia_es_nueva"`
+		FamiliaSecundaria        *models.Familia `json:"familia_secundaria,omitempty"`
+		FamiliaSecundariaEsNueva bool            `json:"familia_secundaria_es_nueva"`
 	}
 
 	var users []models.User
@@ -231,14 +263,26 @@ func (h *RegistroComunitarioHandler) GetPendientes(c *gin.Context) {
 			continue
 		}
 
+		var familiaSecundaria *models.Familia
+		familiaSecundariaEsNueva := false
+		if persona.IDFamiliaSecundaria != nil {
+			var famSec models.Familia
+			if err := database.DB.First(&famSec, *persona.IDFamiliaSecundaria).Error; err == nil {
+				familiaSecundaria = &famSec
+				familiaSecundariaEsNueva = famSec.PendienteAprobacion
+			}
+		}
+
 		resultado = append(resultado, PendienteResponse{
-			IDUser:          u.IDUser,
-			Email:           u.Email,
-			CreatedAt:       u.UpdatedAt,
-			MotivoPendiente: u.MotivoPendiente,
-			Persona:         persona,
-			Familia:         familia,
-			FamiliaEsNueva:  familia.PendienteAprobacion,
+			IDUser:                   u.IDUser,
+			Email:                    u.Email,
+			CreatedAt:                u.UpdatedAt,
+			MotivoPendiente:          u.MotivoPendiente,
+			Persona:                  persona,
+			Familia:                  familia,
+			FamiliaEsNueva:           familia.PendienteAprobacion,
+			FamiliaSecundaria:        familiaSecundaria,
+			FamiliaSecundariaEsNueva: familiaSecundariaEsNueva,
 		})
 	}
 
@@ -286,6 +330,14 @@ func (h *RegistroComunitarioHandler) Aprobar(c *gin.Context) {
 			Where("id_familia = ? AND pendiente_aprobacion = true", persona.IDFamilia).
 			Update("pendiente_aprobacion", false).Error; err != nil {
 			return err
+		}
+
+		if persona.IDFamiliaSecundaria != nil {
+			if err := tx.Model(&models.Familia{}).
+				Where("id_familia = ? AND pendiente_aprobacion = true", *persona.IDFamiliaSecundaria).
+				Update("pendiente_aprobacion", false).Error; err != nil {
+				return err
+			}
 		}
 
 		// Actualizar user: rol miembro + estado completado + limpiar motivo

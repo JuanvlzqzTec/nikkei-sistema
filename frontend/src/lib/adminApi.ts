@@ -209,6 +209,8 @@ export interface RegistroPendiente {
   persona: PersonaPendiente
   familia: FamiliaPendiente
   familia_es_nueva: boolean
+  familia_secundaria?: FamiliaPendiente
+  familia_secundaria_es_nueva: boolean
 }
 
 export const registrosPendientesApi = {
@@ -283,6 +285,7 @@ export interface MiembroDetalle {
   fecha_ingreso_asociacion?: string
   puesto?: string
   familia: { id_familia: number; apellido_jp: string; apellido_kanji?: string }
+  familia_secundaria?: { id_familia: number; apellido_jp: string; apellido_kanji?: string }
   empleo?: { id_empresa_empleadora: number; nombre_empresa: string; ciudad?: string; estado?: string }
   empresa_propia?: { id_empresa: number; nombre_empresa: string; giro_comercial?: string; status_aprobacion?: string }
 }

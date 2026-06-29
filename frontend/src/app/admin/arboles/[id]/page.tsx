@@ -77,7 +77,7 @@ export default function AdminArbolFamiliaPage() {
     arbol.personas.forEach((p) => personasMap.set(p.id_persona, p))
 
     // Solo miembros de ESTA familia
-    const miembros = arbol.personas.filter((p) => p.id_familia === arbol.familia.id_familia)
+    const miembros = arbol.personas.filter((p) => p.id_familia === arbol.familia.id_familia || p.id_familia_secundaria === arbol.familia.id_familia)
 
     type RelacionDescrita = {
       id_genealogia: number

@@ -127,6 +127,8 @@ export default function RegistroComunitarioPage() {
           generacion: data.generacion,
           id_familia: data.id_familia,
           nueva_familia: data.nueva_familia,
+          id_familia_secundaria: data.id_familia_secundaria,
+          nueva_familia_secundaria: data.nueva_familia_secundaria,
         }
         break
       case 3:
@@ -265,11 +267,26 @@ export default function RegistroComunitarioPage() {
       payload.nueva_familia = {
         apellido_jp: data.nueva_familia.apellido_jp.trim(),
         apellido_kanji: data.nueva_familia.apellido_kanji?.trim() || undefined,
-        prefectura_origen:
-          data.nueva_familia.prefectura_origen?.trim() || undefined,
+        prefectura_origen: data.nueva_familia.prefectura_origen?.trim() || undefined,
         anio_llegada_mexico: data.nueva_familia.anio_llegada_mexico
           ? parseInt(data.nueva_familia.anio_llegada_mexico, 10)
           : undefined,
+        lugar_llegada: data.nueva_familia.lugar_llegada?.trim() || undefined,
+      }
+    }
+
+    // Familia secundaria
+    if (data.id_familia_secundaria !== null) {
+      payload.id_familia_secundaria = data.id_familia_secundaria
+    } else if (data.nueva_familia_secundaria) {
+      payload.nueva_familia_secundaria = {
+        apellido_jp: data.nueva_familia_secundaria.apellido_jp.trim(),
+        apellido_kanji: data.nueva_familia_secundaria.apellido_kanji?.trim() || undefined,
+        prefectura_origen: data.nueva_familia_secundaria.prefectura_origen?.trim() || undefined,
+        anio_llegada_mexico: data.nueva_familia_secundaria.anio_llegada_mexico
+          ? parseInt(data.nueva_familia_secundaria.anio_llegada_mexico, 10)
+          : undefined,
+        lugar_llegada: data.nueva_familia_secundaria.lugar_llegada?.trim() || undefined,
       }
     }
 
@@ -328,7 +345,7 @@ export default function RegistroComunitarioPage() {
       )
     )
       return 1
-    if (['generacion', 'id_familia', 'nueva_familia'].includes(field)) return 2
+    if (['generacion', 'id_familia', 'nueva_familia', 'id_familia_secundaria', 'nueva_familia_secundaria'].includes(field)) return 2
     if (['fecha_nacimiento', 'genero', 'lugar_nacimiento'].includes(field))
       return 3
     if (['telefono_principal', 'ciudad', 'estado', 'pais'].includes(field))
@@ -389,10 +406,15 @@ export default function RegistroComunitarioPage() {
     )
   }
 
-  // Familia seleccionada (para pasar al paso de confirmación)
   const familiaSeleccionada =
-    data.id_familia !== null
-      ? familias.find((f) => f.id_familia === data.id_familia) ?? null
+  data.id_familia !== null
+    ? familias.find((f) => f.id_familia === data.id_familia) ?? null
+    : null
+
+  // Familia seleccionada (para pasar al paso de confirmación)
+  const familiaSecundariaSeleccionada =
+    data.id_familia_secundaria !== null
+      ? familias.find((f) => f.id_familia === data.id_familia_secundaria) ?? null
       : null
 
   const isConfirmacion = currentStep === STEP_CONFIRMACION
@@ -461,6 +483,7 @@ export default function RegistroComunitarioPage() {
           <PasoConfirmacion
             data={data}
             familiaSeleccionada={familiaSeleccionada}
+            familiaSecundariaSeleccionada={familiaSecundariaSeleccionada}
             onEditStep={handleEditFromConfirmation}
             isSubmitting={isSubmitting}
             errorEnvio={errorEnvio}

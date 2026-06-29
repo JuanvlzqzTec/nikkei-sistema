@@ -7,6 +7,7 @@ import (
 type Persona struct {
 	IDPersona               uint       `gorm:"primaryKey;column:id_persona;autoIncrement" json:"id_persona"`
 	IDFamilia               uint       `gorm:"not null" json:"id_familia"`
+	IDFamiliaSecundaria     *uint      `gorm:"default:null" json:"id_familia_secundaria"`
 	Nombres                 string     `gorm:"not null;size:150" json:"nombres"`
 	ApellidoPaterno         string     `gorm:"not null;size:100" json:"apellido_paterno"`
 	ApellidoMaterno         *string    `gorm:"size:100" json:"apellido_materno"`

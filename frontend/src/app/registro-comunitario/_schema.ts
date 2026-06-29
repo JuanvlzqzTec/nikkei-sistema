@@ -90,6 +90,8 @@ const paso2BaseSchema = z.object({
   ),
   id_familia: z.number().int().positive().nullable(),
   nueva_familia: nuevaFamiliaSchema.nullable(),
+  id_familia_secundaria: z.number().int().positive().nullable(),
+  nueva_familia_secundaria: nuevaFamiliaSchema.nullable(),
 })
 
 export const paso2Schema = paso2BaseSchema.refine(

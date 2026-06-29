@@ -36,6 +36,7 @@ export interface ArbolPersona {
   generacion: string
   foto_perfil: string | null
   id_familia: number
+  id_familia_secundaria: number | null
   apellido_familia: string
   es_miembro_activo: boolean
   es_publico: boolean

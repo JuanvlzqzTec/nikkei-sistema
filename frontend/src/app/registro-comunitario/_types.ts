@@ -13,6 +13,8 @@ export interface WizardData {
   generacion: Generacion | ''
   id_familia: number | null
   nueva_familia: NuevaFamiliaData | null
+  id_familia_secundaria: number | null
+  nueva_familia_secundaria: NuevaFamiliaData | null
 
   fecha_nacimiento: string
   genero: Genero | ''
@@ -101,6 +103,14 @@ export interface RegistroComunitarioPayload {
     anio_llegada_mexico?: number
     lugar_llegada?: string
   }
+  id_familia_secundaria?: number
+  nueva_familia_secundaria?: {
+    apellido_jp: string
+    apellido_kanji?: string
+    prefectura_origen?: string
+    anio_llegada_mexico?: number
+    lugar_llegada?: string
+  }
 
   fecha_nacimiento: string
   genero: Genero
@@ -137,6 +147,8 @@ export const WIZARD_INITIAL_DATA: WizardData = {
   generacion: '',
   id_familia: null,
   nueva_familia: null,
+  id_familia_secundaria: null,
+  nueva_familia_secundaria: null,
 
   fecha_nacimiento: '',
   genero: '',

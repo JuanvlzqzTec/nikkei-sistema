@@ -58,9 +58,11 @@ type MiembroDetalle struct {
 	ParticipaEventos        bool            `json:"participa_eventos"`
 	AceptaDirectorioPublico bool            `json:"acepta_directorio_publico"`
 	AceptaComunicaciones    bool            `json:"acepta_comunicaciones"`
+	HaRecibidoBeca          bool            `json:"ha_recibido_beca"`
 	FechaIngresoAsociacion  *string         `json:"fecha_ingreso_asociacion"`
 	Puesto                  *string         `json:"puesto"`
 	Familia                 FamiliaResumen  `json:"familia"`
+	FamiliaSecundaria       *FamiliaResumen `json:"familia_secundaria,omitempty"`
 	Empleo                  *EmpleoResumen  `json:"empleo"`
 	EmpresaPropia           *EmpresaResumen `json:"empresa_propia"`
 }
@@ -214,12 +216,25 @@ func (h *AdminMiembrosHandler) GetMiembroDetalle(c *gin.Context) {
 		ParticipaEventos:        persona.ParticipaEventos,
 		AceptaDirectorioPublico: persona.AceptaDirectorioPublico,
 		AceptaComunicaciones:    persona.AceptaComunicaciones,
+		HaRecibidoBeca:          persona.HaRecibidoBeca,
 		Puesto:                  persona.Puesto,
 		Familia: FamiliaResumen{
 			IDFamilia:     familia.IDFamilia,
 			ApellidoJP:    familia.ApellidoJP,
 			ApellidoKanji: familia.ApellidoKanji,
 		},
+	}
+
+	// Familia secundaria
+	if persona.IDFamiliaSecundaria != nil {
+		var familiaSecundaria models.Familia
+		if err := database.DB.First(&familiaSecundaria, *persona.IDFamiliaSecundaria).Error; err == nil {
+			detalle.FamiliaSecundaria = &FamiliaResumen{
+				IDFamilia:     familiaSecundaria.IDFamilia,
+				ApellidoJP:    familiaSecundaria.ApellidoJP,
+				ApellidoKanji: familiaSecundaria.ApellidoKanji,
+			}
+		}
 	}
 
 	// Fecha nacimiento formateada

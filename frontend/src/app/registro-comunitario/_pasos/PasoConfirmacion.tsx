@@ -12,6 +12,7 @@ import {
 interface Props {
   data: WizardData
   familiaSeleccionada?: FamiliaPublica | null
+  familiaSecundariaSeleccionada?: FamiliaPublica | null
   onEditStep: (step: number) => void
   isSubmitting: boolean
   errorEnvio: string | null
@@ -21,6 +22,7 @@ interface Props {
 export default function PasoConfirmacion({
   data,
   familiaSeleccionada,
+  familiaSecundariaSeleccionada,
   onEditStep,
   isSubmitting,
   errorEnvio,
@@ -127,23 +129,19 @@ export default function PasoConfirmacion({
           <Campo label="Generación" valor={labelGeneracion} />
           {data.nueva_familia ? (
             <>
-              <Campo
-                label="Familia"
-                valor={`${data.nueva_familia.apellido_jp} (nueva)`}
-              />
-              <p className="font-sans text-sm text-amber-700 mt-1 italic">
-                Esta familia será revisada por un administrador antes de aparecer
-                en el directorio.
-              </p>
+              <Campo label="Familia principal" valor={`${data.nueva_familia.apellido_jp} (nueva — pendiente de aprobación)`} />
             </>
           ) : familiaSeleccionada ? (
-            <Campo
-              label="Familia"
-              valor={`Familia ${familiaSeleccionada.apellido_jp}`}
-            />
+            <Campo label="Familia principal" valor={`Familia ${familiaSeleccionada.apellido_jp}`} />
           ) : (
-            <Campo label="Familia" valor="—" />
+            <Campo label="Familia principal" valor="—" />
           )}
+
+          {data.nueva_familia_secundaria ? (
+            <Campo label="Familia secundaria" valor={`${data.nueva_familia_secundaria.apellido_jp} (nueva — pendiente de aprobación)`} />
+          ) : familiaSecundariaSeleccionada ? (
+            <Campo label="Familia secundaria" valor={`Familia ${familiaSecundariaSeleccionada.apellido_jp}`} />
+          ) : null}
         </BloqueResumen>
 
         {/* Bloque 3: Datos personales */}

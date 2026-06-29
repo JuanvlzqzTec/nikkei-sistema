@@ -112,6 +112,11 @@ function ModalDetalle({ id, onClose }: { id: number; onClose: () => void }) {
                         Familia {detalle.familia.apellido_jp}
                       </span>
                     )}
+                    {detalle.familia_secundaria && (
+                      <span className="text-xs font-sans px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">
+                        Familia {detalle.familia_secundaria.apellido_jp}
+                      </span>
+                    )}
                     {!detalle.id_user && (
                       <span className="text-xs font-sans px-2 py-0.5 rounded-full font-medium bg-gray-100 text-gray-500">
                         Sin cuenta — registro histórico
