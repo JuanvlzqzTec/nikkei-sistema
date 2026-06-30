@@ -58,6 +58,7 @@ type MiembroDetalle struct {
 	ParticipaEventos        bool            `json:"participa_eventos"`
 	AceptaDirectorioPublico bool            `json:"acepta_directorio_publico"`
 	AceptaComunicaciones    bool            `json:"acepta_comunicaciones"`
+	AceptaEntrevistas       bool            `json:"acepta_entrevistas"`
 	HaRecibidoBeca          bool            `json:"ha_recibido_beca"`
 	FechaIngresoAsociacion  *string         `json:"fecha_ingreso_asociacion"`
 	Puesto                  *string         `json:"puesto"`
@@ -216,6 +217,7 @@ func (h *AdminMiembrosHandler) GetMiembroDetalle(c *gin.Context) {
 		ParticipaEventos:        persona.ParticipaEventos,
 		AceptaDirectorioPublico: persona.AceptaDirectorioPublico,
 		AceptaComunicaciones:    persona.AceptaComunicaciones,
+		AceptaEntrevistas:       persona.AceptaEntrevistas,
 		HaRecibidoBeca:          persona.HaRecibidoBeca,
 		Puesto:                  persona.Puesto,
 		Familia: FamiliaResumen{

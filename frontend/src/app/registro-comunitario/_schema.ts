@@ -178,6 +178,7 @@ export const paso5Schema = z.object({
   ha_recibido_beca: z.boolean(),
   acepta_directorio_publico: z.boolean(),
   acepta_comunicaciones: z.boolean(),
+  acepta_entrevistas: z.boolean(),
 })
 
 export const wizardCompleteSchema = z.object({

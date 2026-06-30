@@ -29,6 +29,7 @@ export interface WizardData {
   ha_recibido_beca: boolean
   acepta_directorio_publico: boolean
   acepta_comunicaciones: boolean
+  acepta_entrevistas: boolean
 }
 
 export interface NuevaFamiliaData {
@@ -124,6 +125,7 @@ export interface RegistroComunitarioPayload {
   ha_recibido_beca?: boolean
   acepta_directorio_publico: boolean
   acepta_comunicaciones: boolean
+  acepta_entrevistas?: boolean
 }
 
 export const TOTAL_PASOS = 5
@@ -163,4 +165,5 @@ export const WIZARD_INITIAL_DATA: WizardData = {
   ha_recibido_beca: false,
   acepta_directorio_publico: false,
   acepta_comunicaciones: true,
+  acepta_entrevistas: false,
 }

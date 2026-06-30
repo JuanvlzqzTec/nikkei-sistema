@@ -59,6 +59,7 @@ type RegistroComunitarioRequest struct {
 	NivelJapones            *string `json:"nivel_japones"`
 	AceptaDirectorioPublico bool    `json:"acepta_directorio_publico"`
 	AceptaComunicaciones    bool    `json:"acepta_comunicaciones"`
+	AceptaEntrevistas       bool    `json:"acepta_entrevistas"`
 	HaRecibidoBeca          bool    `json:"ha_recibido_beca"`
 }
 
@@ -179,6 +180,7 @@ func (h *RegistroComunitarioHandler) CrearRegistro(c *gin.Context) {
 			NivelJapones:            req.NivelJapones,
 			AceptaDirectorioPublico: req.AceptaDirectorioPublico,
 			AceptaComunicaciones:    req.AceptaComunicaciones,
+			AceptaEntrevistas:       req.AceptaEntrevistas,
 			NombreJaponesRegistrado: req.NombreJaponesRegistrado,
 			HaRecibidoBeca:          req.HaRecibidoBeca,
 			EsMiembroActivo:         false, // queda inactivo hasta aprobación

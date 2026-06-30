@@ -34,6 +34,7 @@ type Persona struct {
 	ParticipaEventos        bool       `gorm:"default:true" json:"participa_eventos"`
 	AceptaDirectorioPublico bool       `gorm:"default:false" json:"acepta_directorio_publico"`
 	AceptaComunicaciones    bool       `gorm:"default:true" json:"acepta_comunicaciones"`
+	AceptaEntrevistas       bool       `gorm:"default:false" json:"acepta_entrevistas"`
 	HaRecibidoBeca          bool       `gorm:"default:false" json:"ha_recibido_beca"`
 	NotasAdministrativas    *string    `gorm:"type:text" json:"notas_administrativas"`
 	IDEmpresaEmpleadora     *uint      `json:"id_empresa_empleadora"`

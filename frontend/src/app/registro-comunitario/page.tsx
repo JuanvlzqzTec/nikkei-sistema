@@ -45,6 +45,7 @@ export default function RegistroComunitarioPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null)
   const [enviado, setEnviado] = useState(false)
+  const [aceptoAviso, setAceptoAviso] = useState(false)
 
   const [familias, setFamilias] = useState<FamiliaPublica[]>([])
 
@@ -152,6 +153,7 @@ export default function RegistroComunitarioPage() {
           ha_recibido_beca: data.ha_recibido_beca,
           acepta_directorio_publico: data.acepta_directorio_publico,
           acepta_comunicaciones: data.acepta_comunicaciones,
+          acepta_entrevistas: data.acepta_entrevistas,
         }
         break
     }
@@ -259,6 +261,7 @@ export default function RegistroComunitarioPage() {
       nivel_japones: (data.nivel_japones as NivelJapones) || undefined,
       acepta_directorio_publico: data.acepta_directorio_publico,
       acepta_comunicaciones: data.acepta_comunicaciones,
+      acepta_entrevistas: data.acepta_entrevistas,
     }
 
     if (data.id_familia !== null) {
@@ -418,6 +421,57 @@ export default function RegistroComunitarioPage() {
       : null
 
   const isConfirmacion = currentStep === STEP_CONFIRMACION
+
+  // Pantalla de aviso de privacidad
+  if (!aceptoAviso) {
+    return (
+      <div
+        className="min-h-screen flex flex-col items-center justify-center p-4"
+        style={{ background: 'linear-gradient(135deg, #FEF7F0 0%, #FDE8D8 40%, #FCEEE8 100%)' }}
+      >
+        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-lg border border-amber-100 p-8 sm:p-10">
+          <div className="mb-6">
+            <h1 className="font-serif text-2xl text-red-800 mb-2">Aviso de Privacidad</h1>
+            <p className="font-sans text-sm text-gray-500">Asociación Nikkei Sinaloa</p>
+          </div>
+
+          <div className="space-y-4 text-sm font-sans text-gray-700 leading-relaxed max-h-72 overflow-y-auto pr-2 border border-gray-100 rounded-xl p-4 bg-gray-50">
+            <p>
+              De conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, la <strong>Asociación Nikkei Sinaloa</strong>, con domicilio en Culiacán, Sinaloa, es responsable del tratamiento de los datos personales que usted nos proporcione a través de este formulario.
+            </p>
+            <p><strong>¿Para qué usamos sus datos?</strong></p>
+            <p>
+              Los datos que nos proporcione serán utilizados para: integrar y mantener actualizado el padrón de miembros de la comunidad Nikkei de Sinaloa, gestionar su participación en eventos y actividades culturales, preservar el registro genealógico e histórico de las familias Nikkei, y enviarle comunicaciones relacionadas con la asociación cuando usted así lo autorice.
+            </p>
+            <p><strong>¿Qué datos recabamos?</strong></p>
+            <p>
+              Nombre completo, fecha de nacimiento, género, teléfono, correo electrónico, ciudad de residencia, y datos de origen familiar japonés.
+            </p>
+            <p><strong>Sus derechos ARCO</strong></p>
+            <p>
+              Usted tiene derecho a Acceder, Rectificar, Cancelar u Oponerse al tratamiento de sus datos personales contactándonos en{' '}
+              <a href="mailto:nikkeiculiacanadmin@gmail.com" className="text-red-700 underline">
+                nikkeiculiacanadmin@gmail.com
+              </a>.
+            </p>
+          </div>
+
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => setAceptoAviso(true)}
+              className="w-full min-h-14 px-6 py-4 bg-linear-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-sans font-semibold text-lg rounded-xl shadow-md transition-all duration-200 cursor-pointer"
+            >
+              Acepto el aviso de privacidad y deseo continuar
+            </button>
+            <p className="text-center text-xs font-sans text-gray-400 mt-3">
+              Al continuar, confirmas que has leído y aceptas el tratamiento de tus datos personales.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>

@@ -110,30 +110,27 @@ export default function Paso5Preferencias({
           </label>
         </div>
 
-        {/* Comunicaciones */}
+        {/* Entrevistas */}
         <div>
           <label
             className={`flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
-              data.acepta_comunicaciones
+              data.acepta_entrevistas
                 ? 'border-red-700 bg-red-50'
                 : 'border-gray-200 bg-white hover:border-red-300 hover:bg-amber-50/50'
             }`}
           >
             <input
               type="checkbox"
-              checked={data.acepta_comunicaciones}
-              onChange={(e) =>
-                onChange('acepta_comunicaciones', e.target.checked)
-              }
+              checked={data.acepta_entrevistas}
+              onChange={(e) => onChange('acepta_entrevistas', e.target.checked)}
               className="w-6 h-6 mt-0.5 rounded accent-red-700 cursor-pointer shrink-0"
             />
             <div>
               <p className="font-sans text-base font-semibold text-gray-800 mb-1">
-                Quiero recibir noticias y eventos de la comunidad
+                Acepto ser contactado para entrevistas o actividades
               </p>
               <p className="font-sans text-base text-gray-500 leading-relaxed">
-                Te avisaremos sobre matsuris, ceremonias y actividades culturales.
-                Sin spam, lo prometemos.
+                Acepto ser contactado por la asociación para entrevistas, testimonios u otras actividades relacionadas con la preservación de la herencia Nikkei.
               </p>
             </div>
           </label>

@@ -282,6 +282,7 @@ export interface MiembroDetalle {
   ha_recibido_beca?: boolean
   acepta_directorio_publico: boolean
   acepta_comunicaciones: boolean
+  acepta_entrevistas: boolean
   fecha_ingreso_asociacion?: string
   puesto?: string
   familia: { id_familia: number; apellido_jp: string; apellido_kanji?: string }

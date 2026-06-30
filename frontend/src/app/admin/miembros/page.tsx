@@ -189,6 +189,11 @@ function ModalDetalle({ id, onClose }: { id: number; onClose: () => void }) {
                       {detalle.acepta_comunicaciones ? '✓' : '✗'} Acepta comunicaciones
                     </span>
                     <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
+                      detalle.acepta_entrevistas ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
+                    }`}>
+                      {detalle.acepta_entrevistas ? '✓' : '✗'} Disponible para entrevistas
+                    </span>
+                    <span className={`text-xs font-sans px-3 py-1.5 rounded-full border ${
                       detalle.ha_recibido_beca ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'
                     }`}>
                       {detalle.ha_recibido_beca ? '✓' : '✗'} Ha recibido beca
