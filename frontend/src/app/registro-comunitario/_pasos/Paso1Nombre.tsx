@@ -105,7 +105,7 @@ export default function Paso1Nombre({ data, errors, onChange, firstErrorRef }: P
             }`}
           />
           <p className="mt-1.5 text-sm font-sans text-gray-400">
-            Si no tienes apellido materno, escribe <strong>X</strong>
+            Si no tienes apellido paterno o materno, escribe <strong>X</strong>
           </p>
           {errors.apellido_materno && (
             <p className="mt-1 text-base font-sans text-red-600">

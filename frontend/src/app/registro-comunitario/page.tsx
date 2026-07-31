@@ -437,11 +437,11 @@ export default function RegistroComunitarioPage() {
 
           <div className="space-y-4 text-sm font-sans text-gray-700 leading-relaxed max-h-72 overflow-y-auto pr-2 border border-gray-100 rounded-xl p-4 bg-gray-50">
             <p>
-              De conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, la <strong>Asociación Nikkei Sinaloa</strong>, con domicilio en Culiacán, Sinaloa, es responsable del tratamiento de los datos personales que usted nos proporcione a través de este formulario.
+              De conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, la <strong>Asociación Nikkei Culiacán, A.C.</strong>, con domicilio en Culiacán, Sinaloa, es responsable del tratamiento de los datos personales que usted nos proporcione a través de este formulario.
             </p>
             <p><strong>¿Para qué usamos sus datos?</strong></p>
             <p>
-              Los datos que nos proporcione serán utilizados para: integrar y mantener actualizado el padrón de miembros de la comunidad Nikkei de Sinaloa, gestionar su participación en eventos y actividades culturales, preservar el registro genealógico e histórico de las familias Nikkei, y enviarle comunicaciones relacionadas con la asociación cuando usted así lo autorice.
+              Los datos que nos proporcione serán utilizados para: integrar y mantener actualizado el padrón de miembros de la comunidad Nikkei de Culiacán, gestionar su participación en eventos y actividades culturales, preservar el registro genealógico e histórico de las familias Nikkei, y enviarle comunicaciones relacionadas con la asociación cuando usted así lo autorice.
             </p>
             <p><strong>¿Qué datos recabamos?</strong></p>
             <p>
