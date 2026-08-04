@@ -460,7 +460,7 @@ export default function HomePage() {
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Contacto</h5>
               <ul className="space-y-4">
-                {[{ icon: <MapPin size={15} className="text-amber-400 shrink-0 mt-0.5" />, text: 'Culiacán, Sinaloa, México' }, { icon: <Phone size={15} className="text-amber-400 shrink-0" />, text: '+52 (667) 000-0000' }, { icon: <Mail size={15} className="text-amber-400 shrink-0" />, text: 'hola@nikkeisinaloa.org' }].map((item, i) => (
+                {[{ icon: <MapPin size={15} className="text-amber-400 shrink-0 mt-0.5" />, text: 'Culiacán, Sinaloa, México' }, { icon: <Phone size={15} className="text-amber-400 shrink-0" />, text: '+52 (667) 142-0914' }, { icon: <Mail size={15} className="text-amber-400 shrink-0" />, text: 'nikkeiculiacanadmin@gmail.com' }].map((item, i) => (
                   <li key={i} className="flex items-start justify-center md:justify-start gap-2.5 text-white/55 text-sm font-sans">{item.icon}<span>{item.text}</span></li>
                 ))}
               </ul>
@@ -468,10 +468,10 @@ export default function HomePage() {
             <div>
               <h5 className="font-serif text-amber-300 mb-5 pt-2 text-sm tracking-wide uppercase">Horarios</h5>
               <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3 inline-block md:block mx-auto md:mx-0 text-left">
-                <p className="text-[10px] text-white/35 font-sans font-bold uppercase tracking-widest">Atención en Oficina</p>
+                <p className="text-[10px] text-white/35 font-sans font-bold uppercase tracking-widest">Horario de atención</p>
                 <div className="space-y-1.5">
-                  <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Lun — Vie</span><span className="text-xs text-white/75 font-sans font-medium">9:00 — 18:00</span></div>
-                  <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Sábado</span><span className="text-xs text-white/75 font-sans font-medium">10:00 — 14:00</span></div>
+                  <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Lun — Vie</span><span className="text-xs text-white/75 font-sans font-medium">9:00 — 17:00</span></div>
+                  <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Sábado</span><span className="text-xs text-white/75 font-sans font-medium">10:00 — 13:00</span></div>
                   <div className="flex justify-between gap-6"><span className="text-xs text-white/50 font-sans">Domingo</span><span className="text-xs text-red-400/70 font-sans">Cerrado</span></div>
                 </div>
               </div>

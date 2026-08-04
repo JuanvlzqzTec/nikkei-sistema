@@ -21,8 +21,8 @@ import {
 } from '@/app/registro-comunitario/_types'
 
 // Contacto del admin — TODO: mover a env / config cuando exista
-const ADMIN_EMAIL = 'hola@nikkeisinaloa.org'
-const ADMIN_TELEFONO = '+52 (667) 000-0000'
+const ADMIN_EMAIL = 'nikkeiculiacanadmin@gmail.com'
+const ADMIN_TELEFONO = '+52 (667) 142-0914'
 
 let cachedRaw: string | null = null
 let cachedDraft: WizardDraft | null = null
