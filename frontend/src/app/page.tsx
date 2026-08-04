@@ -486,6 +486,16 @@ export default function HomePage() {
               <Link href="#" className="hover:text-amber-300 transition-colors duration-200">Términos de Uso</Link>
             </div>
           </div>
+          <div className="h-px bg-linear-to-r from-transparent via-white/10 to-transparent my-6" />
+          <div className="flex justify-center">
+            <Link href="mailto:juan@codigohq.com" className="group flex items-center gap-3 py-2">
+              <Image src="/codigo-logo.png" alt="Logo CODIGO" width={28} height={28} className="rounded-md shrink-0 opacity-90 group-hover:opacity-100 transition-opacity duration-200" />
+              <span className="text-left leading-tight">
+                <span className="block text-xs text-white/50 font-sans group-hover:text-amber-300 transition-colors duration-200">Desarrollado por Juan Antonio Velázquez Alarcón</span>
+                <span className="block text-xs text-white/35 font-sans group-hover:text-amber-300/80 transition-colors duration-200">CODIGO · juan@codigohq.com</span>
+              </span>
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
